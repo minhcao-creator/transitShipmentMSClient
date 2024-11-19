@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <div className="flex bg-emerald-50">
-          <div className="h-screen px-2 py-24 overflow-y-auto flex flex-col justify-around items-center bg-[#116A7B]">
+          <div className="h-screen px-2 py-24 flex flex-col justify-around items-center bg-[#116A7B]">
             <Link href="#" className="p-2 text-gray-900 rounded-md hover:bg-gray-100 group">
               <Dashboard />
             </Link>
