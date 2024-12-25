@@ -7,7 +7,7 @@ const Map = dynamic(
   { ssr: false }
 );
 
-const HomePage = () => {
+const Geos = () => {
   const locations = [{
     "address": "1284 Quang Trung, p14, Gò Vấp",
     "id": "1420",
@@ -2143,7 +2143,7 @@ const HomePage = () => {
   return (
     <div className="flex">
       <div className="w-full h-screen">
-        <Map center={{ lng: 106.6087319, lat: 10.8175212 }} locations={locations} />
+        {/* <Map center={{ lng: 106.6087319, lat: 10.8175212 }} locations={locations} /> */}
       </div>
 
       <div className="w-1/4">
@@ -2152,4 +2152,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Geos;

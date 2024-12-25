@@ -19,6 +19,7 @@ type MapLocation = LatLngLiteral & { id: string };
 type MapProps = {
   center: LatLngLiteral;
   locations: MapLocation[];
+  routes: any;
 };
 
 const SelectedLocation = ({ center }: { center: LatLngLiteral }) => {
@@ -27,7 +28,7 @@ const SelectedLocation = ({ center }: { center: LatLngLiteral }) => {
   return null;
 };
 
-export const Map: React.FC<MapProps> = memo(({ center, locations }) => {
+export const Map: React.FC<MapProps> = memo(({ center, locations, routes }) => {
   const [mapType, setMapType] = useState<MapType>("roadmap");
   const [selectedLocation, setSelectedLocation] = useState<
     MapLocation | undefined
@@ -86,8 +87,13 @@ export const Map: React.FC<MapProps> = memo(({ center, locations }) => {
           {selectedLocation && <SelectedLocation center={selectedLocation} />}
           {renderMarks()}
           <ZoomControl position="topright" />
-          <RoutingMachine locations={[[10.844834, 106.639579], [10.783838, 106.623397], [10.75561759411038, 106.64372159732207], [10.73829, 106.63353], [10.756358, 106.703772], [10.844834, 106.639579]]} color={'#37AB9C'} index={'1'} />
-          <RoutingMachine locations={[[10.844834, 106.639579], [10.8070035, 106.6203028], [10.8245, 106.701861], [10.5878863, 106.851401], [10.844834, 106.639579]]} color={'#AB6037'} index={'2'} />
+          {
+            routes?.map((route: any, index: number) => {
+              return (
+                <RoutingMachine locations={route} color={'#37AB9C'} index={index} />
+              )
+            })
+          }
         </MapContainer>
       </div>
       {/* <div style={{ display: "flex", marginTop: "10px", gap: "20px" }}>
