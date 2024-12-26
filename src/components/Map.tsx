@@ -34,6 +34,8 @@ export const Map: React.FC<MapProps> = memo(({ center, locations, routes }) => {
     MapLocation | undefined
   >();
 
+  const colors = ['#000807', '#EE2677', '#8D775F', '#EDB458', '#E8871E']
+
   const getUrl = () => {
     const mapTypeUrls: Record<MapType, string> = {
       roadmap: "http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}",
@@ -46,13 +48,17 @@ export const Map: React.FC<MapProps> = memo(({ center, locations, routes }) => {
 
   const mapMarkIcon = new Icon({
     iconUrl: "khotrungchuyen.png",
-    iconSize: [25, 40],
+    iconSize: [28, 46],
+  });
+  const mapMarkIcons = new Icon({
+    iconUrl: "khotrungchuyen.png",
+    iconSize: [12, 20],
   });
 
   const renderMarks = () => {
     return locations.map((location) => (
       <div key={location.id}>
-        <Marker
+        {location.id == '0' ? <Marker
           icon={mapMarkIcon}
           position={{ lat: location.lat, lng: location.lng }}
           eventHandlers={{
@@ -60,7 +66,16 @@ export const Map: React.FC<MapProps> = memo(({ center, locations, routes }) => {
               setSelectedLocation(location);
             },
           }}
-        />
+        /> :
+          <Marker
+            icon={mapMarkIcons}
+            position={{ lat: location.lat, lng: location.lng }}
+            eventHandlers={{
+              click: () => {
+                setSelectedLocation(location);
+              },
+            }}
+          />}
       </div>
     ));
   };
@@ -90,7 +105,7 @@ export const Map: React.FC<MapProps> = memo(({ center, locations, routes }) => {
           {
             routes?.map((route: any, index: number) => {
               return (
-                <RoutingMachine locations={route} color={'#37AB9C'} index={index} />
+                <RoutingMachine locations={route} color={colors[index]} index={index} />
               )
             })
           }

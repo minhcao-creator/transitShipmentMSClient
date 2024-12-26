@@ -11,7 +11,7 @@ export default function RoutingMachine({ locations, color, index }) {
     // const marker = L.marker(currentPos, { icon: travellerIcon }).addTo(map);
     var routingIcon = new L.Icon({
         iconUrl: `/map-marker${index}.png`,
-        iconSize: [12, 20]
+        iconSize: [18, 30]
     });
 
     const waypoints = locations.map((location) => L.latLng(location))
@@ -21,12 +21,12 @@ export default function RoutingMachine({ locations, color, index }) {
             waypoints,
             lineOptions: {
                 styles: [
-                    { color, opacity: 0.5, weight: 4 }
+                    { color, weight: 4 }
                 ]
             },
             createMarker: function (i, wp, nWps) {
                 // here change the starting and ending icons
-                return L.marker(wp.latLng, {
+                return i == 0 || i == nWps - 1 ? '' : L.marker(wp.latLng, {
                     icon: routingIcon // here pass the custom marker icon instance
                 });
             }
