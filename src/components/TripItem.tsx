@@ -52,7 +52,7 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
           >
             {trip.type}
           </div>
-          <span>{format(trip.plannedTime, "HH:mm")}</span>
+          <span>{trip.plannedTime && format(trip.plannedTime, "HH:mm")}</span>
           <button
             className="bg-[#2C2C2C] rounded-sm text-white px-2"
           >
@@ -62,7 +62,7 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
         <div>
           <span className="font-semibold">{trip.name}</span>
         </div>
-        <div>{trip.postOfficeList.toString()}</div>
+        <div>{trip.postOfficeList?.toString()}</div>
       </div>
     </li>
   );
