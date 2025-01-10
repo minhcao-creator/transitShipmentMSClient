@@ -1,4 +1,6 @@
+import { PlusIcon } from '@radix-ui/react-icons'
 import React from 'react'
+
 
 function Header() {
   return (
@@ -24,15 +26,12 @@ function Header() {
       <span className='basis-[10%] px-1'>
         Trạng thái
       </span>
-      <span className='basis-[4%] px-1'>
+      <span className='basis-[6%] px-1'>
 
       </span>
-      <span className='basis-[4%] px-1'>
-
-      </span>
-      <span className='basis-[4%] px-1'>
-
-      </span>
+      <button className='basis-[6%] border border-teal-800 flex justify-center rounded-sm text-teal-800 hover:text-white hover:bg-teal-800'>
+        <PlusIcon />
+      </button>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { tripsInitData } from "@/tripData"
-import { Board, BoardAction } from "@/types/type"
+import { Board, BoardAction } from "@/types/board"
 import { createContext, PropsWithChildren, useContext, useEffect, useReducer, useState } from "react"
 
 const boardInitialState: Board = {

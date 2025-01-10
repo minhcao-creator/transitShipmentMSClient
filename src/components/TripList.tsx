@@ -14,7 +14,7 @@ import TripItem from "./TripItem";
 // import { PlusIcon } from "@radix-ui/react-icons";
 // import CreateTaskForm from "./CreateTaskForm";
 // import { cn } from "@/lib/utils";
-import { Trip } from "@/types/type";
+import { Trip } from "@/types/board";
 import { useEffect, useState } from "react";
 
 type TripListProps = {

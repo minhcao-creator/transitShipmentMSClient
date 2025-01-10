@@ -1,4 +1,4 @@
-import { TripMap } from "@/types/type";
+import { TripMap } from "@/types/board";
 
 export const tripsInitData: TripMap = {
   "planned": [

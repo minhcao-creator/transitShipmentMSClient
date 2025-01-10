@@ -25,7 +25,7 @@ import {
 // } from "./ui/dropdown-menu";
 import { useBoard } from "@/context/BoardContext/BoardContext";
 import { memo } from "react";
-import { Trip } from "@/types/type";
+import { Trip } from "@/types/board";
 import { format } from "date-fns";
 
 type TripItemProps = {

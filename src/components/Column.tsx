@@ -8,7 +8,7 @@ import {
   DraggableStateSnapshot,
 } from "react-beautiful-dnd";
 import TripList from "./TripList";
-import { Trip } from "@/types/type";
+import { Trip } from "@/types/board";
 
 type ColumnProps = {
   listTitle: string;

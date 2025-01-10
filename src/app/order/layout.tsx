@@ -1,3 +1,4 @@
+import { OrderProvider } from "@/context/OrderContext/OrderContext";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,7 +12,9 @@ export default function RootLayout({
 }>) {
   return (
     <div className="w-full">
-      {children}
+      <OrderProvider>
+        {children}
+      </OrderProvider>
     </div>
   );
 }
