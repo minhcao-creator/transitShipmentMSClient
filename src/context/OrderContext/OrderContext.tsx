@@ -63,6 +63,8 @@ function orderReducer(state: Order[], action: OrderAction): Order[] {
         (order) => order.id !== idDel
       )
 
+      localStorage.setItem("@Order", JSON.stringify(newState));
+
       return newState
     }
 
@@ -75,6 +77,8 @@ function orderReducer(state: Order[], action: OrderAction): Order[] {
           (packageData) => packageData.id !== idDel
         )
       })
+
+      localStorage.setItem("@Order", JSON.stringify(newState));
 
       return newState
     }
@@ -89,6 +93,87 @@ function orderReducer(state: Order[], action: OrderAction): Order[] {
           )
         ))
       })
+
+      localStorage.setItem("@Order", JSON.stringify(newState));
+
+      return newState
+    }
+
+    case "EDIT_ITEM": {
+      const idEdit = action.payload.id
+      const newState = [...state]
+      newState.forEach((order) => {
+        order.packages.forEach((packageData) => (
+          packageData.items.forEach((item) => {
+            if (item.id === idEdit) {
+              item.number = action.payload.number,
+                item.note = action.payload.note
+            }
+          })
+        ))
+      })
+
+      localStorage.setItem("@Order", JSON.stringify(newState));
+
+      return newState
+    }
+
+    case "EDIT_PACKAGE": {
+      const idEdit = action.payload.id
+      const newState = [...state]
+      newState.forEach((order) => {
+        order.packages.forEach((packageData) => {
+          if (packageData.id === idEdit) {
+            packageData.height = action.payload.height
+            packageData.weight = action.payload.weight
+            packageData.length = action.payload.length
+            packageData.width = action.payload.width
+            packageData.status = action.payload.status
+            packageData.type = action.payload.type
+            packageData.note = action.payload.note
+          }
+        })
+      })
+
+      localStorage.setItem("@Order", JSON.stringify(newState));
+
+      return newState
+    }
+
+    case "EDIT_ORDER": {
+      const idEdit = action.payload.id
+      const newState = [...state]
+      newState.forEach((order) => {
+        if ((order.id) === idEdit) {
+          order.customer = action.payload.customer
+          order.customerAddress = action.payload.customerAddress
+          order.customerContact = action.payload.customerContact
+          order.location = action.payload.location
+          order.note = action.payload.note
+          order.receiveAddress = action.payload.receiveAddress
+          order.receiver = action.payload.receiver
+          order.shop = action.payload.shop
+          order.shopContact = action.payload.shopContact
+          order.status = action.payload.status
+        }
+      })
+
+      localStorage.setItem("@Order", JSON.stringify(newState));
+
+      return newState
+    }
+
+    case "ADD_ORDER": {
+      const newState = [...state]
+
+      const newOrder = {
+        ...action.payload
+      }
+
+      newState.unshift(newOrder)
+
+      localStorage.setItem("@Order", JSON.stringify(newState));
+
       return newState
     }
 

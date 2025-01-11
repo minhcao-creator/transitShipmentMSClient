@@ -7,6 +7,7 @@ import RowItem from './RowItem'
 import HeaderItem from './HeaderItem'
 import { Package } from '@/types/order'
 import { useOrder } from '@/context/OrderContext/OrderContext'
+import PackageEdit from '../modal/PackageEdit'
 
 type RowPackageProps = {
   packageData: Package;
@@ -31,13 +32,16 @@ function RowPackage({ packageData }: RowPackageProps) {
               {packageData.id}
             </button>
           </span>
-          <span className='basis-[12%] px-1'>
+          <span className='basis-[9%] px-1'>
             {packageData.weight}
           </span>
-          <span className='basis-[12%] px-1'>
+          <span className='basis-[9%] px-1'>
+            {packageData.length}
+          </span>
+          <span className='basis-[9%] px-1'>
             {packageData.width}
           </span>
-          <span className='basis-[12%] px-1'>
+          <span className='basis-[9%] px-1'>
             {packageData.height}
           </span>
           <span className='basis-[12%] px-1'>
@@ -74,20 +78,21 @@ function RowPackage({ packageData }: RowPackageProps) {
         )}
       </div>
       {showModal && (
-        <div className='absolute top-0 left-0 h-screen w-full bg-neutral-800 bg-opacity-60 flex items-center justify-center'>
-          <div className='p-4 w-1/2 bg-white rounded'>
-            <div className='flex gap-4'>
-              <div className='flex-1 flex justify-center '>
-                <span className='text-sm tracking-wider border-b border-neutral-600'>
-                  THÔNG TIN BƯU KIỆN
-                </span>
-              </div>
-              <button onClick={() => setShowModal(false)}>
-                <Cross1Icon />
-              </button>
-            </div>
-          </div>
-        </div>
+        // <div className='absolute top-0 left-0 h-screen w-full bg-neutral-800 bg-opacity-60 flex items-center justify-center'>
+        //   <div className='p-4 w-1/2 bg-white rounded'>
+        //     <div className='flex gap-4'>
+        //       <div className='flex-1 flex justify-center '>
+        //         <span className='text-sm tracking-wider border-b border-neutral-600'>
+        //           THÔNG TIN BƯU KIỆN
+        //         </span>
+        //       </div>
+        //       <button onClick={() => setShowModal(false)}>
+        //         <Cross1Icon />
+        //       </button>
+        //     </div>
+        //   </div>
+        // </div>
+        <PackageEdit packageData={packageData} setShowModal={() => setShowModal(false)} />
       )}
     </div>
   )

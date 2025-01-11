@@ -1,43 +1,44 @@
+"use client"
+
 import { useOrder } from '@/context/OrderContext/OrderContext'
 import { Order } from '@/types/order'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import React, { useState } from 'react'
 
-type OrderEditProps = {
-  order: Order
+type OrderAddProps = {
+  order: Order,
   setShowModal: () => void
 }
 
-function OrderEdit({ order, setShowModal }: OrderEditProps) {
-
+function OrderAdd({ order, setShowModal }: OrderAddProps) {
   const { dispatch } = useOrder()
 
-  const [shopEdit, setShopEdit] = useState<string>(order.shop)
-  const [customerEdit, setCustomerEdit] = useState<string>(order.customer)
-  const [shopContactEdit, setShopContactEdit] = useState<string>(order.shopContact)
-  const [customerContactEdit, setCustomerContactEdit] = useState<string>(order.customerContact)
-  const [customerAddressEdit, setCustomerAddressEdit] = useState<string>(order.customerAddress)
-  const [noteEdit, setNoteEdit] = useState<string>(order.note)
-  const [receiveAddressEdit, setReceiveAddressEdit] = useState<string>(order.receiveAddress)
-  const [receiverEdit, setReceiverEdit] = useState<string>(order.receiver)
-  // const [locationEdit, setLocationEdit] = useState<number[]>(order.location)
-  const [statusEdit, setStatusEdit] = useState<string>(order.status)
+  const [shopAdd, setShopAdd] = useState<string>(order.shop)
+  const [customerAdd, setCustomerAdd] = useState<string>(order.customer)
+  const [shopContactAdd, setShopContactAdd] = useState<string>(order.shopContact)
+  const [customerContactAdd, setCustomerContactAdd] = useState<string>(order.customerContact)
+  const [customerAddressAdd, setCustomerAddressAdd] = useState<string>(order.customerAddress)
+  const [noteAdd, setNoteAdd] = useState<string>(order.note)
+  const [receiveAddressAdd, setReceiveAddressAdd] = useState<string>(order.receiveAddress)
+  const [receiverAdd, setReceiverAdd] = useState<string>(order.receiver)
+  // const [locationAdd, setLocationAdd] = useState<number[]>(order.location)
+  const [statusAdd, setStatusAdd] = useState<string>(order.status)
 
-  const handleUpdate = (orderEdit: Order) => {
-    dispatch({ type: "EDIT_ORDER", payload: orderEdit })
+  const handleUpdate = (orderAdd: Order) => {
+    dispatch({ type: "ADD_ORDER", payload: orderAdd })
     setShowModal()
   }
 
   const handleReset = () => {
-    setShopEdit(order.shop)
-    setCustomerEdit(order.customer)
-    setShopContactEdit(order.shopContact)
-    setCustomerContactEdit(order.customerContact)
-    setCustomerAddressEdit(order.customerAddress)
-    setNoteEdit(order.note)
-    setReceiveAddressEdit(order.receiveAddress)
-    setReceiverEdit(order.receiver)
-    setStatusEdit(order.status)
+    setShopAdd(order.shop)
+    setCustomerAdd(order.customer)
+    setShopContactAdd(order.shopContact)
+    setCustomerContactAdd(order.customerContact)
+    setCustomerAddressAdd(order.customerAddress)
+    setNoteAdd(order.note)
+    setReceiveAddressAdd(order.receiveAddress)
+    setReceiverAdd(order.receiver)
+    setStatusAdd(order.status)
   }
 
   return (
@@ -71,8 +72,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               </span>
               <input
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={shopEdit}
-                onChange={(e) => setShopEdit(e.target.value)}
+                value={shopAdd}
+                onChange={(e) => setShopAdd(e.target.value)}
               />
             </div>
 
@@ -82,8 +83,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               </span>
               <input
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={shopContactEdit}
-                onChange={(e) => setShopContactEdit(e.target.value)} />
+                value={shopContactAdd}
+                onChange={(e) => setShopContactAdd(e.target.value)} />
             </div>
 
             <div className='flex flex-col gap-1'>
@@ -92,8 +93,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               </span>
               <input
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={customerEdit}
-                onChange={(e) => setCustomerEdit(e.target.value)} />
+                value={customerAdd}
+                onChange={(e) => setCustomerAdd(e.target.value)} />
             </div>
 
             <div className='flex flex-col gap-1'>
@@ -102,8 +103,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               </span>
               <input
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={customerContactEdit}
-                onChange={(e) => setCustomerContactEdit(e.target.value)} />
+                value={customerContactAdd}
+                onChange={(e) => setCustomerContactAdd(e.target.value)} />
             </div>
 
             <div className='flex flex-col gap-1'>
@@ -112,8 +113,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               </span>
               <input
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={customerAddressEdit}
-                onChange={(e) => setCustomerAddressEdit(e.target.value)} />
+                value={customerAddressAdd}
+                onChange={(e) => setCustomerAddressAdd(e.target.value)} />
             </div>
 
           </div>
@@ -124,8 +125,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               </span>
               <input
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={receiveAddressEdit}
-                onChange={(e) => setReceiveAddressEdit(e.target.value)} />
+                value={receiveAddressAdd}
+                onChange={(e) => setReceiveAddressAdd(e.target.value)} />
             </div>
 
             <div className='flex flex-col gap-1'>
@@ -134,8 +135,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               </span>
               <input
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={receiverEdit}
-                onChange={(e) => setReceiverEdit(e.target.value)} />
+                value={receiverAdd}
+                onChange={(e) => setReceiverAdd(e.target.value)} />
             </div>
 
 
@@ -155,8 +156,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               </span>
               <input
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={statusEdit}
-                onChange={(e) => setStatusEdit(e.target.value)} />
+                value={statusAdd}
+                onChange={(e) => setStatusAdd(e.target.value)} />
             </div>
 
             <div className='flex flex-col gap-1.5'>
@@ -166,8 +167,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               <textarea
                 rows={5}
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={noteEdit}
-                onChange={(e) => setNoteEdit(e.target.value)}
+                value={noteAdd}
+                onChange={(e) => setNoteAdd(e.target.value)}
               ></textarea>
             </div>
 
@@ -185,18 +186,18 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
             className='border border-teal-600 text-teal-600 rounded-sm px-4 py-1.5 hover:bg-teal-600 hover:text-white'
             onClick={() => handleUpdate({
               ...order,
-              shop: shopEdit,
-              customer: customerEdit,
-              shopContact: shopContactEdit,
-              customerContact: customerContactEdit,
-              customerAddress: customerAddressEdit,
-              note: noteEdit,
-              receiveAddress: receiveAddressEdit,
-              receiver: receiverEdit,
-              status: statusEdit
+              shop: shopAdd,
+              customer: customerAdd,
+              shopContact: shopContactAdd,
+              customerContact: customerContactAdd,
+              customerAddress: customerAddressAdd,
+              note: noteAdd,
+              receiveAddress: receiveAddressAdd,
+              receiver: receiverAdd,
+              status: statusAdd
             })}
           >
-            UPDATE
+            ADD
           </button>
         </div>
       </div>
@@ -204,4 +205,4 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
   )
 }
 
-export default OrderEdit
+export default OrderAdd

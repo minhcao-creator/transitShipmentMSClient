@@ -11,13 +11,16 @@ function HeaderPackage({ idOrder }: HeaderPackageProps) {
       <span className='basis-[12%] px-1'>
         Mã bưu kiện
       </span>
-      <span className='basis-[12%] px-1'>
+      <span className='basis-[9%] px-1'>
         Cân nặng
       </span>
-      <span className='basis-[12%] px-1'>
+      <span className='basis-[9%] px-1'>
         Chiều dài
       </span>
-      <span className='basis-[12%] px-1'>
+      <span className='basis-[9%] px-1'>
+        Chiều rộng
+      </span>
+      <span className='basis-[9%] px-1'>
         Chiều cao
       </span>
       <span className='basis-[12%] px-1'>

@@ -16,6 +16,7 @@ export const orderInitialData: Order[] = [
     packages: [
       {
         id: 'PP01',
+        length: 20,
         weight: 20,
         height: 10,
         width: 8,
@@ -53,6 +54,7 @@ export const orderInitialData: Order[] = [
       {
         id: 'PP02',
         weight: 20,
+        length: 20,
         height: 10,
         width: 8,
         note: "note gi thi note",
@@ -104,6 +106,7 @@ export const orderInitialData: Order[] = [
       {
         id: 'PP03',
         weight: 20,
+        length: 20,
         height: 10,
         width: 8,
         note: "note gi thi note",
@@ -158,6 +161,7 @@ export const orderInitialData: Order[] = [
       {
         id: 'PP04',
         weight: 20,
+        length: 20,
         height: 10,
         width: 8,
         note: "note gi thi note",
@@ -192,5 +196,19 @@ export const orderInitialData: Order[] = [
         ],
       }
     ],
+  },
+  {
+    id: "AA03",
+    shop: "Nguyen Van A",
+    customer: "Le Tung B",
+    shopContact: "0332060870",
+    customerContact: "0223606780",
+    customerAddress: "abc, quan1, tphcm",
+    note: "note gi cung duoc",
+    receiveAddress: "abc, quan1, tphcm",
+    receiver: "Cao Anh Huy",
+    location: [1, 2],
+    status: "done",
+    packages: [],
   }
 ]

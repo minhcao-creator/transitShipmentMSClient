@@ -1,4 +1,4 @@
-import Header from '@/components/tableOrder/Header'
+import Header from '@/components/tableOrder/HeaderOrder'
 import Row from '@/components/tableOrder/Row'
 import React from 'react'
 
