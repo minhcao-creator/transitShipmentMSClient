@@ -1,4 +1,4 @@
-import Header from '@/components/tableOrder/HeaderOrder'
+import HeaderOrder from '@/components/tableOrder/HeaderOrder'
 import Row from '@/components/tableOrder/Row'
 import React from 'react'
 
@@ -9,7 +9,7 @@ function Order() {
         <span className='text-sm font-semibold tracking-wider'>DANH SÁCH ĐƠN HÀNG</span>
       </div>
       <div className='text-xs'>
-        <Header />
+        <HeaderOrder />
         <Row />
       </div>
     </div>

@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import OrderAdd from '../modal/OrderAdd'
 
 
-function Header() {
+function HeaderOrder() {
 
   const [showModal, setShowModal] = useState<boolean>(false)
 
@@ -64,4 +64,4 @@ function Header() {
   )
 }
 
-export default Header
+export default HeaderOrder

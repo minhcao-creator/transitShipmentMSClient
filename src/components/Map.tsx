@@ -56,7 +56,7 @@ export const Map: React.FC<MapProps> = memo(({ center, locations, routes }) => {
   });
 
   const renderMarks = () => {
-    return locations.map((location) => (
+    return locations?.map((location) => (
       <div key={location.id}>
         {location.id == '0' ? <Marker
           icon={mapMarkIcon}

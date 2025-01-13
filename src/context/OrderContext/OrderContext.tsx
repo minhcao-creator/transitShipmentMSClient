@@ -177,6 +177,46 @@ function orderReducer(state: Order[], action: OrderAction): Order[] {
       return newState
     }
 
+    case "ADD_PACKAGE": {
+      const newState = [...state]
+
+      const idOrder = action.payload.idOrder
+      const newPackage = {
+        ...action.payload.packageData
+      }
+
+      newState.forEach((order) => {
+        if ((order.id) === idOrder) {
+          order.packages.unshift(newPackage)
+        }
+      })
+
+      localStorage.setItem("@Order", JSON.stringify(newState));
+
+      return newState
+    }
+
+    case "ADD_ITEM": {
+      const newState = [...state]
+
+      const idPackage = action.payload.idPackage
+      const newItem = {
+        ...action.payload.item
+      }
+
+      newState.forEach((order) => {
+        order.packages.forEach((packageData) => {
+          if (packageData.id === idPackage) {
+            packageData.items.unshift(newItem)
+          }
+        })
+      })
+
+      localStorage.setItem("@Order", JSON.stringify(newState));
+
+      return newState
+    }
+
     default:
       return initialData
   }

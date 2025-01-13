@@ -33,37 +33,14 @@ export type Order = {
   packages: Package[];
 }
 
-// type AddOrder = {
-//   id: string,
-//   shop: string;
-//   customer: string;
-//   shopContact: string;
-//   customerContact: string;
-//   customerAddress: string;
-//   note: string;
-//   receiveAddress: string;
-//   receiver: string;
-//   location: number[];
-//   status: string;
-// }
-
-type AddPackage = {
-  idOrder: string
-  weight: number;
-  length: number;
-  height: number;
-  width: number;
-  note: string;
-  type: string;
-  status: string;
-  location: number[];
+export type AddPackage = {
+  idOrder: string;
+  packageData: Package
 }
 
 type AddItem = {
-  idPackage: string
-  name: string;
-  number: number;
-  note: string;
+  idPackage: string;
+  item: Item
 }
 
 export type OrderAction =
