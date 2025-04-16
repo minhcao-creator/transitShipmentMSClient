@@ -1,6 +1,6 @@
 const Geo = () => {
   return (
-    <svg className="flex-shrink-0 w-5 h-5 text-white transition duration-75 group-hover:text-gray-900 " xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="512" height="512" x="0" y="0" viewBox="0 0 512 512">
+    <svg className="flex-shrink-0 w-5 h-5 transition duration-75 group-hover:text-gray-900 " xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="512" height="512" x="0" y="0" viewBox="0 0 512 512">
       <g>
         <path d="M256 0C166.035 0 91 72.47 91 165c0 35.202 10.578 66.592 30.879 96.006l121.494 189.58c5.894 9.216 19.372 9.198 25.254 0l122.021-190.225C410.512 232.28 421 199.307 421 165 421 74.019 346.981 0 256 0zm0 240c-41.353 0-75-33.647-75-75s33.647-75 75-75 75 33.647 75 75-33.647 75-75 75z" opacity="1" data-original="#000000">
         </path>

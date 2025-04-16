@@ -1,10 +1,11 @@
+"use client"
+
 import { memo, useState } from "react";
 import {
   MapContainer,
   TileLayer,
   Marker,
   useMap,
-  ZoomControl,
 } from "react-leaflet";
 import { Icon, LatLngLiteral } from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -12,14 +13,14 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import RoutingMachine from "./RoutingMachine"
 
-type MapType = "roadmap" | "satellite" | "hybrid" | "terrain";
-
-type MapLocation = LatLngLiteral & { id: string };
+type MapLocation = LatLngLiteral & { id: string, name: string };
 
 type MapProps = {
   center: LatLngLiteral;
   locations: MapLocation[];
   routes: any;
+  setStationId: any,
+  stationId: any,
 };
 
 const SelectedLocation = ({ center }: { center: LatLngLiteral }) => {
@@ -28,23 +29,12 @@ const SelectedLocation = ({ center }: { center: LatLngLiteral }) => {
   return null;
 };
 
-export const Map: React.FC<MapProps> = memo(({ center, locations, routes }) => {
-  const [mapType, setMapType] = useState<MapType>("roadmap");
+export const Map = memo(({ center, locations, routes, setStationId, stationId }: MapProps) => {
   const [selectedLocation, setSelectedLocation] = useState<
     MapLocation | undefined
   >();
 
-  const colors = ['#000807', '#EE2677', '#8D775F', '#EDB458', '#E8871E']
-
-  const getUrl = () => {
-    const mapTypeUrls: Record<MapType, string> = {
-      roadmap: "http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}",
-      satellite: "http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}",
-      hybrid: "http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}",
-      terrain: "http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}",
-    };
-    return mapTypeUrls[mapType];
-  };
+  const colors = ['#3859B1', '#EE2677', '#8D775F', '#FFD900', '#003C67', '#67003B', '#00BD55', '#FFAC05', '#B50000']
 
   const mapMarkIcon = new Icon({
     iconUrl: "khotrungchuyen.png",
@@ -52,13 +42,13 @@ export const Map: React.FC<MapProps> = memo(({ center, locations, routes }) => {
   });
   const mapMarkIcons = new Icon({
     iconUrl: "khotrungchuyen.png",
-    iconSize: [12, 20],
+    iconSize: [18, 28],
   });
 
   const renderMarks = () => {
     return locations?.map((location) => (
       <div key={location.id}>
-        {location.id == '0' ? <Marker
+        {location.id == '1420' ? <Marker
           icon={mapMarkIcon}
           position={{ lat: location.lat, lng: location.lng }}
           eventHandlers={{
@@ -98,25 +88,18 @@ export const Map: React.FC<MapProps> = memo(({ center, locations, routes }) => {
           attributionControl={false}
           style={{ width: "100%", height: "100%" }}
         >
-          <TileLayer url={getUrl()} />
+          <TileLayer url={"http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}"} />
           {selectedLocation && <SelectedLocation center={selectedLocation} />}
-          {renderMarks()}
-          <ZoomControl position="topright" />
+          {!routes && renderMarks()}
           {
             routes?.map((route: any, index: number) => {
               return (
-                <RoutingMachine locations={route} color={colors[index]} index={index} />
+                <RoutingMachine stationId={stationId} setSelectedLocation={setSelectedLocation} locations={locations} route={route} color={colors[index]} index={index} setStationId={setStationId} />
               )
             })
           }
         </MapContainer>
       </div>
-      {/* <div style={{ display: "flex", marginTop: "10px", gap: "20px" }}>
-        <button onClick={() => setMapType("roadmap")}>roadmap</button>
-        <button onClick={() => setMapType("satellite")}>satellite</button>
-        <button onClick={() => setMapType("hybrid")}>hybrid</button>
-        <button onClick={() => setMapType("terrain")}>terrain</button>
-      </div> */}
     </>
   );
 });

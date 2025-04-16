@@ -10,49 +10,48 @@ function HeaderOrder() {
   const [showModal, setShowModal] = useState<boolean>(false)
 
   const newOrder = {
-    id: (+new Date).toString(36).slice(-4),
-    shop: '',
-    customer: '',
-    shopContact: '',
-    customerContact: '',
-    customerAddress: '',
-    note: '',
-    receiveAddress: '',
-    receiver: '',
-    location: [1, 2],
-    packages: [],
-    status: '',
+    id: `ORD${(+new Date).toString(36).slice(-6)}`,
+    senderName: '',
+    receiverName: '',
+    receiverAddress: '',
+    senderPhoneNumber: '',
+    receiverPhoneNumber: '',
+    message: '',
+    parcels: [],
   }
 
   return (
     <div>
-      <div className='flex flex-row item-center font-semibold p-3 border-b border-blue-gray-100 text-white bg-[#9A9A9A] rounded-t'>
-        <span className='basis-[7%] px-1'>
+      <div className='flex flex-row item-center font-semibold p-4 border-b text-white bg-cyan-800 rounded-t'>
+        <span className='basis-[10%] px-1 border-r'>
           Mã đơn
         </span>
-        <span className='basis-[10%] px-1'>
-          Tên đơn hàng
+        <span className='basis-[10%] px-1 border-r'>
+          Tên người gửi
         </span>
-        <span className='basis-[17%] px-1'>
-          Địa chỉ người nhận
+        <span className='basis-[10%] px-1 border-r'>
+          SĐT gửi
         </span>
-        <span className='basis-[17%] px-1'>
-          Địa điểm nhận đơn
+        <span className='basis-[10%] px-1 border-r'>
+          Tên người nhận
         </span>
-        <span className='basis-[10%] px-1'>
-          Người nhận đơn
+        <span className='basis-[10%] px-1 border-r'>
+          SĐT nhận
         </span>
-        <span className='basis-[17%] px-1'>
-          Vị trí đơn hàng
+        <span className='basis-[21%] px-1 border-r'>
+          Địa chỉ nhận hàng
         </span>
-        <span className='basis-[10%] px-1'>
+        <span className='basis-[8%] px-1 border-r'>
           Trạng thái
         </span>
-        <span className='basis-[6%] px-1'>
-
+        <span className='basis-[6%] px-1 border-r'>
+          Bưu kiện
+        </span>
+        <span className='basis-[9%] px-1'>
+          Món hàng
         </span>
         <button
-          className='basis-[6%] border border-teal-800 flex justify-center rounded-sm text-teal-800 hover:text-white hover:bg-teal-800'
+          className='basis-[6%] border border-white flex justify-center rounded-sm text-white hover:text-cyan-800 hover:bg-white'
           onClick={() => setShowModal(true)}
         >
           <PlusIcon />

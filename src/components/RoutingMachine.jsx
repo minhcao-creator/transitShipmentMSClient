@@ -3,9 +3,18 @@
 import L from 'leaflet';
 import 'leaflet-routing-machine';
 import { useMap } from "react-leaflet";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-export default function RoutingMachine({ locations, color, index }) {
+export default function RoutingMachine({ locations, route, color, index, setStationId, setSelectedLocation, stationId }) {
+
+    const routeVisitStationsOrderBy = route.routeVisitsStations?.sort((a, b) => a.ordinalNumber - b.ordinalNumber)
+
+    const routeListTmp = routeVisitStationsOrderBy.map((routeVisitsStation) => {
+        return locations.filter(location => location.id === routeVisitsStation.station)[0]
+    });
+
+    const routeList = [...routeListTmp, routeListTmp[0]]
+
     const map = useMap();
     // const travellerIcon = L.icon({ iconUrl: "/active-map-marker.png", iconSize: [26, 40] });
     // const marker = L.marker(currentPos, { icon: travellerIcon }).addTo(map);
@@ -14,45 +23,69 @@ export default function RoutingMachine({ locations, color, index }) {
         iconSize: [18, 30]
     });
 
-    const waypoints = locations.map((location) => L.latLng(location))
+    var routingIconKho = new L.Icon({
+        iconUrl: `/khotrungchuyen.png`,
+        iconSize: [28, 46]
+    });
+
+    const waypoints = routeList?.map((location) => L.latLng(location.lat, location.lng))
+    const choosedWay = routeList.some(station => station.id === stationId)
+
+    const markerRefs = useRef({});
 
     useEffect(() => {
         const routingInstance = L.Routing.control({
             waypoints,
             lineOptions: {
-                styles: [
-                    { color, weight: 4 }
-                ]
+                styles: [{ color, weight: choosedWay ? 6 : 4 }]
             },
             createMarker: function (i, wp, nWps) {
-                // here change the starting and ending icons
-                return i == 0 || i == nWps - 1 ? '' : L.marker(wp.latLng, {
-                    icon: routingIcon // here pass the custom marker icon instance
+                const isWarehouse = i === 0 || i === nWps - 1;
+                const marker = L.marker(wp.latLng, {
+                    icon: isWarehouse ? routingIconKho : routingIcon
                 });
+
+                const tooltipText = isWarehouse
+                    ? `Kho trung chuyển: ${routeList[i].name}`
+                    : `Bưu cục ${i + 1}: ${routeList[i].name}`;
+
+                marker.bindTooltip(tooltipText, {
+                    permanent: false,
+                    direction: "top"
+                });
+
+                if (!isWarehouse) {
+                    marker.bindPopup(`Bưu cục ${i + 1}: ${routeList[i].name}`);
+
+                    marker.on("click", function () {
+                        setStationId(routeList[i].id);
+                        setSelectedLocation(routeList[i]);
+                    });
+
+                    markerRefs.current[routeList[i].id] = marker;
+                }
+
+                return marker;
             }
         }).addTo(map);
 
-        const routingControlContainer = routingInstance.getContainer()
-        const controlContainerParent = routingControlContainer.parentNode
-        controlContainerParent.removeChild(routingControlContainer)
+        // Loại bỏ giao diện mặc định của routing control
+        const routingControlContainer = routingInstance.getContainer();
+        const controlContainerParent = routingControlContainer.parentNode;
+        controlContainerParent.removeChild(routingControlContainer);
 
-        // routingInstance.on('routesfound', (d) => {
-        //     const routes = d.routes?.[0]?.coordinates ?? [];
-
-        //     let index = 0;
-        //     const updateMarkerPosition = () => {
-        //         if (index < routes.length) {
-        //             const cord = routes[index];
-        //             marker.setLatLng([cord.lat, cord.lng]);
-        //             index++;
-        //             map.panTo([cord.lat, cord.lng], { animate: true, duration: 0.5, easeLinearity: 0.5, noMoveStart: true });
-        //             requestAnimationFrame(updateMarkerPosition);
-        //         }
-        //     };
-
-        //     updateMarkerPosition();
-        // });
+        return () => {
+            map.removeControl(routingInstance);
+        };
     }, []);
+
+    useEffect(() => {
+        if (stationId && markerRefs.current[stationId]) {
+            const marker = markerRefs.current[stationId];
+            marker.openPopup();
+            // marker.openTooltip();
+        }
+    }, [stationId]);
 
     return null;
 }

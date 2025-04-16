@@ -1,4 +1,4 @@
-import { BoardProvider } from "@/context/BoardContext/BoardContext";
+import { BoardProvider } from "@/context/RouteContext/RouteContextInBound";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

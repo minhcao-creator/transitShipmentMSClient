@@ -10,22 +10,27 @@ function HeaderPackage({ idOrder }: HeaderPackageProps) {
 
   const [showModal, setShowModal] = useState<boolean>(false)
 
-  const newPackage = {
-    id: (+new Date).toString(36).slice(-4),
+  const newParcel = {
+    id: `P${(+new Date).toString(36).slice(-6)}`,
     weight: 0,
-    length: 0,
+    depth: 0,
     height: 0,
     width: 0,
     note: '',
-    type: '',
-    status: '',
-    location: [1, 2],
+    type: {
+      id: '',
+      name: '',
+    },
+    status: {
+      id: '',
+      name: '',
+    },
     items: [],
   }
 
   return (
     <div>
-      <div className='flex flex-row item-center font-semibold p-3 border-b border-blue-gray-100 text-white bg-[#646464]'>
+      <div className='flex flex-row item-center font-semibold p-4 border-b border-blue-gray-100 text-white bg-cyan-900'>
         <span className='basis-[12%] px-1'>
           Mã bưu kiện
         </span>
@@ -60,7 +65,7 @@ function HeaderPackage({ idOrder }: HeaderPackageProps) {
         </button>
       </div>
       {showModal && (
-        <PackageAdd packageData={newPackage} idOrder={idOrder} setShowModal={() => setShowModal(false)} />
+        <PackageAdd parcelData={newParcel} idOrder={idOrder} setShowModal={() => setShowModal(false)} />
       )}
     </div>
 

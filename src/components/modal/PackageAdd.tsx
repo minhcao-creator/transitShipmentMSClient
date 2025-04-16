@@ -1,43 +1,55 @@
+import { api } from '@/context/AuthContext/AuthContext'
 import { useOrder } from '@/context/OrderContext/OrderContext'
-import { Package } from '@/types/order'
+import { Parcels } from '@/types/orderLocal'
 import { Cross1Icon } from '@radix-ui/react-icons'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 type PackageAddProps = {
   idOrder: string,
-  packageData: Package
+  parcelData: Parcels
   setShowModal: () => void
 }
 
-function PackageAdd({ idOrder, packageData, setShowModal }: PackageAddProps) {
+function PackageAdd({ idOrder, parcelData, setShowModal }: PackageAddProps) {
   const { dispatch } = useOrder()
+  const router = useRouter()
 
-  const [weightAdd, setWeightAdd] = useState<number>(packageData.weight)
-  const [lengthAdd, setLengthAdd] = useState<number>(packageData.length)
-  const [widthAdd, setWidthAdd] = useState<number>(packageData.width)
-  const [heightAdd, setHeightAdd] = useState<number>(packageData.height)
-  const [noteAdd, setNoteAdd] = useState<string>(packageData.note)
-  const [typeAdd, setTypeAdd] = useState<string>(packageData.type)
-  const [statusAdd, setStatusAdd] = useState<string>(packageData.status)
+  const [weightAdd, setWeightAdd] = useState<number>(parcelData.weight)
+  const [depthAdd, setDepthAdd] = useState<number>(parcelData.depth)
+  const [widthAdd, setWidthAdd] = useState<number>(parcelData.width)
+  const [heightAdd, setHeightAdd] = useState<number>(parcelData.height)
+  const [noteAdd, setNoteAdd] = useState<string>(parcelData.note)
 
-  const handleUpdate = (packageDataAdd: Package) => {
-    setShowModal()
-    dispatch({
-      type: "ADD_PACKAGE", payload: {
-        idOrder,
-        packageData: packageDataAdd
+  const handleUpdate = async (parcelDataAdd: Parcels) => {
+    try {
+      const res1 = await api.post('/parcels', {
+        ...parcelDataAdd
+      })
+      if (res1.data) {
+        const res2 = await api.patch(`/orders/${idOrder}/parcels/${parcelDataAdd.id}/add`)
+        if (res2.data) {
+          dispatch({
+            type: "ADD_PARCEL", payload: {
+              idOrder,
+              parcelData: parcelDataAdd
+            }
+          })
+          setShowModal()
+        }
       }
-    })
+    } catch (error) {
+      console.log(error)
+      router.push('/logout')
+    }
   }
 
   const handleReset = () => {
-    setWeightAdd(packageData.weight)
-    setLengthAdd(packageData.length)
-    setWidthAdd(packageData.width)
-    setHeightAdd(packageData.height)
-    setNoteAdd(packageData.note)
-    setTypeAdd(packageData.type)
-    setStatusAdd(packageData.status)
+    setWeightAdd(parcelData.weight)
+    setDepthAdd(parcelData.depth)
+    setWidthAdd(parcelData.width)
+    setHeightAdd(parcelData.height)
+    setNoteAdd(parcelData.note)
   }
 
   return (
@@ -63,7 +75,7 @@ function PackageAdd({ idOrder, packageData, setShowModal }: PackageAddProps) {
                   Mã bưu kiện
                 </span>
                 <span className='border border-neutral-400 p-2 flex-1 rounded-sm bg-neutral-200'>
-                  {packageData.id}
+                  {parcelData.id}
                 </span>
               </div>
               <div className='flex flex-col gap-1'>
@@ -81,36 +93,17 @@ function PackageAdd({ idOrder, packageData, setShowModal }: PackageAddProps) {
 
               <div className='flex flex-col gap-1'>
                 <span >
-                  Loại bưu kiện
-                </span>
-                <input
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                  value={typeAdd}
-                  onChange={(e) => setTypeAdd(e.target.value)} />
-              </div>
-
-              <div className='flex flex-col gap-1'>
-                <span >
                   Chiều dài
                 </span>
                 <input
                   type={"number"}
                   className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                  value={lengthAdd}
-                  onChange={(e) => setLengthAdd(Number(e.target.value))} />
+                  value={depthAdd}
+                  onChange={(e) => setDepthAdd(Number(e.target.value))} />
               </div>
 
             </div>
             <div className='flex-1 flex flex-col gap-3'>
-              <div className='flex flex-col gap-1'>
-                <span >
-                  Trạng thái bưu kiện
-                </span>
-                <input
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                  value={statusAdd}
-                  onChange={(e) => setStatusAdd(e.target.value)} />
-              </div>
 
               <div className='flex flex-col gap-1'>
                 <span >
@@ -153,22 +146,20 @@ function PackageAdd({ idOrder, packageData, setShowModal }: PackageAddProps) {
         <div className='flex items-center justify-between'>
           <button className='border border-rose-600 text-rose-600 rounded-sm px-4 py-1.5 hover:bg-rose-600 hover:text-white'
             onClick={handleReset}>
-            RESET
+            ĐẶT LẠI
           </button>
           <button className='border border-teal-600 text-teal-600 rounded-sm px-4 py-1.5 hover:bg-teal-600 hover:text-white'
             onClick={() => handleUpdate({
-              ...packageData,
+              ...parcelData,
               weight: weightAdd,
-              length: lengthAdd,
+              depth: depthAdd,
               width: widthAdd,
               height: heightAdd,
-              note: noteAdd,
-              type: typeAdd,
-              status: statusAdd,
+              note: noteAdd
 
             })}
           >
-            ADD
+            THỰC HIỆN
           </button>
         </div>
       </div>

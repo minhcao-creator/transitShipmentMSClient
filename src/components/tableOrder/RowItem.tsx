@@ -1,9 +1,9 @@
 "use client"
 
 import { useOrder } from '@/context/OrderContext/OrderContext'
-import { Item } from '@/types/order'
+import { Item } from '@/types/orderLocal'
 import { CheckIcon, MinusIcon, Pencil1Icon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
-import React, { memo, useState } from 'react'
+import { useState } from 'react'
 
 type RowItemProps = {
   item: Item;
@@ -34,30 +34,33 @@ function RowItem({ item }: RowItemProps) {
 
   return (
     <div>
-      <div className='flex flex-row item-center p-3 border-b border-blue-gray-100 bg-[#B8B8B8]'>
-        <span className='basis-[20%] px-1'>
+      <div className='flex flex-row item-center p-4 border-b border-blue-gray-100 bg-[#dedede]'>
+        <span className='basis-[10%] px-1'>
           <button className='bg-[#2C2C2C] rounded-sm text-white px-1'>
-            {item.name}
+            {item.id}
           </button>
+        </span>
+        <span className='basis-[20%] px-1'>
+          {item.name}
         </span>
         <span className='basis-[18%] px-1 flex gap-2'>
           <button className='w-4 h-4 border border-slate-600 rounded-sm hover:bg-slate-600 hover:text-white'
             onClick={() => {
               handleEditItem({
                 ...item,
-                number: item.number - 1
+                quantity: item.quantity - 1
               })
             }}>
             <MinusIcon />
           </button>
           <span className='w-4 flex justify-center'>
-            {item.number}
+            {item.quantity}
           </span>
           <button className='w-4 h-4 border border-slate-600 rounded-sm hover:bg-slate-600 hover:text-white'
             onClick={() => {
               handleEditItem({
                 ...item,
-                number: item.number + 1
+                quantity: item.quantity + 1
               })
             }}>
             <PlusIcon />
@@ -86,4 +89,4 @@ function RowItem({ item }: RowItemProps) {
   )
 }
 
-export default memo<RowItemProps>(RowItem);
+export default RowItem;

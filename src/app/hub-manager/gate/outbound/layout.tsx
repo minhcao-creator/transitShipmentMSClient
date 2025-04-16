@@ -1,8 +1,8 @@
-import { OrderProvider } from "@/context/OrderContext/OrderContext";
+import { BoardProvider } from "@/context/RouteContext/RouteContextOutBound"
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Order",
+  title: "outbound",
 };
 
 export default function RootLayout({
@@ -11,10 +11,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="w-full">
-      <OrderProvider>
-        {children}
-      </OrderProvider>
+    <div className="md:max-w-screen-xl mx-auto">
+      <BoardProvider>{children}</BoardProvider>
     </div>
+
   );
 }
