@@ -15,21 +15,7 @@ import { Route, RouteMap } from "@/types/routes";
 
 export default function Board() {
   const { boardState, dispatch } = useBoard();
-  console.log('boardStatelocal', boardState)
 
-  // // using useCallback is optional
-  // const onBeforeCapture = useCallback(() => {
-  //   /*...*/
-  // }, []);
-  // const onBeforeDragStart = useCallback(() => {
-  //   /*...*/
-  // }, []);
-  // const onDragStart = useCallback(() => {
-  //   /*...*/
-  // }, []);
-  // const onDragUpdate = useCallback(() => {
-  //   /*...*/
-  // }, []);
   const onDragEnd = async (result: DropResult) => {
     try {
       if (!result.destination) return;
@@ -145,10 +131,6 @@ export default function Board() {
 
   return (
     <DragDropContext
-      // onBeforeCapture={onBeforeCapture}
-      // onBeforeDragStart={onBeforeDragStart}
-      // onDragStart={onDragStart}
-      // onDragUpdate={onDragUpdate}
       onDragEnd={onDragEnd}
     >
       <Droppable

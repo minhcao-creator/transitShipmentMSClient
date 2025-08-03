@@ -1,23 +1,17 @@
 "use client"
 
+import { useAuth } from "@/context/AuthContext/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const ProtectedRoute = ({ allowedRoles, children }: { allowedRoles: string[], children: React.ReactNode }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const { authState } = useAuth()
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
 
-    // Lấy role từ token
-    const role = getRoleFromToken(token);
-    setUserRole(role);
+    const role = authState.user?.role || '';
 
     if (!allowedRoles.includes(role)) {
       router.push("/login");
@@ -31,13 +25,5 @@ const ProtectedRoute = ({ allowedRoles, children }: { allowedRoles: string[], ch
   return <>{children}</>;
 };
 
-const getRoleFromToken = (token: string): string => {
-  try {
-    const decoded: any = JSON.parse(atob(token.split(".")[1]));
-    return decoded.role.name;
-  } catch (error) {
-    return "";
-  }
-};
 
 export default ProtectedRoute;

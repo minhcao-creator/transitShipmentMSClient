@@ -12,16 +12,16 @@ const UserContext = createContext({
 })
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
-  const { isAxiosConfigured } = useAuth();
+  const { authState } = useAuth();
 
   const [userState, dispatch] = useReducer(
     userReducer,
     initialData
   )
   useEffect(() => {
-    if (!isAxiosConfigured) return
+    if (!authState.isAxiosConfigured) return
     loadData();
-  }, [isAxiosConfigured])
+  }, [authState.isAxiosConfigured])
 
   async function loadData() {
     try {

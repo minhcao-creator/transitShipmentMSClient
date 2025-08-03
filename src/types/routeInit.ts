@@ -78,8 +78,21 @@ export type Board = {
 
 export type BoardAction =
   | { type: "SET_TRIPS"; payload: Board }
-  | { type: "MOVE_TRIP"; payload: OnDragPayload }
-  | { type: "MOVE_COLUMN"; payload: OnDragPayload };
+  | { type: "MOVE_STATION"; payload: OnDragPayload }
+  | { type: "MOVE_COLUMN"; payload: OnDragPayload }
+  | {
+    type: "ADD_STATION"; payload: {
+      idColumn: string,
+      station: string,
+      ordinalNumber: number,
+      etd: Date;
+      eta: Date;
+      departuredAt: Date;
+      arrivedAt: Date;
+    }
+  }
+  | { type: "DELETE_STATION"; payload: { station: string, idColumn: string } }
+  | { type: "ADD_TRIP"; payload: Route }
 
 type OnDragPayload = {
   source: DraggableLocation;

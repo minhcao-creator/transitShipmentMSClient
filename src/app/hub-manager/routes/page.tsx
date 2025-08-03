@@ -12,6 +12,8 @@ import { Station } from "@/types/orderLocal";
 import { Vehicle } from "@/types/routes";
 import VehicleTag from "@/components/routesTag/vehicleTag";
 import Board from "@/components/boadComponent/BoardRoute";
+import { useBoard } from "@/context/RouteContext/RouteContext";
+import { RouteMap } from "@/types/routeInit";
 
 const override = {
   display: "block",
@@ -57,10 +59,12 @@ const Routes = () => {
 
   const groupedOrderList = Object.values(groupedOrders);
 
-  const handlePlan = async () => {
+  const { boardState, dispatch } = useBoard()
+
+  const handlePlan = () => {
     setIsLoading(false)
-    const res = await api.get("routes")
-    setRouteList(res.data.filter((route: any) => route.plan?.id === 'INIT'))
+    const routelist = Object.values(boardState.columns);
+    setRouteList(routelist)
     setIsLoading(true)
   }
 
@@ -68,13 +72,12 @@ const Routes = () => {
 
   useEffect(() => {
     const targetVehicle = vehicles.find((vehicle) => {
-      const route = routeList?.find((route: any) => route.vehicle.id === vehicle.id);
+      const route = Object.values(boardState.columns)?.find((route) => route.vehicle.id === vehicle.id);
       return route?.routeVisitsStations.some((routeVisitsStation: any) => routeVisitsStation.station == stationId);
     });
 
     if (targetVehicle) {
       const targetRef = vehicleRefs?.current?.get(targetVehicle.id);
-      console.log(targetRef)
       if (targetRef) {
         targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
       }

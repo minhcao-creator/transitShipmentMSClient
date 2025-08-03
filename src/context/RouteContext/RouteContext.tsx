@@ -31,8 +31,6 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
     try {
       const localBoardData = await api.get('/routes')
       const dataObject = transformData(localBoardData.data);
-      console.log(dataObject)
-      // const dataObject = localBoardData.data;
       dispatch({ type: "SET_TRIPS", payload: dataObject });
       setLoading(false);
     } catch (error) {
@@ -88,62 +86,100 @@ function boardReducer(state: Board, action: BoardAction): Board {
       const result = [...state.ordered];
       const [removed] = result.splice(action.payload.source.index, 1);
       result.splice(action.payload.destination.index, 0, removed);
-
       const newState = { ...state, ordered: result };
-      // save locally
-      // localStorage.setItem("@Board", JSON.stringify(newState));
       return newState;
     }
-    // case "MOVE_TRIP": {
-    //   if (
-    //     action.payload.source.droppableId ===
-    //     action.payload.destination.droppableId
-    //   ) {
-    //     // Reordering within the same column
-    //     const reorderedTrips = [
-    //       ...state.columns[action.payload.source.droppableId],
-    //     ];
-    //     const [movedTrip] = reorderedTrips.splice(
-    //       action.payload.source.index,
-    //       1
-    //     );
-    //     reorderedTrips.splice(action.payload.destination.index, 0, movedTrip);
 
-    //     const newState = {
-    //       ...state,
-    //       columns: {
-    //         ...state.columns,
-    //         [action.payload.source.droppableId]: reorderedTrips,
-    //       },
-    //     };
-    //     // save locally
-    //     // localStorage.setItem("@Board", JSON.stringify(newState));
-    //     // Exit after handling reordering within the same column
-    //     return newState;
-    //   }
+    case "ADD_STATION": {
+      const idColumn = action.payload.idColumn;
 
-    //   // Handling movement between different columns
-    //   const startTrips = [...state.columns[action.payload.source.droppableId]];
-    //   const finishTrips = [
-    //     ...state.columns[action.payload.destination.droppableId],
-    //   ];
-    //   const [removedTrip] = startTrips.splice(action.payload.source.index, 1);
-    //   finishTrips.splice(action.payload.destination.index, 0, removedTrip);
+      const newRoute = state.columns[idColumn]
 
-    //   const newState = {
-    //     ...state,
-    //     columns: {
-    //       ...state.columns,
-    //       [action.payload.source.droppableId]: startTrips,
-    //       [action.payload.destination.droppableId]: finishTrips,
-    //     },
-    //   };
+      newRoute.routeVisitsStations.push({
+        station: action.payload.station,
+        ordinalNumber: action.payload.ordinalNumber,
+        etd: action.payload.etd,
+        eta: action.payload.eta,
+        departuredAt: action.payload.departuredAt,
+        arrivedAt: action.payload.arrivedAt
+      })
 
-    //   // save locally
-    //   // localStorage.setItem("@Board", JSON.stringify(newState));
+      const newState = {
+        ...state,
+        columns: {
+          ...state.columns,
+          [idColumn]: newRoute,
+        },
+      };
 
-    //   return newState;
-    // }
+      return newState
+
+    }
+    case "DELETE_STATION": {
+      const idColumn = action.payload.idColumn;
+      const idStation = action.payload.station
+
+      const newRoute = state.columns[idColumn]
+
+      newRoute.routeVisitsStations = newRoute.routeVisitsStations.filter((station) => station.station !== idStation)
+
+      const newState = {
+        ...state,
+        columns: {
+          ...state.columns,
+          [idColumn]: newRoute,
+        },
+      };
+
+      return newState
+    }
+    case "MOVE_STATION": {
+      if (
+        action.payload.source.droppableId ===
+        action.payload.destination.droppableId
+      ) {
+        // Reordering within the same column
+        const newRouteVisitsStations = [...state.columns[action.payload.source.droppableId].routeVisitsStations];
+        const [movedTrip] = newRouteVisitsStations.splice(
+          action.payload.source.index + 1,
+          1
+        );
+        newRouteVisitsStations.splice(action.payload.destination.index + 1, 0, movedTrip);
+
+        const newTrip = { ...state.columns[action.payload.source.droppableId], routeVisitsStations: newRouteVisitsStations }
+
+        const newState = {
+          ...state,
+          columns: {
+            ...state.columns,
+            [action.payload.source.droppableId]: newTrip,
+          },
+        };
+        return newState;
+      }
+
+      // Handling movement between different columns
+      const startRouteVisitsStations = [...state.columns[action.payload.source.droppableId].routeVisitsStations];
+      const finishRouteVisitsStations = [
+        ...state.columns[action.payload.destination.droppableId].routeVisitsStations,
+      ];
+      const [removedTrip] = startRouteVisitsStations.splice(action.payload.source.index + 1, 1);
+      finishRouteVisitsStations.splice(action.payload.destination.index + 1, 0, removedTrip);
+
+      const newStartTrip = { ...state.columns[action.payload.source.droppableId], routeVisitsStations: startRouteVisitsStations };
+      const newFinishTrip = { ...state.columns[action.payload.destination.droppableId], routeVisitsStations: finishRouteVisitsStations }
+
+      const newState = {
+        ...state,
+        columns: {
+          ...state.columns,
+          [action.payload.source.droppableId]: newStartTrip,
+          [action.payload.destination.droppableId]: newFinishTrip,
+        },
+      };
+
+      return newState;
+    }
     default: {
       return boardInitialState;
     }

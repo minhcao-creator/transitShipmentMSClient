@@ -8,14 +8,12 @@ import {
   DroppableProvided,
   DroppableStateSnapshot,
 } from "react-beautiful-dnd";
-// import { Card, CardContent, CardHeader } from "./ui/card";
 import TripItem from "./TripItemRoute";
-// import { Button } from "./ui/button";
-// import { PlusIcon } from "@radix-ui/react-icons";
-// import CreateTaskForm from "./CreateTaskForm";
-// import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@radix-ui/react-icons";
+import { api } from "@/context/AuthContext/AuthContext";
+import { Station } from "@/types/user";
+import { useBoard } from "@/context/RouteContext/RouteContext";
 
 type TripListProps = {
   listTitle?: string;
@@ -34,23 +32,56 @@ export default function TripList({
   listType,
   heightFull
 }: TripListProps) {
-  const [showForm, setShowForm] = useState(false);
+
+  const { dispatch } = useBoard();
+
+  const [showModal, setShowModal] = useState(false);
+
+  const [stations, setStations] = useState<Station[]>()
+
+  const handleAddStation = async (stationId: string, ordinalNumber: string) => {
+    try {
+
+      dispatch({
+        type: 'ADD_STATION', payload: {
+          idColumn: listTitle || "",
+          station: stationId,
+          ordinalNumber: Number(ordinalNumber),
+          etd: new Date("2025-04-17T03:31:35.408Z"),
+          eta: new Date("2025-04-17T03:31:35.408Z"),
+          departuredAt: new Date("2025-04-17T03:31:35.408Z"),
+          arrivedAt: new Date("2025-04-17T03:31:35.408Z")
+        }
+      })
+
+      await api.patch(`/routes/${listTitle}/stations/${stationId}/add`, {
+        ordinalNumber: ordinalNumber,
+        etd: "2025-04-17T03:31:35.408Z",
+        eta: "2025-04-17T03:31:35.408Z",
+        departuredAt: "2025-04-17T03:31:35.408Z",
+        arrivedAt: "2025-04-17T03:31:35.408Z"
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+  const getStations = async () => {
+    try {
+      const usedStationIds = new Set(listOfTrips.map(trip => trip.station));
+      usedStationIds.add('1420');
+      const res = await api.get('/stations');
+      const stations = res.data.filter((s: any) => !usedStationIds.has(s.id));
+      setStations(stations)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setShowForm((open) => !open);
-      }
-      if (e.key === "Escape") {
-        e.preventDefault();
-        setShowForm(false);
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
+    getStations()
+  }, [])
 
   return (
     <Droppable
@@ -63,15 +94,27 @@ export default function TripList({
         dropSnapshot: DroppableStateSnapshot
       ) => (
         <div {...dropProvided.droppableProps}>
-          <button className={`w-full flex gap-1 items-center justify-center p-1 rounded-t-sm bg-gray-800 hover:bg-gray-600`}>
-            {/* <span>{listTitle}</span> */}
-
+          <button
+            className={`relative w-full flex gap-1 items-center justify-center p-1 rounded-t-sm bg-gray-800 hover:bg-gray-600`}
+            onClick={() => setShowModal(!showModal)}
+          >
             <PlusIcon className="text-white size-5" />
-
+            {showModal && <div className='absolute left-16 top-0 z-40 flex flex-col items-start gap-2 p-2 w-[24rem] h-[15rem] overflow-auto bg-gray-300 rounded'>
+              {stations?.map((s, i) => (
+                <button
+                  key={i}
+                  className="text-xs bg-gray-50 hover:bg-gray-200 p-1 w-full flex flex-col items-start rounded"
+                  onClick={() => handleAddStation(s.id, (listOfTrips[listOfTrips.length - 1].ordinalNumber + 1).toString())}
+                >
+                  <span>{s.id}</span>
+                  <span>{s.name}</span>
+                </button>
+              ))}
+            </div>}
           </button>
           <div ref={dropProvided.innerRef} className={`rounded-b-sm bg-white p-2 transition-all duration-1000 ${heightFull ? 'h-[32rem]' : 'h-[13rem]'} overflow-y-auto`}>
             <InnerList
-              listOfTrips={listOfTrips.slice(1)}
+              listOfTrips={listOfTrips}
               dropProvided={dropProvided}
               title={listTitle}
             />
@@ -102,6 +145,7 @@ function InnerList({ title, listOfTrips }: InnerListProps) {
             ) => (
               <TripItem
                 key={title + trip.station}
+                idColumn={title || ""}
                 trip={trip}
                 provided={dragProvided}
                 isDragging={dragSnapshot.isDragging}
