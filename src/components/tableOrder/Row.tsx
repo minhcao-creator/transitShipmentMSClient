@@ -2,21 +2,25 @@
 
 import React from 'react'
 import RowOrder from './RowOrder'
-import { useOrder } from '@/context/OrderContext/OrderContext'
+import { useOrder } from '@/context/OrderStationContext/OrderStationContext';
+import { Order } from '@/types/orderStation';
 
 export default function Row() {
   const { orderState } = useOrder();
+  const indexStart = (orderState.pageIndex - 1) * orderState.pageSize
+  const indexEnd = orderState.pageIndex * orderState.pageSize
+  const orders = orderState.orders.length > indexEnd ? orderState.orders.slice(indexStart, indexEnd) : orderState.orders.slice(indexStart)
 
-  console.log(orderState)
-  const token = localStorage.getItem('token')
-  const decoded: any = token ? JSON.parse(atob(token.split(".")[1])) : null
-  const userId = decoded.sub
+  const handleFilter = () => {
+    if (!orderState.isFilter) return orders
+    const orderFilters = orders.filter((order: Order) => orderState.titleFilter && (order[orderState.titleFilter].toLowerCase().includes(orderState.nameFilter.toLowerCase())))
+    return orderFilters
+  }
 
-  const newOrderState = orderState.filter((order) => order.postOfficeManager?.id === userId)
   return (
-    <div className='max-h-[70dvh] overflow-y-auto'>
-      {newOrderState.map((order) => (
-        <RowOrder order={order} key={order.id} />
+    <div className='h-[61dvh] overflow-y-auto'>
+      {handleFilter().map((order, index) => (
+        <RowOrder order={order} key={order.id} index={indexStart + index + 1} />
       ))}
     </div>
   )

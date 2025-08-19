@@ -36,7 +36,7 @@ function TripItem({ isDragging, provided, trip, idColumn }: TripItemProps) {
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >
-      <div className={`${isDragging ? "bg-[#FFC2C2]" : "bg-[#F4F4F4]"} p-1 drop-shadow-[1.5px_1.5px_1.5px_rgba(88,88,88,0.62)] rounded-sm text-xs flex items-center justify-between gap-2`}>
+      <div className={`${isDragging ? "bg-[#FFC2C2]" : "bg-[#F4F4F4]"} p-1 drop-shadow-[1.5px_1.5px_1.5px_rgba(88,88,88,0.62)] rounded-sm text-sm flex items-center justify-between gap-2`}>
         <span>{trip.station}</span>
         <button className="p-1" onClick={() => {
           handleDeleteStation()

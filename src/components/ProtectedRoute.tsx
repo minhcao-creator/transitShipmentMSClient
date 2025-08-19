@@ -11,14 +11,18 @@ const ProtectedRoute = ({ allowedRoles, children }: { allowedRoles: string[], ch
 
   useEffect(() => {
 
+    if (!authState.isCheckAuth) return
+
     const role = authState.user?.role || '';
 
+    console.log(authState.user)
+
     if (!allowedRoles.includes(role)) {
-      router.push("/login");
+      router.push("/logout");
     }
 
     setLoading(false);
-  }, [router]);
+  }, [authState.isCheckAuth]);
 
   if (loading) return <p>Loading...</p>;
 

@@ -20,6 +20,7 @@ type AuthContextType = {
     driverLicenseNumber?: string;
     driverClass?: string;
     role: string;
+    station?: string;
   } | undefined;
   isAxiosConfigured: boolean;
   isCheckAuth: boolean;
@@ -76,7 +77,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
               firstname: res.data.firstname,
               phoneNumber: res.data.phoneNumber,
               email: res.data.email,
-              role: res.data.role.name
+              role: res.data.role.name,
+              station: res.data.station.id,
             },
             isAxiosConfigured: true,
             isCheckAuth: true,

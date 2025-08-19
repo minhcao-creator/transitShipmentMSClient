@@ -1,4 +1,5 @@
-import { useOrder } from '@/context/OrderContext/OrderContext'
+
+import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
 import { Order } from '@/types/order'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import React, { useState } from 'react'
@@ -24,8 +25,8 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
   const [statusEdit, setStatusEdit] = useState<string>(order.status)
 
   const handleUpdate = (orderEdit: Order) => {
-    dispatch({ type: "EDIT_ORDER", payload: orderEdit })
-    setShowModal()
+    // dispatch({ type: "EDIT_ORDER", payload: orderEdit })
+    // setShowModal()
   }
 
   const handleReset = () => {
@@ -143,10 +144,10 @@ function OrderEdit({ order, setShowModal }: OrderEditProps) {
               <span >
                 Vị trí đơn hàng
               </span>
-              <input
+              {/* <input
                 className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
                 value={order.location.toString()}
-              />
+              /> */}
             </div>
 
             <div className='flex flex-col gap-1'>

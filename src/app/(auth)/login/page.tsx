@@ -42,7 +42,8 @@ function Login() {
               firstname: res.data.firstname,
               phoneNumber: res.data.phoneNumber,
               email: res.data.email,
-              role: res.data.role.name
+              role: res.data.role.name,
+              station: res.data.station.id,
             },
             isAxiosConfigured: true,
             isCheckAuth: true,
@@ -107,7 +108,8 @@ function Login() {
           firstname: res.data.firstname,
           phoneNumber: res.data.phoneNumber,
           email: res.data.email,
-          role: res.data.role
+          role: res.data.role,
+          station: res.data.station,
         },
         isAxiosConfigured: true,
         isCheckAuth: true,

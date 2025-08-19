@@ -30,8 +30,8 @@ const UploadFile = (props: { setPackages: any }) => {
       <label className="flex flex-col items-center justify-center w-full h-40 bg-[#D0FCFD] bg-opacity-15 border border-[#088586] border-dashed rounded cursor-pointer hover:bg-opacity-40">
         <div className="flex flex-col items-center justify-center">
           <UploadIcon />
-          <p className="mb-2 text-xs text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-          <p className="text-xs text-gray-500">Support format: Only excel</p>
+          <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+          <p className="text-sm text-gray-500">Support format: Only excel</p>
         </div>
         <input id="dropzone-file" type="file" className="hidden" accept='.xlsx' onChange={(e) => handleChangFile(e)} />
       </label>
@@ -50,7 +50,7 @@ const UploadFile = (props: { setPackages: any }) => {
         </div>
       </div>
       <button className="rounded bg-[#088586] px-4 py-1 w-full" onClick={handleUpLoadFile}>
-        <p className="text-xs text-white font-bold">
+        <p className="text-sm text-white font-bold">
           UPLOAD FILE
         </p>
       </button>

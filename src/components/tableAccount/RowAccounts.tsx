@@ -7,8 +7,8 @@ export default function RowAccounts() {
   const { userState } = useUser()
   return (
     <div className='max-h-[64dvh] overflow-y-auto'>
-      {userState.map((user) => (
-        <RowAccount user={user} key={user.id} />
+      {userState.map((user, index) => (
+        <RowAccount user={user} key={user.id} index={index} />
       ))}
     </div>
   )

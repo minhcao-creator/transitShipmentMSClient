@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext/AuthContext";
-import { OrderProvider } from "@/context/OrderContext/OrderContext";
 export const metadata: Metadata = {
   title: "Map",
 };
@@ -13,12 +12,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
+      </head>
       <body className="overflow-hidden">
-        <div className="w-full overflow-hidden h-screen bg-cyan-900 bg-opacity-20 font-roboto">
+        <div className="w-full overflow-hidden h-screen bg-cyan-900 bg-opacity-20 font-inter">
           <AuthProvider>
-            <OrderProvider>
-              {children}
-            </OrderProvider>
+            {children}
           </AuthProvider>
         </div>
       </body >

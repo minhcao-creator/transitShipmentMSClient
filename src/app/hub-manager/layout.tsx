@@ -9,6 +9,7 @@ import Logout from "@/assets/img/logout";
 import Routing from "@/assets/img/routing";
 import Geo from "@/assets/img/geo";
 import { usePathname } from "next/navigation";
+import { OrderStationProvider } from "@/context/OrderStationContext/OrderStationContext"
 
 export default function RootLayout({
   children,
@@ -60,7 +61,9 @@ export default function RootLayout({
         </div>
         <div className="w-full">
           <UserProvider>
-            {children}
+            <OrderStationProvider>
+              {children}
+            </OrderStationProvider>
           </UserProvider>
         </div>
       </div>

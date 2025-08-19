@@ -68,7 +68,7 @@ export default function TripList({
         dropSnapshot: DroppableStateSnapshot
       ) => (
         <div {...dropProvided.droppableProps}>
-          <div className="flex items-center justify-center uppercase bg-cyan-800 text-xs font-semibold py-2.5 text-white rounded-t-sm">
+          <div className="flex items-center justify-center uppercase bg-cyan-800 text-sm font-semibold py-2.5 text-white rounded-t-sm">
             {listTitle}
           </div>
           <div className="rounded-b-sm bg-white p-2 max-h-[100dvh] overflow-y-auto">

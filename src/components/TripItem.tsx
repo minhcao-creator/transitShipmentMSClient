@@ -42,7 +42,7 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >
-      <div className={`${isDragging ? "bg-[#FFC2C2]" : "bg-[#F8F8F8]"} p-2 drop-shadow-[1.5px_1.5px_1.5px_rgba(88,88,88,0.38)] rounded-sm text-xs flex flex-col gap-1`}>
+      <div className={`${isDragging ? "bg-[#FFC2C2]" : "bg-[#F8F8F8]"} p-2 drop-shadow-[1.5px_1.5px_1.5px_rgba(88,88,88,0.38)] rounded-sm text-sm flex flex-col gap-1`}>
         <div className="flex justify-between">
           <div
             className={`${trip.type === "outbound"

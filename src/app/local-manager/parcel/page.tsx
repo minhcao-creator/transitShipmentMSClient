@@ -26,7 +26,7 @@ function Parcel() {
           </svg>
         </button>
       </div>
-      <div className='text-xs'>
+      <div className='text-sm'>
         <HeaderOrder />
         <Row />
       </div>

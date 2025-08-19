@@ -18,7 +18,7 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >
-      <div className={`${isDragging ? "bg-[#FFC2C2]" : "bg-[#F6F6F6]"} p-3 drop-shadow-[1.5px_1.5px_1.5px_rgba(88,88,88,0.52)] rounded-sm text-xs flex flex-col gap-1`}>
+      <div className={`${isDragging ? "bg-[#FFC2C2]" : "bg-[#F6F6F6]"} p-3 drop-shadow-[1.5px_1.5px_1.5px_rgba(88,88,88,0.52)] rounded-sm text-sm flex flex-col gap-1`}>
         <div className="flex justify-between items-center pb-1">
           <div
             className={`${trip.plan.id.endsWith('_I')

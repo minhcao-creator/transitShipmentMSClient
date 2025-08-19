@@ -20,6 +20,13 @@ export default function RootLayout({
     <ProtectedRoute allowedRoles={["local-manager"]}>
       <div className="flex">
         <div className="h-screen px-2 py-24 flex flex-col justify-around items-center bg-cyan-800">
+          <Link href="#" className="w-10 h-10 text-gray-900 rounded-full hover:scale-110 transition-transform duration-200">
+            <img
+              src="/a.jpg"
+              alt="Avatar"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          </Link>
           <Link href="#" className="p-2 text-gray-900 rounded-md hover:bg-gray-100 group">
             <Dashboard />
           </Link>

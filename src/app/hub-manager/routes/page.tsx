@@ -120,9 +120,9 @@ const Routes = () => {
         <MapRoutes key={mapKey} center={{ lng: 106.6087319, lat: 10.8175212 }} locations={locations} routes={routeList} setStationId={setStationId} stationId={stationId} />
       </ div>
       {modeButton ?
-        <div className="w-5/12 max-h-screen flex text-xs p-3 gap-3">
+        <div className="w-5/12 max-h-screen flex text-sm p-3 gap-3">
           <div className="grow flex flex-col">
-            <div className="flex items-center justify-between bg-[#6C4F4B] text-xs font-semibold tracking-wider p-3 text-white rounded-t-sm">
+            <div className="flex items-center justify-between bg-[#6C4F4B] text-sm font-semibold tracking-wider p-3 text-white rounded-t-sm">
               <div>
                 {driverShow ? "DANH SÁCH XE TẢI" : "DANH SÁCH BƯU CỤC"}
               </div>

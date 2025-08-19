@@ -57,7 +57,6 @@ export type Station = {
 
 export type Order = {
   id: string;
-  stationId?: string;
   weight: number;
   senderName: string;
   receiverName: string;
@@ -72,6 +71,15 @@ export type Order = {
   createdAt: string;
 }
 
+export type State = {
+  orders: Order[];
+  pageIndex: number;
+  pageSize: number;
+  isFilter: boolean;
+  titleFilter: keyof Order | undefined;
+  nameFilter: string;
+};
+
 export type AddParcel = {
   idOrder: string;
   parcelData: Parcels
@@ -82,8 +90,16 @@ type AddItem = {
   item: Item
 }
 
+type FilterType = {
+  titleFilter: keyof Order | undefined;
+  nameFilter: string;
+}
+
 export type OrderAction =
   | { type: "SET_ORDERS"; payload: Order[] }
+  | { type: "SET_ORDERS_PAGINATION"; payload: number }
+  | { type: "SET_ORDERS_FILTER"; payload: FilterType }
+  | { type: "SET_ORDERS_NONFILTER" }
   | { type: "ADD_ORDER"; payload: Order }
   | { type: "EDIT_ORDER"; payload: Order }
   | { type: "DELETE_ORDER"; payload: Order }

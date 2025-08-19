@@ -11,15 +11,21 @@ function Logout() {
   const { authState } = useAuth()
 
   useEffect(() => {
-    localStorage.removeItem("accesstoken")
-    localStorage.removeItem("refreshtoken")
+    localStorage.removeItem("accessToken")
+    localStorage.removeItem("refreshToken")
     handleLogout()
-    router.replace('/login')
   }, [])
 
   const handleLogout = async () => {
-    const res = await api.post(`users/${authState.user?.id}`)
+    console.log(authState.user)
+    await api.post('auth/logout', null, {
+      params: {
+        id: authState.user?.id
+      }
+    })
+    router.replace('/login')
   }
+
 
   return (
     <div>Logout</div>

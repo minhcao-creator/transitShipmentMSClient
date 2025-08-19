@@ -103,7 +103,7 @@ export default function TripList({
               {stations?.map((s, i) => (
                 <button
                   key={i}
-                  className="text-xs bg-gray-50 hover:bg-gray-200 p-1 w-full flex flex-col items-start rounded"
+                  className="text-sm bg-gray-50 hover:bg-gray-200 p-1 w-full flex flex-col items-start rounded"
                   onClick={() => handleAddStation(s.id, (listOfTrips[listOfTrips.length - 1].ordinalNumber + 1).toString())}
                 >
                   <span>{s.id}</span>

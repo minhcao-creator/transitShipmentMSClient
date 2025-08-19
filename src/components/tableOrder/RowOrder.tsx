@@ -5,15 +5,16 @@ import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import React, { useState } from 'react'
 import RowPackage from './RowPackage'
 import HeaderPackage from './HeaderPackage'
-import { Order } from '@/types/orderLocal'
-import { useOrder } from '@/context/OrderContext/OrderContext'
+import { Order } from '@/types/orderStation'
+import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
 import OrderEdit from '../modal/OrderEdit'
 
 type RowOrderProps = {
-  order: Order
+  order: Order,
+  index: number
 }
 
-function RowOrder({ order }: RowOrderProps) {
+function RowOrder({ order, index }: RowOrderProps) {
   const [show, setShow] = useState<boolean>(false)
   const [showModal, setShowModal] = useState<boolean>(false)
   const { dispatch } = useOrder()
@@ -26,49 +27,52 @@ function RowOrder({ order }: RowOrderProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Pending":
-        return "text-yellow-600";
+        return "text-yellow-600 rounded-lg bg-yellow-200 px-2";
       case "Shipped":
-        return "text-blue-600";
+        return "text-blue-500 border rounded-lg border-blue-500 px-2";
       case "Delivered":
-        return "text-green-600";
+        return "text-green-500 border rounded-lg border-green-500 px-2";
       case "Cancelled":
-        return "text-red-600";
+        return "text-red-500 border rounded-lg border-red-500 px-2";
       default:
-        return "text-gray-700";
+        return "text-gray-500 border rounded-lg border-gray-500 px-2";
     }
   };
 
   return (
     <div>
       <div>
-        <div className='flex flex-row item-center p-4 border-b border-blue-gray-100 bg-white'>
-          <span className='basis-[10%] px-1'>
-            <button className='bg-[#2C2C2C] rounded-sm text-white px-1'>
-              {order.id}
-            </button>
+        <div className='flex flex-row item-center p-4 border-b border-gray-400 bg-white'>
+          <span className='basis-[4%] px-2 border-r border-gray-900'>
+            {index}
           </span>
-          <span className='basis-[10%] px-1'>
+          <span className='basis-[9%] px-2 border-r border-gray-900'>
+            {order.id}
+          </span>
+          <span className='basis-[10%] px-2 border-r border-gray-900'>
             {order.senderName}
           </span>
-          <span className='basis-[10%] px-1'>
+          <span className='basis-[9%] px-2 border-r border-gray-900'>
             {order.senderPhoneNumber}
           </span>
-          <span className='basis-[10%] px-1'>
+          <span className='basis-[10%] px-2 border-r border-gray-900'>
             {order.receiverName}
           </span>
-          <span className='basis-[10%] px-1'>
+          <span className='basis-[9%] px-2 border-r border-gray-900'>
             {order.receiverPhoneNumber}
           </span>
-          <span className='basis-[21%] px-1 truncate hover:text-wrap'>
+          <span className='basis-[22%] px-2 border-r border-gray-900 truncate hover:text-wrap'>
             {order.receiverAddress}
           </span>
-          <span className={`basis-[8%] px-1 ${getStatusColor(order.status?.name || '')}`}>
-            {order.status?.name}
+          <span className='basis-[8%] px-2 border-r border-gray-900'>
+            <span className={`${getStatusColor(order.status?.name || '')}`}>
+              {order.status?.name}
+            </span>
           </span>
-          <span className='basis-[6%] px-1'>
+          <span className='basis-[5%] px-2 border-r border-gray-900'>
             {parcels}
           </span>
-          <span className='basis-[6%] px-1'>
+          <span className='basis-[5%] px-1'>
             {items}
           </span>
           <button className='basis-[3%] px-1 border-neutral-600 border-x hover:text-cyan-600' onClick={() => setShowModal(true)}>
@@ -93,9 +97,9 @@ function RowOrder({ order }: RowOrderProps) {
           </div>
         </div>)}
       </div>
-      {/* {showModal && (
+      {showModal && (
         <OrderEdit order={order} setShowModal={() => setShowModal(false)} />
-      )} */}
+      )}
     </div>
 
 
