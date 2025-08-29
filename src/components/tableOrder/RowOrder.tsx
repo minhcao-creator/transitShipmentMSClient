@@ -8,6 +8,7 @@ import HeaderPackage from './HeaderPackage'
 import { Order } from '@/types/orderStation'
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
 import OrderEdit from '../modal/OrderEdit'
+import { api } from '@/context/AuthContext/AuthContext'
 
 type RowOrderProps = {
   order: Order,
@@ -18,8 +19,13 @@ function RowOrder({ order, index }: RowOrderProps) {
   const [show, setShow] = useState<boolean>(false)
   const [showModal, setShowModal] = useState<boolean>(false)
   const { dispatch } = useOrder()
-  const handleDeleteOrder = () => {
-    // dispatch({ type: "DELETE_ORDER", payload: order })
+  const handleDeleteOrder = async () => {
+    try {
+      dispatch({ type: "DELETE_ORDER", payload: order })
+      await api.delete(`orders/${order.id}`)
+    } catch (error) {
+      console.log(error)
+    }
   }
   const parcels = order.parcels ? order.parcels.length : 0
   const items = order.parcels ? order.parcels.reduce((items, parcel) => items = items + (parcel.items ? parcel.items.length : 0), 0) : 0
@@ -43,45 +49,45 @@ function RowOrder({ order, index }: RowOrderProps) {
     <div>
       <div>
         <div className='flex flex-row item-center p-4 border-b border-gray-400 bg-white'>
-          <span className='basis-[4%] px-2 border-r border-gray-900'>
+          <span className='flex items-center basis-[4%] px-2 border-r border-gray-900'>
             {index}
           </span>
-          <span className='basis-[9%] px-2 border-r border-gray-900'>
+          <span className='flex items-center basis-[9%] px-2 border-r border-gray-900'>
             {order.id}
           </span>
-          <span className='basis-[10%] px-2 border-r border-gray-900'>
+          <span className='flex items-center basis-[10%] px-2 border-r border-gray-900'>
             {order.senderName}
           </span>
-          <span className='basis-[9%] px-2 border-r border-gray-900'>
+          <span className='flex items-center basis-[9%] px-2 border-r border-gray-900'>
             {order.senderPhoneNumber}
           </span>
-          <span className='basis-[10%] px-2 border-r border-gray-900'>
+          <span className='flex items-center basis-[10%] px-2 border-r border-gray-900'>
             {order.receiverName}
           </span>
-          <span className='basis-[9%] px-2 border-r border-gray-900'>
+          <span className='flex items-center basis-[9%] px-2 border-r border-gray-900'>
             {order.receiverPhoneNumber}
           </span>
-          <span className='basis-[22%] px-2 border-r border-gray-900 truncate hover:text-wrap'>
+          <span className='flex items-center basis-[22%] px-2 border-r border-gray-900 truncate hover:text-wrap'>
             {order.receiverAddress}
           </span>
-          <span className='basis-[8%] px-2 border-r border-gray-900'>
+          <span className='flex items-center basis-[8%] px-2 border-r border-gray-900'>
             <span className={`${getStatusColor(order.status?.name || '')}`}>
               {order.status?.name}
             </span>
           </span>
-          <span className='basis-[5%] px-2 border-r border-gray-900'>
+          <span className='flex items-center basis-[5%] px-2 border-r border-gray-900'>
             {parcels}
           </span>
-          <span className='basis-[5%] px-1'>
+          <span className='flex items-center basis-[5%] px-2'>
             {items}
           </span>
-          <button className='basis-[3%] px-1 border-neutral-600 border-x hover:text-cyan-600' onClick={() => setShowModal(true)}>
+          <button className='flex items-center basis-[3%] px-2 border-neutral-600 border-x hover:text-cyan-600' onClick={() => setShowModal(true)}>
             <Pencil1Icon />
           </button>
-          <button className='basis-[3%] px-1 border-neutral-600 border-r hover:text-rose-600' onClick={handleDeleteOrder}>
+          <button className='flex items-center basis-[3%] px-2 border-neutral-600 border-r hover:text-rose-600' onClick={handleDeleteOrder}>
             <TrashIcon />
           </button>
-          <button className='basis-[3%] px-1 border-neutral-600 border-r'
+          <button className='flex items-center basis-[3%] px-2 border-neutral-600 border-r'
             onClick={() => setShow(!show)}>
             <div className={`h-4 w-4 ${show ? "" : "transform -rotate-90"}`}>
               <DropdownIcon />
@@ -89,10 +95,10 @@ function RowOrder({ order, index }: RowOrderProps) {
           </button>
         </div>
         {show && (<div className='pl-8 pr-4 bg-white'>
-          <HeaderPackage idOrder={order.id} />
-          <div className='max-h-[48dvh] overflow-y-auto'>
+          <HeaderPackage idOrder={order.id} showIdOrder={false} />
+          <div className='max-h-[44dvh] overflow-y-auto'>
             {order.parcels?.map((parcel) => (
-              <RowPackage parcelData={parcel} key={parcel.id} />
+              <RowPackage idOrder={order.id} parcelData={parcel} key={parcel.id} showIdOrder={false} />
             ))}
           </div>
         </div>)}

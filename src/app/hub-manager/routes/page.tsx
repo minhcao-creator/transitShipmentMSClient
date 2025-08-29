@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeftIcon, DoubleArrowDownIcon, DoubleArrowUpIcon, PlusIcon } from "@radix-ui/react-icons";
 import { api } from "@/context/AuthContext/AuthContext";
-import { useOrder } from "@/context/OrderContext/OrderContext";
+import { useOrder } from "@/context/OrderStationContext/OrderStationContext";
 import { useRouter } from "next/navigation";
 import LocalTag from "@/components/routesTag/localTag";
 import { Order } from "@/types/orderLocal";
@@ -46,7 +46,7 @@ const Routes = () => {
 
   const groupedOrders: Record<string, { managerId: string; station: Station | undefined; orders: Order[] }> = {};
 
-  const newOrderState = orderState.filter((order) => order.status?.name === 'Pending')
+  const newOrderState = orderState.orders.filter((order) => order.status?.name === 'Pending')
 
   newOrderState.forEach(order => {
     const managerId = order?.postOfficeManager?.id || '';
@@ -122,7 +122,7 @@ const Routes = () => {
       {modeButton ?
         <div className="w-5/12 max-h-screen flex text-sm p-3 gap-3">
           <div className="grow flex flex-col">
-            <div className="flex items-center justify-between bg-[#6C4F4B] text-sm font-semibold tracking-wider p-3 text-white rounded-t-sm">
+            <div className="flex items-center justify-between bg-[#6C4F4B] text-xs font-semibold tracking-wider p-3 text-white rounded-t-sm">
               <div>
                 {driverShow ? "DANH SÁCH XE TẢI" : "DANH SÁCH BƯU CỤC"}
               </div>

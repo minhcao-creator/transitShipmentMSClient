@@ -57,6 +57,7 @@ export type Station = {
 
 export type Order = {
   id: string;
+  stationId?: string;
   weight: number;
   senderName: string;
   receiverName: string;
@@ -80,6 +81,24 @@ export type State = {
   nameFilter: string;
 };
 
+export type StateParcel = {
+  parcels: Parcels[];
+  pageIndex: number;
+  pageSize: number;
+  isFilter: boolean;
+  titleFilter: keyof Parcels | undefined;
+  nameFilter: string;
+};
+
+export type StateItem = {
+  items: Item[];
+  pageIndex: number;
+  pageSize: number;
+  isFilter: boolean;
+  titleFilter: keyof Item | undefined;
+  nameFilter: string;
+};
+
 export type AddParcel = {
   idOrder: string;
   parcelData: Parcels
@@ -91,12 +110,13 @@ type AddItem = {
 }
 
 type FilterType = {
-  titleFilter: keyof Order | undefined;
+  titleFilter: keyof Order | keyof Parcels | keyof Item | undefined;
   nameFilter: string;
 }
 
 export type OrderAction =
   | { type: "SET_ORDERS"; payload: Order[] }
+  | { type: "IMPORT_EXCEL"; payload: Order[] }
   | { type: "SET_ORDERS_PAGINATION"; payload: number }
   | { type: "SET_ORDERS_FILTER"; payload: FilterType }
   | { type: "SET_ORDERS_NONFILTER" }

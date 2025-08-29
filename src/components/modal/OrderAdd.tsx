@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { api, useAuth } from '@/context/AuthContext/AuthContext'
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
-import { Order } from '@/types/orderLocal'
+import { Order } from '@/types/orderStation'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/navigation'
 import AlertComponent from '../AlertComponent'
@@ -15,7 +15,6 @@ type OrderAddProps = {
 
 function OrderAdd({ order, setShowModal }: OrderAddProps) {
   const { dispatch } = useOrder()
-  const router = useRouter()
 
   const [senderNameAdd, setSenderNameAdd] = useState<string>(order.senderName)
   const [receiverNameAdd, setReceiverNameAdd] = useState<string>(order.receiverName)
@@ -80,29 +79,29 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
         return;
       }
 
-      setAlert({ type: "success", message: "Gửi đơn thành công 🎉" });
+      dispatch({ type: "ADD_ORDER", payload: orderAdd })
 
       const res = await api.post('/orders', orderAdd)
       if (res.data) {
-        dispatch({ type: "ADD_ORDER", payload: orderAdd })
-        await api.patch(`orders/${order.id}/status/OrderStatuses001/set`);
+        await api.patch(`orders/${order.id}/status/OrderStatuses001/set`)
         await api.patch(`orders/${order.id}/departure-station/${authState.user?.station}/set`)
         setShowModal()
+        setAlert({ type: "success", message: "Gửi đơn thành công" })
       }
     } catch (error) {
       console.log(error)
-      router.push('/logout')
+      // router.push('/logout')
     }
   }
 
-  const handleReset = () => {
-    setSenderNameAdd(order.senderName)
-    setReceiverNameAdd(order.receiverName)
-    setReceiverAddressAdd(order.receiverAddress)
-    setSenderPhoneNumberAdd(order.senderPhoneNumber)
-    setReceiverPhoneNumberAdd(order.receiverPhoneNumber)
-    setMessageAdd(order.message)
-  }
+  // const handleReset = () => {
+  //   setSenderNameAdd(order.senderName)
+  //   setReceiverNameAdd(order.receiverName)
+  //   setReceiverAddressAdd(order.receiverAddress)
+  //   setSenderPhoneNumberAdd(order.senderPhoneNumber)
+  //   setReceiverPhoneNumberAdd(order.receiverPhoneNumber)
+  //   setMessageAdd(order.message)
+  // }
 
 
   return (
@@ -277,15 +276,15 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
           ></textarea>
         </div>
 
-        <div className='flex items-center justify-between mt-8'>
-          <button
+        <div className='flex items-center justify-end w-full mt-8'>
+          {/* <button
             className='border border-rose-800 text-rose-800 rounded-sm px-4 py-1.5 hover:bg-rose-800 hover:text-white'
             onClick={handleReset}
           >
             ĐẶT LẠI
-          </button>
+          </button> */}
           <button
-            className='border border-cyan-800 text-cyan-800 rounded-sm px-4 py-1.5 hover:bg-cyan-800 hover:text-white'
+            className='rounded-sm px-8 py-2 bg-cyan-800 text-white hover:scale-110 transition-transform duration-200'
             onClick={() => handleUpdate({
               ...order,
               stationId: authState.user?.station,
@@ -303,18 +302,20 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
               createdAt: order.createdAt
             })}
           >
-            THỰC HIỆN
+            THÊM MỚI
           </button>
         </div>
       </div>
-      {alert && (
-        <AlertComponent
-          type={alert?.type}
-          message={alert?.message}
-          onClose={() => setAlert(null)}
-        />
-      )}
-    </div>
+      {
+        alert && (
+          <AlertComponent
+            type={alert?.type}
+            message={alert?.message}
+            onClose={() => setAlert(null)}
+          />
+        )
+      }
+    </div >
   )
 }
 

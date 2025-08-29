@@ -5,7 +5,7 @@ import { useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { getMonth, getYear } from "date-fns";
 import range from "lodash/range";
-import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
+import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon } from "@radix-ui/react-icons";
 import { vi } from "date-fns/locale/vi";
 
 import "../datepickercss.css";
@@ -35,6 +35,8 @@ export default function DatePickerComponent() {
   return (
     <DatePicker
       locale="vi"
+      showIcon
+      icon={<CalendarIcon className="text-cyan-800" />} // đổi icon ở đây
       dateFormat={"eeee, d MMMM yyyy"}
       renderCustomHeader={({
         date,

@@ -2,15 +2,16 @@
 
 import DropdownIcon from '@/assets/img/dropdownIcon'
 import DatePickerComponent from '@/components/DatePickerComponent'
+import UploadFile from '@/components/form/uploadFile'
 import Pagination from '@/components/Pagination'
-import HeaderOrder from '@/components/tableOrder/HeaderOrder'
-import Row from '@/components/tableOrder/Row'
+import HeaderItem from '@/components/tableOrder/HeaderItem'
+import RowItem from '@/components/tableOrder/RowItem'
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
-import { Order } from '@/types/orderStation'
+import { Item, Order } from '@/types/orderStation'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 
-function OrderPage() {
+function ParcelPage() {
 
   const titleFilterLabels: Record<string, string> = {
     id: "Mã đơn",
@@ -22,6 +23,27 @@ function OrderPage() {
   };
 
   const { orderState, dispatch } = useOrder()
+
+  type ItemWithOrder = Item & { idOrder: string } & { idParcel: string };
+
+  const items: ItemWithOrder[] = [];
+  for (const order of orderState.orders) {
+    if (order.parcels) {
+      for (const parcel of order.parcels) {
+        if (parcel.items) {
+          items.push(
+            ...parcel.items.map(item => ({
+              ...item,
+              idOrder: order.id,
+              idParcel: parcel.id
+            }))
+          );
+        }
+      }
+    }
+  }
+
+
   const total = Math.ceil(orderState.orders.length / orderState.pageSize)
   const current = orderState.pageIndex
 
@@ -132,12 +154,16 @@ function OrderPage() {
         <DatePickerComponent />
       </div>
       <div className='text-sm'>
-        <HeaderOrder />
-        <Row />
+        <HeaderItem idParcel='' />
+        <div className='max-h-[32dvh] overflow-y-auto'>
+          {items.map((item) => (
+            <RowItem item={item} key={item.id} />
+          ))}
+        </div>
         <Pagination total={total} current={current} />
       </div>
     </div>
   )
 }
 
-export default OrderPage
+export default ParcelPage

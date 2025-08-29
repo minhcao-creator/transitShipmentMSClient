@@ -3,17 +3,17 @@
 import DropdownIcon from '@/assets/img/dropdownIcon'
 import DatePickerComponent from '@/components/DatePickerComponent'
 import Pagination from '@/components/Pagination'
-import HeaderOrder from '@/components/tableOrder/HeaderOrder'
-import Row from '@/components/tableOrder/Row'
+import HeaderPackage from '@/components/tableOrder/HeaderPackage'
+import RowPackage from '@/components/tableOrder/RowPackage'
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
-import { Order } from '@/types/orderStation'
+import { Order, Parcels } from '@/types/orderStation'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 
-function OrderPage() {
+function ParcelPage() {
 
   const titleFilterLabels: Record<string, string> = {
-    id: "Mã đơn",
+    id: "Mã bưu kiện",
     senderName: "Người gửi",
     receiverName: "Người nhận",
     receiverAddress: "Địa chỉ nhận hàng",
@@ -22,7 +22,21 @@ function OrderPage() {
   };
 
   const { orderState, dispatch } = useOrder()
-  const total = Math.ceil(orderState.orders.length / orderState.pageSize)
+
+  type ParcelWithOrder = Parcels & { idOrder: string };
+
+  const parcels: ParcelWithOrder[] = [];
+  for (const order of orderState.orders) {
+    if (order.parcels) {
+      parcels.push(
+        ...order.parcels.map(parcel => ({
+          ...parcel,
+          idOrder: order.id
+        }))
+      );
+    }
+  }
+  const total = Math.ceil(parcels.length / orderState.pageSize)
   const current = orderState.pageIndex
 
   const [titleFilter, setTitleFilter] = useState<keyof Order | undefined>(undefined)
@@ -62,46 +76,7 @@ function OrderPage() {
             }}>
             <Cross1Icon />
           </button>}
-          {/* {showTitleFilter && <div className='absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]'>
-            <button
-              className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('id')
-                setShowTitleFilter(!showTitleFilter)
-              }}
-            >Mã đơn</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('senderName')
-                setShowTitleFilter(!showTitleFilter)
-              }}>Người gửi</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('receiverName')
-                setShowTitleFilter(!showTitleFilter)
-              }}>Người nhận</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('receiverAddress')
-                setShowTitleFilter(!showTitleFilter)
-              }}>Địa chỉ nhận hàng</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('senderPhoneNumber')
-                setShowTitleFilter(!showTitleFilter)
-              }}>SĐT gửi</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('receiverPhoneNumber')
-                setShowTitleFilter(!showTitleFilter)
-              }}>SĐT nhận</button>
-            <button className='hover:bg-rose-200 p-2 border border-rose-200 text-rose-400 rounded m-1'
-              onClick={() => {
-                setTitleFilter(undefined)
-                setShowTitleFilter(!showTitleFilter)
-                dispatch({ type: "SET_ORDERS_NONFILTER" })
-              }}>Bỏ chọn</button>
-          </div>} */}
+
           {showTitleFilter && (
             <div className="absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]">
               {Object.entries(titleFilterLabels).map(([key, label]) => (
@@ -132,12 +107,16 @@ function OrderPage() {
         <DatePickerComponent />
       </div>
       <div className='text-sm'>
-        <HeaderOrder />
-        <Row />
+        <HeaderPackage idOrder='' showIdOrder={true} />
+        <div className='h-[62dvh] overflow-y-auto'>
+          {parcels?.map((parcel) => (
+            <RowPackage parcelData={parcel} key={parcel.id} showIdOrder={true} idOrder={parcel.idOrder} />
+          ))}
+        </div>
         <Pagination total={total} current={current} />
       </div>
     </div>
   )
 }
 
-export default OrderPage
+export default ParcelPage

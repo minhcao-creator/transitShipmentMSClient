@@ -20,7 +20,7 @@ function Pagination({ total, current }: PaginationProps) {
 
   return (
     <div>
-      {show1 && <div className="flex w-full justify-center items-center m-4 text-sm">
+      {show1 && <div className="flex w-full justify-center items-center text-sm mt-4">
         <button onClick={() => handlePagination(current - 1)}>
           <ArrowLeftIcon className="text-gray-700 mx-2 w-5 h-5 hover:text-cyan-500" />
         </button>

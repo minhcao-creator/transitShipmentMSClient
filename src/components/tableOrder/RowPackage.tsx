@@ -5,15 +5,17 @@ import { Cross1Icon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import React, { useState } from 'react'
 import RowItem from './RowItem'
 import HeaderItem from './HeaderItem'
-import { useOrder } from '@/context/OrderContext/OrderContext'
+import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
 import PackageEdit from '../modal/PackageEdit'
 import { Parcels } from '@/types/orderLocal'
 
 type RowPackageProps = {
+  idOrder: string;
   parcelData: Parcels;
+  showIdOrder: boolean;
 }
 
-function RowPackage({ parcelData }: RowPackageProps) {
+function RowPackage({ idOrder, parcelData, showIdOrder }: RowPackageProps) {
   const [show, setShow] = useState<boolean>(false)
   const [showModal, setShowModal] = useState<boolean>(false)
 
@@ -26,40 +28,44 @@ function RowPackage({ parcelData }: RowPackageProps) {
   return (
     <div>
       <div>
-        <div className='flex flex-row item-center p-4 border-b border-blue-gray-100 bg-[#EDEDED]'>
-          <span className='basis-[12%] px-1'>
-            <button className='bg-[#2C2C2C] rounded-sm text-white px-1'>
-              {parcelData.id}
-            </button>
+        <div className='flex flex-row item-center p-4 border-b border-gray-400 bg-[#EDEDED]'>
+          <span className='basis-[4%] px-2 border-r border-gray-900'>
+            1
           </span>
-          <span className='basis-[9%] px-1'>
+          {showIdOrder && <span className='basis-[10%] px-2 border-r border-gray-900'>
+            {idOrder}
+          </span>}
+          <span className='basis-[10%] px-2 border-r border-gray-900'>
+            {parcelData.id}
+          </span>
+          <span className='basis-[7%] px-2 border-r border-gray-900'>
             {parcelData.weight}
           </span>
-          <span className='basis-[9%] px-1'>
+          <span className='basis-[7%] px-2 border-r border-gray-900'>
             {parcelData.depth}
           </span>
-          <span className='basis-[9%] px-1'>
+          <span className='basis-[7%] px-2 border-r border-gray-900'>
             {parcelData.width}
           </span>
-          <span className='basis-[9%] px-1'>
+          <span className='basis-[7%] px-2 border-r border-gray-900'>
             {parcelData.height}
           </span>
-          <span className='basis-[12%] px-1'>
-
+          <span className='basis-[12%] px-2 border-r border-gray-900'>
+            {parcelData.type?.name}
           </span>
-          <span className='basis-[18%] px-1'>
+          <span className={showIdOrder ? 'basis-[18%] px-2 border-r border-gray-900' : 'basis-[30%] px-2 border-r border-gray-900'}>
             {parcelData.note}
           </span>
-          <span className='basis-[10%] px-1'>
-
+          <span className='basis-[9%] px-2'>
+            Trạng thái
           </span>
-          <button className='basis-[4%] px-1 border-neutral-600 border-x hover:text-cyan-600' onClick={() => setShowModal(true)}>
+          <button className='basis-[3%] px-2 border-neutral-600 border-x hover:text-cyan-600' onClick={() => setShowModal(true)}>
             <Pencil1Icon />
           </button>
-          <button className='basis-[4%] px-1 border-neutral-600 border-r hover:text-rose-600' onClick={handleDeletePackage}>
+          <button className='basis-[3%] px-2 border-neutral-600 border-r hover:text-rose-600' onClick={handleDeletePackage}>
             <TrashIcon />
           </button>
-          <button className='basis-[4%] px-1 border-neutral-600 border-r'
+          <button className='basis-[3%] px-2 border-neutral-600 border-r'
             onClick={() => setShow(!show)}>
             <div className={`h-4 w-4 ${show ? "" : "transform -rotate-90"}`}>
               <DropdownIcon />
@@ -77,9 +83,9 @@ function RowPackage({ parcelData }: RowPackageProps) {
           </div>
         )}
       </div>
-      {/* {showModal && (
-        <PackageEdit packageData={packageData} setShowModal={() => setShowModal(false)} />
-      )} */}
+      {showModal && (
+        <PackageEdit packageData={parcelData} setShowModal={() => setShowModal(false)} />
+      )}
     </div>
   )
 }

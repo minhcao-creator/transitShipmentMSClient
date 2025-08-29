@@ -3,10 +3,11 @@ import React, { useState } from 'react'
 import PackageAdd from '../modal/PackageAdd'
 
 type HeaderPackageProps = {
-  idOrder: string
+  idOrder: string;
+  showIdOrder: boolean;
 }
 
-function HeaderPackage({ idOrder }: HeaderPackageProps) {
+function HeaderPackage({ idOrder, showIdOrder }: HeaderPackageProps) {
 
   const [showModal, setShowModal] = useState<boolean>(false)
 
@@ -30,44 +31,49 @@ function HeaderPackage({ idOrder }: HeaderPackageProps) {
 
   return (
     <div>
-      <div className='flex flex-row item-center font-semibold p-4 border-b border-blue-gray-100 text-white bg-cyan-900'>
-        <span className='basis-[12%] px-1'>
+      <div className='flex flex-row item-center font-semibold p-4 border-b text-white bg-cyan-900 rounded-t'>
+        <span className='basis-[4%] px-2 border-r'>
+          STT
+        </span>
+        {showIdOrder && <span className='basis-[10%] px-2 border-r'>
+          Mã đơn hàng
+        </span>}
+        <span className='basis-[10%] px-2 border-r'>
           Mã bưu kiện
         </span>
-        <span className='basis-[9%] px-1'>
-          Cân nặng
+        <span className='basis-[7%] px-2 border-r'>
+          C.nặng
         </span>
-        <span className='basis-[9%] px-1'>
-          Chiều dài
+        <span className='basis-[7%] px-2 border-r'>
+          Ch.dài
         </span>
-        <span className='basis-[9%] px-1'>
-          Chiều rộng
+        <span className='basis-[7%] px-2 border-r'>
+          Ch.rộng
         </span>
-        <span className='basis-[9%] px-1'>
-          Chiều cao
+        <span className='basis-[7%] px-2 border-r'>
+          Ch.cao
         </span>
-        <span className='basis-[12%] px-1'>
+        <span className='basis-[12%] px-2 border-r'>
           Loại
         </span>
-        <span className='basis-[18%] px-1'>
+        <span className={showIdOrder ? 'basis-[18%] px-2 border-r' : 'basis-[30%] px-2 border-r'}>
           Ghi chú
         </span>
-        <span className='basis-[10%] px-1'>
+        <span className='basis-[9%] px-2'>
           Trạng thái
         </span>
-        <span className='basis-[6%] px-1'>
-
-        </span>
         <button
-          className='basis-[6%] border border-slate-200 flex justify-center rounded-sm text-slate-200 hover:text-teal-800 hover:bg-slate-100'
+          className='basis-[9%] flex justify-center items-center rounded-sm text-cyan-800 bg-cyan-100 hover:scale-110 transition-transform duration-200'
           onClick={() => setShowModal(true)}>
           <PlusIcon />
         </button>
       </div>
-      {showModal && (
-        <PackageAdd parcelData={newParcel} idOrder={idOrder} setShowModal={() => setShowModal(false)} />
-      )}
-    </div>
+      {
+        showModal && (
+          <PackageAdd parcelData={newParcel} idOrder={idOrder} setShowModal={() => setShowModal(false)} />
+        )
+      }
+    </div >
 
   )
 }

@@ -13,12 +13,14 @@ export default function Row() {
 
   const handleFilter = () => {
     if (!orderState.isFilter) return orders
-    const orderFilters = orders.filter((order: Order) => orderState.titleFilter && (order[orderState.titleFilter].toLowerCase().includes(orderState.nameFilter.toLowerCase())))
+    const orderFilters = orders.filter((order: Order) => order[orderState.titleFilter].toLowerCase().includes(orderState.nameFilter.toLowerCase()))
     return orderFilters
   }
 
+  console.log('orderFilters', handleFilter())
+
   return (
-    <div className='h-[61dvh] overflow-y-auto'>
+    <div className='h-[62dvh] overflow-y-auto'>
       {handleFilter().map((order, index) => (
         <RowOrder order={order} key={order.id} index={indexStart + index + 1} />
       ))}

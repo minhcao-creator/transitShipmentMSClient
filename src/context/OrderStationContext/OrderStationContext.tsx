@@ -32,9 +32,9 @@ export const OrderStationProvider = ({ children }: PropsWithChildren) => {
   }, [authState.isCheckAuth])
 
   async function loadData() {
-    console.log('Order Station Context')
     try {
-      const res = await api.get(`orders/departure-stations/${authState.user?.station}`)
+      // const res = await api.get(`orders/departure-stations/${authState.user?.station}`)
+      const res = await api.get('orders')
       dispatch({ type: "SET_ORDERS", payload: res.data });
       setLoading(false);
     } catch (error) {
@@ -71,6 +71,20 @@ function orderReducer(state: State, action: OrderAction): State {
       }
     }
 
+    case "IMPORT_EXCEL": {
+
+      const newOrders = [...action.payload, ...state.orders]
+
+      return {
+        orders: newOrders,
+        pageIndex: 1,
+        pageSize: 7,
+        isFilter: false,
+        titleFilter: undefined,
+        nameFilter: ''
+      }
+    }
+
     case "SET_ORDERS_PAGINATION": {
       return {
         ...state,
@@ -94,18 +108,21 @@ function orderReducer(state: State, action: OrderAction): State {
       }
     }
 
-    // case "DELETE_ORDER": {
-    //   const idDel = action.payload.id
-    //   var newState = [...state]
+    case "DELETE_ORDER": {
+      const idDel = action.payload.id
+      var newOrders = [...state.orders]
 
-    //   newState = newState.filter(
-    //     (order) => order.id !== idDel
-    //   )
+      newOrders = newOrders.filter(
+        (order) => order.id !== idDel
+      )
 
-    //   localStorage.setItem("@Order", JSON.stringify(newState));
+      const newState = {
+        ...state,
+        orders: newOrders
+      }
 
-    //   return newState
-    // }
+      return newState
+    }
 
     // case "DELETE_PACKAGE": {
     //   const idDel = action.payload.id
@@ -179,28 +196,27 @@ function orderReducer(state: State, action: OrderAction): State {
     //   return newState
     // }
 
-    // case "EDIT_ORDER": {
-    //   const idEdit = action.payload.id
-    //   const newState = [...state]
-    //   newState.forEach((order) => {
-    //     if ((order.id) === idEdit) {
-    //       order.customer = action.payload.customer
-    //       order.customerAddress = action.payload.customerAddress
-    //       order.customerContact = action.payload.customerContact
-    //       order.location = action.payload.location
-    //       order.note = action.payload.note
-    //       order.receiveAddress = action.payload.receiveAddress
-    //       order.receiver = action.payload.receiver
-    //       order.shop = action.payload.shop
-    //       order.shopContact = action.payload.shopContact
-    //       order.status = action.payload.status
-    //     }
-    //   })
+    case "EDIT_ORDER": {
+      const idEdit = action.payload.id
+      const newOrders = [...state.orders]
+      newOrders.forEach((order) => {
+        if ((order.id) === idEdit) {
+          order.senderName = action.payload.senderName
+          order.senderPhoneNumber = action.payload.senderPhoneNumber
+          order.receiverName = action.payload.receiverName
+          order.receiverAddress = action.payload.receiverAddress
+          order.receiverPhoneNumber = action.payload.receiverPhoneNumber
+          order.message = action.payload.message
+        }
+      })
 
-    //   localStorage.setItem("@Order", JSON.stringify(newState));
+      const newState = {
+        ...state,
+        orders: newOrders
+      }
 
-    //   return newState
-    // }
+      return newState
+    }
 
     case "ADD_ORDER": {
 

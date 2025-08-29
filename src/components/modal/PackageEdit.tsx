@@ -1,4 +1,4 @@
-import { useOrder } from '@/context/OrderContext/OrderContext'
+import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
 import { Package } from '@/types/order'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import React, { useState } from 'react'
@@ -19,6 +19,51 @@ function PackageEdit({ packageData, setShowModal }: PackageEditProps) {
   const [typeEdit, setTypeEdit] = useState<string>(packageData.type)
   const [statusEdit, setStatusEdit] = useState<string>(packageData.status)
 
+  const [open, setOpen] = useState<boolean>(false)
+
+  const parcelTypes = [
+    {
+      id: "fragile",
+      name: "Hàng dễ vỡ"
+    },
+    {
+      id: "bulky",
+      name: "Hàng cồng kềnh"
+    },
+    {
+      id: "perishable",
+      name: "Hàng dễ hỏng"
+    },
+    {
+      id: "liquid",
+      name: "Chất lỏng"
+    },
+    {
+      id: "valuable",
+      name: "Hàng giá trị cao"
+    },
+    {
+      id: "documents",
+      name: "Tài liệu/giấy tờ"
+    },
+    {
+      id: "electronics",
+      name: "Thiết bị điện tử"
+    },
+    {
+      id: "flammable",
+      name: "Hàng dễ cháy nổ"
+    },
+    {
+      id: "oversize",
+      name: "Hàng quá khổ"
+    },
+    {
+      id: "normal",
+      name: "Hàng thông thường"
+    }
+  ]
+
   const handleUpdate = (packageDataEdit: Package) => {
     setShowModal()
     dispatch({ type: "EDIT_PACKAGE", payload: packageDataEdit })
@@ -35,13 +80,12 @@ function PackageEdit({ packageData, setShowModal }: PackageEditProps) {
   }
 
   return (
-    <div className='absolute top-0 left-0 h-screen w-full bg-neutral-800 bg-opacity-80 flex items-center justify-center'>
+    <div className='absolute top-0 left-0 h-screen w-full bg-neutral-900 bg-opacity-90 flex items-center justify-center'>
       <div className='p-8 w-1/2 bg-white rounded flex flex-col gap-8'>
-
         <div className='flex gap-4'>
           <div className='flex-1 flex justify-center'>
-            <span className='text-sm pb-2 tracking-wider border-b-2 border-neutral-500 mr-[-30px]'>
-              THÔNG TIN BƯU KIỆN
+            <span className='font-bold text-lg pb-2 tracking-wider border-b-2 border-neutral-500 mr-[-30px]'>
+              KIỆN HÀNG : {packageData.id}
             </span>
           </div>
           <button onClick={setShowModal} className='w-4 h-4'>
@@ -50,93 +94,88 @@ function PackageEdit({ packageData, setShowModal }: PackageEditProps) {
         </div>
 
         <div className='flex flex-col gap-3'>
-          <div className='flex items-start gap-8 justify-between'>
-            <div className='flex-1 flex flex-col gap-3'>
-              <div className='flex flex-col gap-1'>
-                <span >
-                  Mã bưu kiện
-                </span>
-                <span className='border border-neutral-400 p-2 flex-1 rounded-sm bg-neutral-200'>
-                  {packageData.id}
-                </span>
-              </div>
-              <div className='flex flex-col gap-1'>
-                <span >
-                  Cân nặng
-                </span>
-                <input
-                  type={"number"}
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                  value={weightEdit}
-                  onChange={(e) => setWeightEdit(Number(e.target.value))} />
-              </div>
+          <div className='flex items-start justify-between'>
+            <div className='flex flex-col gap-1'>
+              <span >
+                Cân nặng
+              </span>
+              <input
+                type={"number"}
+                className='w-20 border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
+                value={weightEdit}
+                onChange={(e) => setWeightEdit(Number(e.target.value))} />
             </div>
-            <div className='flex-1 flex flex-col gap-3'>
 
-              <div className='flex flex-col gap-1'>
-                <span >
-                  Loại bưu kiện
-                </span>
-                <input
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                  value={typeEdit}
-                  onChange={(e) => setTypeEdit(e.target.value)} />
-              </div>
-
-              <div className='flex flex-col gap-1'>
-                <span >
-                  Chiều dài
-                </span>
-                <input
-                  type={"number"}
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                  value={lengthEdit}
-                  onChange={(e) => setLenghtEdit(Number(e.target.value))} />
-              </div>
-
+            <div className='flex flex-col gap-1'>
+              <span >
+                Chiều dài
+              </span>
+              <input
+                type={"number"}
+                className='w-20 border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
+                value={lengthEdit}
+                onChange={(e) => setLenghtEdit(Number(e.target.value))} />
             </div>
-            <div className='flex-1 flex flex-col gap-3'>
-              <div className='flex flex-col gap-1'>
-                <span >
-                  Trạng thái bưu kiện
-                </span>
-                <input
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                  value={statusEdit}
-                  onChange={(e) => setStatusEdit(e.target.value)} />
-              </div>
 
-              <div className='flex flex-col gap-1'>
-                <span >
-                  Chiều rộng
-                </span>
-                <input
-                  type={"number"}
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                  value={widthEdit}
-                  onChange={(e) => setWidthEdit(Number(e.target.value))} />
-              </div>
+            <div className='flex flex-col gap-1'>
+              <span >
+                Chiều rộng
+              </span>
+              <input
+                type={"number"}
+                className='w-20 border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
+                value={widthEdit}
+                onChange={(e) => setWidthEdit(Number(e.target.value))} />
             </div>
-          </div>
-          <div className='flex items-start gap-8 justify-between'>
-            <div className='flex flex-col gap-1 basic-[1/33]'>
+
+            <div className='flex flex-col gap-1'>
               <span >
                 Chiều cao
               </span>
               <input
                 type={"number"}
-                className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
+                className='w-20 border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
                 value={heightEdit}
                 onChange={(e) => setHeightEdit(Number(e.target.value))} />
             </div>
 
+            <div className='relative flex flex-col gap-1 w-48'>
+              <span >
+                Loại bưu kiện
+              </span>
+              <div
+                className="border border-gray-800 p-2 rounded-sm cursor-pointer bg-white"
+                onClick={() => setOpen(!open)}
+              >
+                {typeEdit || 'Chọn loại bưu kiện'}
+              </div>
+              {open && (
+                <div className="absolute top-16 h-48 overflow-y-auto z-10 bg-white border rounded-sm w-full mt-1 shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]">
+                  {parcelTypes.map((p) => (
+                    <div
+                      key={p.id}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setTypeEdit(p.name)
+                        setOpen(false)
+                      }}
+                    >
+                      {p.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className='flex items-start gap-8 justify-between'>
             <div className='flex flex-col gap-1 grow'>
               <span >
                 Lời nhắn
               </span>
               <textarea
                 rows={1}
-                className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
+                className='border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
                 value={noteEdit}
                 onChange={(e) => setNoteEdit(e.target.value)}
               ></textarea>
@@ -144,12 +183,12 @@ function PackageEdit({ packageData, setShowModal }: PackageEditProps) {
           </div>
         </div>
 
-        <div className='flex items-center justify-between'>
-          <button className='border border-rose-600 text-rose-600 rounded-sm px-4 py-1.5 hover:bg-rose-600 hover:text-white'
+        <div className='flex items-center justify-end w-full mt-8'>
+          {/* <button className='border border-rose-600 text-rose-600 rounded-sm px-4 py-1.5 hover:bg-rose-600 hover:text-white'
             onClick={handleReset}>
             RESET
-          </button>
-          <button className='border border-teal-600 text-teal-600 rounded-sm px-4 py-1.5 hover:bg-teal-600 hover:text-white'
+          </button> */}
+          <button className='rounded-sm px-8 py-2 bg-cyan-800 text-white hover:scale-110 transition-transform duration-200'
             onClick={() => handleUpdate({
               ...packageData,
               weight: weightEdit,
@@ -162,7 +201,7 @@ function PackageEdit({ packageData, setShowModal }: PackageEditProps) {
 
             })}
           >
-            UPDATE
+            CHỈNH SỬA
           </button>
         </div>
       </div>

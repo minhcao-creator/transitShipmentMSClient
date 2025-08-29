@@ -601,12 +601,15 @@ h2.react-datepicker__current-month {
   border-radius: 4px;
   padding: 10px;
   font-size: 14px;
+  width: 18em;
 }
 
 .react-datepicker__input-container .react-datepicker__calendar-icon {
   position: absolute;
-  right: 10px;
+  right: 12px;
   top: 10px;
+  width: 20px;
+  height: 20px;
 }
 
 .react-datepicker__year-read-view,

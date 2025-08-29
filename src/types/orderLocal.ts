@@ -57,7 +57,6 @@ export type Station = {
 
 export type Order = {
   id: string;
-  stationId?: string;
   weight: number;
   senderName: string;
   receiverName: string;
