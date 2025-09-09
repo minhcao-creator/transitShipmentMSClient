@@ -43,15 +43,18 @@ export default function RootLayout({
               )
             })}
           </div>
-          <button className="text-cyan-800 border border-cyan-800 rounded-sm hover:bg-[#116A7B] px-4 py-1 text-sm hover:text-white" onClick={() => setShowUpload(!showUpload)}>
-            + Thêm tập tin
-          </button>
+          <div>
+            <button className="text-cyan-800 border border-cyan-800 rounded-sm hover:bg-[#116A7B] px-4 py-1 text-sm hover:text-white" onClick={() => setShowUpload(!showUpload)}>
+              + Tải đơn hàng
+            </button>
 
-          {showUpload && (
-            <div className="absolute top-16 right-5 w-80 z-10">
-              <UploadFile />
-            </div>
-          )}
+            {showUpload && (
+              <div className="absolute top-16 right-5 w-80 z-10">
+                <UploadFile />
+              </div>
+            )}
+          </div>
+
         </div>
         {children}
       </div>

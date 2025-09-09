@@ -41,27 +41,27 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
   }
 
   function transformData(routes: Route[]) {
-    const allowedPlanIds = ["PREP_O", "READY_O", "INPROG_O", "DONE_O"];
+    const allowedStatusIds = ["PREP_O", "READY_O", "INPROG_O", "DONE_O"];
     const routeMap: RouteMap = {};
-    const ordered = [...allowedPlanIds];
+    const ordered = [...allowedStatusIds];
 
-    // Gom route theo planId
+    // Gom route theo StatusId
     routes.forEach(route => {
-      const planId = route.plan?.id;
-      if (allowedPlanIds.includes(planId)) {
-        if (!routeMap[planId]) {
-          routeMap[planId] = [];
+      const StatusId = route.status?.id;
+      if (allowedStatusIds.includes(StatusId)) {
+        if (!routeMap[StatusId]) {
+          routeMap[StatusId] = [];
         }
-        routeMap[planId].push(route);
+        routeMap[StatusId].push(route);
       }
     });
 
     // Tạo sortedMap có đủ 4 keys, kể cả khi rỗng
     const sortedMap: RouteMap = {};
 
-    allowedPlanIds.forEach(planId => {
-      const routesForPlan = routeMap[planId] || [];
-      sortedMap[planId] = [...routesForPlan].sort((a, b) => {
+    allowedStatusIds.forEach(StatusId => {
+      const routesForStatus = routeMap[StatusId] || [];
+      sortedMap[StatusId] = [...routesForStatus].sort((a, b) => {
         return parseInt(a.startCode) - parseInt(b.startCode);
       });
     });

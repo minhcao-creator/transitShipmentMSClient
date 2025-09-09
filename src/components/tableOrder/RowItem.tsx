@@ -1,15 +1,19 @@
 "use client"
 
-import { useOrder } from '@/context/OrderContext/OrderContext'
+import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
 import { Item } from '@/types/orderLocal'
 import { CheckIcon, MinusIcon, Pencil1Icon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 
 type RowItemProps = {
   item: Item;
+  idParcel: string;
+  idOrder: string;
+  index: number;
+  isShowParcel: boolean;
 }
 
-function RowItem({ item }: RowItemProps) {
+function RowItem({ item, idParcel, idOrder, index, isShowParcel }: RowItemProps) {
 
   const { dispatch } = useOrder()
 
@@ -35,15 +39,22 @@ function RowItem({ item }: RowItemProps) {
   return (
     <div>
       <div className='flex flex-row item-center p-4 border-b border-blue-gray-100 bg-[#dedede]'>
-        <span className='basis-[10%] px-1'>
-          <button className='bg-[#2C2C2C] rounded-sm text-white px-1'>
-            {item.id}
-          </button>
+        <span className='basis-[4%] px-2 border-r'>
+          {index}
         </span>
-        <span className='basis-[20%] px-1'>
+        {isShowParcel && <span className='basis-[10%] px-2 border-r'>
+          {idOrder}
+        </span>}
+        {isShowParcel && <span className='basis-[10%] px-2 border-r'>
+          {idParcel}
+        </span>}
+        <span className={isShowParcel ? 'basis-[10%] px-2' : 'basis-[20%] px-2'}>
+          {item.id}
+        </span>
+        <span className='basis-[20%] px-2'>
           {item.name}
         </span>
-        <span className='basis-[18%] px-1 flex gap-2'>
+        <span className='basis-[12%] px-1 flex gap-2'>
           <button className='w-4 h-4 border border-slate-600 rounded-sm hover:bg-slate-600 hover:text-white'
             onClick={() => {
               handleEditItem({
@@ -67,16 +78,16 @@ function RowItem({ item }: RowItemProps) {
           </button>
         </span>
         {editNote ? (
-          <input className='basis-[48%] px-1 border-b border-black mr-[2%] focus:outline-none bg-[#B8B8B8]' value={note}
+          <input className='basis-[25%] px-2 border-b border-black mr-[2%] focus:outline-none bg-[#B8B8B8]' value={note}
             onChange={(e) => setNote(e.target.value)}
           />
         ) : (
-          <span className='basis-[50%] px-1'>
+          <span className='basis-[25%] px-2'>
             {item.note}
           </span>
         )}
 
-        <button className='basis-[4%] px-1 border-neutral-600 border-x hover:text-cyan-600'
+        <button className='basis-[5%] px-2 border-neutral-600 border-x hover:text-cyan-600'
           onClick={handleEditButton}>
           {editNote ? <CheckIcon /> : <Pencil1Icon />}
         </button>

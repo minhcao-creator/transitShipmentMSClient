@@ -68,6 +68,7 @@ export type Order = {
   status?: OrderStatus;
   parcels: Parcels[];
   postOfficeManager?: PostOfficeManager;
+  currentStation?: Station;
   departureStation?: Station;
   createdAt: string;
 }
@@ -75,6 +76,8 @@ export type Order = {
 export type State = {
   orders: Order[];
   pageIndex: number;
+  pageParcelIndex: number;
+  pageItemIndex: number;
   pageSize: number;
   isFilter: boolean;
   titleFilter: keyof Order | undefined;
@@ -118,6 +121,8 @@ export type OrderAction =
   | { type: "SET_ORDERS"; payload: Order[] }
   | { type: "IMPORT_EXCEL"; payload: Order[] }
   | { type: "SET_ORDERS_PAGINATION"; payload: number }
+  | { type: "SET_PARCELS_PAGINATION"; payload: number }
+  | { type: "SET_ITEMS_PAGINATION"; payload: number }
   | { type: "SET_ORDERS_FILTER"; payload: FilterType }
   | { type: "SET_ORDERS_NONFILTER" }
   | { type: "ADD_ORDER"; payload: Order }

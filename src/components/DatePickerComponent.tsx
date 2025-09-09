@@ -10,7 +10,15 @@ import { vi } from "date-fns/locale/vi";
 
 import "../datepickercss.css";
 
-registerLocale("vi", vi);
+const customVi = {
+  ...vi,
+  localize: {
+    ...vi.localize,
+    day: (n: number) => ["CN", "T2", "T3", "T4", "T5", "T6", "T7"][n],
+  },
+};
+
+registerLocale("custom-vi", customVi);
 
 
 export default function DatePickerComponent() {
@@ -34,7 +42,7 @@ export default function DatePickerComponent() {
 
   return (
     <DatePicker
-      locale="vi"
+      locale="custom-vi"
       showIcon
       icon={<CalendarIcon className="text-cyan-800" />} // đổi icon ở đây
       dateFormat={"eeee, d MMMM yyyy"}

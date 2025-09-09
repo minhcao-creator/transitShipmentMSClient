@@ -3,14 +3,14 @@
 import DropdownIcon from '@/assets/img/dropdownIcon'
 import DatePickerComponent from '@/components/DatePickerComponent'
 import Pagination from '@/components/Pagination'
-import HeaderItem from '@/components/tableOrder/HeaderItem'
-import RowItem from '@/components/tableOrder/RowItem'
+import HeaderOrder from '@/components/tableOrder/HeaderOrder'
+import Row from '@/components/tableOrder/Row'
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
-import { Item, Order } from '@/types/orderStation'
+import { Order } from '@/types/orderStation'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 
-function ParcelPage() {
+function OrderPage() {
 
   const titleFilterLabels: Record<string, string> = {
     id: "Mã đơn",
@@ -22,34 +22,8 @@ function ParcelPage() {
   };
 
   const { orderState, dispatch } = useOrder()
-
-  type ItemWithOrder = Item & { idOrder: string } & { idParcel: string };
-
-  const items: ItemWithOrder[] = [];
-  for (const order of orderState.orders) {
-    if (order.parcels) {
-      for (const parcel of order.parcels) {
-        if (parcel.items) {
-          items.push(
-            ...parcel.items.map(item => ({
-              ...item,
-              idOrder: order.id,
-              idParcel: parcel.id
-            }))
-          );
-        }
-      }
-    }
-  }
-
-
-  const total = Math.ceil(items.length / orderState.pageSize)
-
-  const current = orderState.pageItemIndex
-
-  const indexStart = (orderState.pageItemIndex - 1) * orderState.pageSize
-  const indexEnd = orderState.pageItemIndex * orderState.pageSize
-  const itemsCurrent = items.length > indexEnd ? items.slice(indexStart, indexEnd) : items.slice(indexStart)
+  const total = Math.ceil(orderState.orders.length / orderState.pageSize)
+  const current = orderState.pageIndex
 
   const [titleFilter, setTitleFilter] = useState<keyof Order | undefined>(undefined)
   const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
@@ -118,16 +92,12 @@ function ParcelPage() {
         <DatePickerComponent />
       </div>
       <div className='text-sm'>
-        <HeaderItem idParcel='' idOrder='' isShowParcel={true} />
-        <div className='h-[62dvh] overflow-y-auto'>
-          {itemsCurrent.map((item, index) => (
-            <RowItem item={item} key={item.id} idParcel={item.idParcel} idOrder={item.idOrder} index={indexStart + index + 1} isShowParcel={true} />
-          ))}
-        </div>
-        <Pagination total={total} current={current} typeTable='item' />
+        <HeaderOrder />
+        <Row />
+        <Pagination total={total} current={current} />
       </div>
-    </div >
+    </div>
   )
 }
 
-export default ParcelPage
+export default OrderPage

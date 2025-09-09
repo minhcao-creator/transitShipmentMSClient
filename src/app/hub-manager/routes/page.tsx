@@ -7,13 +7,13 @@ import { api } from "@/context/AuthContext/AuthContext";
 import { useOrder } from "@/context/OrderStationContext/OrderStationContext";
 import { useRouter } from "next/navigation";
 import LocalTag from "@/components/routesTag/localTag";
-import { Order } from "@/types/orderLocal";
-import { Station } from "@/types/orderLocal";
+import { Order, Station } from "@/types/orderStation";
 import { Vehicle } from "@/types/routes";
 import VehicleTag from "@/components/routesTag/vehicleTag";
 import Board from "@/components/boadComponent/BoardRoute";
 import { useBoard } from "@/context/RouteContext/RouteContext";
 import { RouteMap } from "@/types/routeInit";
+import RouteAdd from "@/components/modal/RouteAdd";
 
 const override = {
   display: "block",
@@ -28,6 +28,7 @@ const MapRoutes = dynamic(
 );
 
 const Routes = () => {
+  const [allLocations, setAllLocations] = useState<any>([])
   const [locations, setLocations] = useState<any>([])
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [routeList, setRouteList] = useState<any>(null)
@@ -36,6 +37,8 @@ const Routes = () => {
   const [modeButton, setModeButton] = useState<boolean>(true)
   const [heightFull, setHeightFull] = useState<boolean>(false)
 
+  const [showModal, setShowModal] = useState<boolean>(false)
+
   const [driverShow, setDriverShow] = useState<boolean>(true)
   const [mapKey, setMapKey] = useState(0);
 
@@ -43,19 +46,18 @@ const Routes = () => {
 
   const { orderState } = useOrder()
 
-
-  const groupedOrders: Record<string, { managerId: string; station: Station | undefined; orders: Order[] }> = {};
-
   const newOrderState = orderState.orders.filter((order) => order.status?.name === 'Pending')
 
-  newOrderState.forEach(order => {
-    const managerId = order?.postOfficeManager?.id || '';
-    const station = order.departureStation
-    if (!groupedOrders[managerId]) {
-      groupedOrders[managerId] = { managerId, station, orders: [] };
-    }
-    groupedOrders[managerId].orders.push(order);
-  });
+  const groupedOrders: Record<string, { stationId: string; station: Station | undefined; orders: Order[] }>
+    = newOrderState.reduce((acc: any, order) => {
+      const stationId = order.departureStation?.id || '';
+      const station = order.departureStation;
+      if (!acc[stationId]) {
+        acc[stationId] = { stationId, station, orders: [] };
+      }
+      acc[stationId].orders.push(order);
+      return acc;
+    }, {});
 
   const groupedOrderList = Object.values(groupedOrders);
 
@@ -69,27 +71,14 @@ const Routes = () => {
   }
 
   const vehicleRefs = useRef(new Map<string, HTMLDivElement>());
-
-  useEffect(() => {
-    const targetVehicle = vehicles.find((vehicle) => {
-      const route = Object.values(boardState.columns)?.find((route) => route.vehicle.id === vehicle.id);
-      return route?.routeVisitsStations.some((routeVisitsStation: any) => routeVisitsStation.station == stationId);
-    });
-
-    if (targetVehicle) {
-      const targetRef = vehicleRefs?.current?.get(targetVehicle.id);
-      if (targetRef) {
-        targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }
-  }, [stationId, vehicles, routeList]);
+  const localRefs = useRef(new Map<string, HTMLDivElement>());
 
   useEffect(() => {
     try {
+
       api.get('/stations')
         .then(function (response) {
-          const locations = response.data.map((loc: any) => { return { id: loc.id, name: loc.name, lat: loc.latitude, lng: loc.longtitude } });
-          setLocations(locations)
+          setAllLocations(response.data)
         })
         .catch(function (error) {
           console.log(error);
@@ -109,6 +98,34 @@ const Routes = () => {
     }
 
   }, [])
+
+  useEffect(() => {
+    const targetVehicle = vehicles.find((vehicle) => {
+      const route = Object.values(boardState.columns)?.find((route) => route.vehicle.id === vehicle.id);
+      return route?.routeVisitsStations.some((routeVisitsStation: any) => routeVisitsStation.station == stationId);
+    });
+
+    if (targetVehicle) {
+      const targetRef = vehicleRefs?.current?.get(targetVehicle.id);
+      if (targetRef) {
+        targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [stationId, vehicles, routeList]);
+
+  useEffect(() => {
+    if (!stationId) return;
+
+    const targetRef = localRefs.current?.get(stationId);
+    if (targetRef) {
+      targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [stationId, groupedOrderList]);
+
+  useEffect(() => {
+    const locations = allLocations.map((loc: any) => { return { id: loc.id, name: loc.name, lat: loc.latitude, lng: loc.longtitude, haveOrder: !!groupedOrders[loc.id] } });
+    setLocations(locations)
+  }, [allLocations, orderState])
 
   useEffect(() => {
     setMapKey(prevKey => prevKey + 1);
@@ -149,7 +166,14 @@ const Routes = () => {
             ) : (
               <div className="rounded-b-sm bg-white p-2 flex flex-col gap-3 grow max-h-[100dvh] overflow-y-auto">
                 {groupedOrderList.map((groupedOrder: any) => (
-                  <LocalTag localName={groupedOrder.station?.name || 'null'} orders={groupedOrder.orders} />
+                  <div
+                    key={groupedOrder.station?.id}
+                    ref={(el) => {
+                      if (el) localRefs?.current?.set(groupedOrder.station?.id, el);
+                    }}
+                  >
+                    <LocalTag groupedOrder={groupedOrder} stationId={stationId} setStationId={setStationId} />
+                  </div>
                 ))}
               </div>
             )}
@@ -174,7 +198,7 @@ const Routes = () => {
         :
         <div className={`transition-all duration-1000 overflow-hidden z-30 absolute left-0 bottom-0 p-2 w-full flex flex-col items-end justify-start p-4 gap-2 ${heightFull ? 'h-screen' : 'h-80'} `}>
           <div className="w-full flex justify-end items-center gap-4">
-            <button onClick={() => { }} className="text-white bg-teal-800 flex items-center gap-2 px-2 p-1 rounded hover:bg-teal-700">
+            <button onClick={() => setShowModal(!showModal)} className="text-white bg-teal-800 flex items-center gap-2 px-2 p-1 rounded hover:bg-teal-700">
               <PlusIcon className="size-5" />
               <span className="text-sm">Tạo chuyến đi mới</span>
             </button>
@@ -202,6 +226,9 @@ const Routes = () => {
         <span>{modeButton ? "EDIT" : "ALNS"}</span>
         <ChevronLeftIcon width={24} height={24} />
       </button>
+
+      {showModal && <RouteAdd setShowModal={() => setShowModal(false)} />}
+
     </div >
   )
 };

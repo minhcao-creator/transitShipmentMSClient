@@ -38,6 +38,9 @@ export type Route = {
   plan: {
     id: string;
   },
+  status: {
+    id: string;
+  },
   routeVisitsStations: [
     {
       station: string,

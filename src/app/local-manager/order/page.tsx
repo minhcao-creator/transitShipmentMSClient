@@ -5,10 +5,11 @@ import DatePickerComponent from '@/components/DatePickerComponent'
 import Pagination from '@/components/Pagination'
 import HeaderOrder from '@/components/tableOrder/HeaderOrder'
 import Row from '@/components/tableOrder/Row'
+import { api } from '@/context/AuthContext/AuthContext'
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
-import { Order } from '@/types/orderStation'
-import { Cross1Icon } from '@radix-ui/react-icons'
-import { useState } from 'react'
+import { Order, Station } from '@/types/orderStation'
+import { Cross1Icon, PlusIcon } from '@radix-ui/react-icons'
+import { useEffect, useState } from 'react'
 
 function OrderPage() {
 
@@ -22,6 +23,7 @@ function OrderPage() {
   };
 
   const { orderState, dispatch } = useOrder()
+
   const total = Math.ceil(orderState.orders.length / orderState.pageSize)
   const current = orderState.pageIndex
 
@@ -29,6 +31,37 @@ function OrderPage() {
   const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
 
   const [nameFilter, setNameFilter] = useState<string>("")
+
+  const [showAddTransit, setShowAddTransit] = useState<boolean>(false)
+
+  const orderPending = orderState.orders.filter((order) => order.status?.name == "Pending")
+
+  const [id, setId] = useState<string>('')
+  const [stations, setStations] = useState<Station[]>([])
+  const [station, setStation] = useState<Station | undefined>(undefined)
+  const [showStation, setShowStation] = useState<boolean>(false)
+
+  const handleCreateTTO = async () => {
+    try {
+      setShowAddTransit(!showAddTransit)
+      const id = `TTO${(+new Date).toString(36).slice(-6)}`
+      // await api.post('transit-orders', {
+      //   id: id
+      // })
+      setId(id)
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+  useEffect(() => {
+    const getStations = async () => {
+      const res = await api.get('stations')
+      setStations(res.data)
+    }
+    getStations()
+  }, [])
 
   return (
     <div>
@@ -62,46 +95,6 @@ function OrderPage() {
             }}>
             <Cross1Icon />
           </button>}
-          {/* {showTitleFilter && <div className='absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]'>
-            <button
-              className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('id')
-                setShowTitleFilter(!showTitleFilter)
-              }}
-            >Mã đơn</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('senderName')
-                setShowTitleFilter(!showTitleFilter)
-              }}>Người gửi</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('receiverName')
-                setShowTitleFilter(!showTitleFilter)
-              }}>Người nhận</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('receiverAddress')
-                setShowTitleFilter(!showTitleFilter)
-              }}>Địa chỉ nhận hàng</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('senderPhoneNumber')
-                setShowTitleFilter(!showTitleFilter)
-              }}>SĐT gửi</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('receiverPhoneNumber')
-                setShowTitleFilter(!showTitleFilter)
-              }}>SĐT nhận</button>
-            <button className='hover:bg-rose-200 p-2 border border-rose-200 text-rose-400 rounded m-1'
-              onClick={() => {
-                setTitleFilter(undefined)
-                setShowTitleFilter(!showTitleFilter)
-                dispatch({ type: "SET_ORDERS_NONFILTER" })
-              }}>Bỏ chọn</button>
-          </div>} */}
           {showTitleFilter && (
             <div className="absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]">
               {Object.entries(titleFilterLabels).map(([key, label]) => (
@@ -134,9 +127,68 @@ function OrderPage() {
       <div className='text-sm'>
         <HeaderOrder />
         <Row />
-        <Pagination total={total} current={current} />
+        <Pagination total={total} current={current} typeTable='order' />
       </div>
-    </div>
+      <div className='absolute bottom-4 right-4'>
+        <button
+          className='p-2 rounded bg-cyan-800 shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]'
+          onClick={handleCreateTTO}
+        >
+          <PlusIcon className='w-8 h-8 text-white' />
+        </button>
+      </div>
+      <div className={`absolute text-white bottom-20 right-4 overflow-hidden duration-200`}>
+        <div className={`relative flex flex-col gap-2 h-[33rem] w-[16rem] p-3 bg-cyan-800 bg-opacity-20 border-2 border-cyan-950 rounded ${showAddTransit ? "" : "hidden opacity-0"}`}>
+          <p className='mx-auto py-1 px-2 rounded-sm font-medium text-white bg-cyan-900'>TRUNG CHUYỂN</p>
+          <button
+            className="w-full flex justify-between bg-cyan-950 border border-white px-3 py-2 items-center rounded-sm"
+            onClick={() => setShowStation(!showStation)}
+          >
+            <span>{station?.name || "Chọn bưu cục nhận"}</span>
+            <DropdownIcon />
+          </button>
+          {showStation && (
+            <div className="overflow-y-auto h-[25rem] text-cyan-950 absolute top-28 right-1 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]">
+              {stations.map((station) => (
+                <button
+                  key={station.id}
+                  className="hover:bg-rose-200 p-2 border rounded m-1"
+                  onClick={() => {
+                    setStation(station)
+                    setShowStation(false)
+                  }}
+                >
+                  {station.name}
+                </button>
+              ))}
+              <button
+                className="hover:bg-rose-200 p-2 border border-rose-200 text-rose-400 rounded m-1"
+                onClick={() => {
+                  setStation(undefined)
+                  setShowStation(false)
+                }}
+              >
+                Bỏ chọn
+              </button>
+            </div>
+          )}
+          <div className='flex-1 overflow-y-auto rounded-sm bg-cyan-900 border border-white p-2 bg-opacity-40'>
+            {orderPending.map((order) => <div key={order.id} className='text-sm flex bg-cyan-950 border-opacity-40 rounded-sm m-1 py-1 px-2 items-center'>
+              <div className='flex-1'>{order.id}</div>
+              <input type="checkbox" className="w-4 h-4" />
+            </div>)}
+          </div>
+          <div className="flex w-full justify-between">
+            <button className="text-sm bg-opacity-90 rounded-sm px-4 py-1 bg-rose-800 text-white hover:scale-110 transition-transform duration-200">
+              BỎ
+            </button>
+            <button className="text-sm bg-opacity-90 rounded-sm px-4 py-1 bg-cyan-800 text-white hover:scale-110 transition-transform duration-200">
+              TẠO
+            </button>
+          </div>
+        </div>
+      </div>
+    </div >
   )
 }
 

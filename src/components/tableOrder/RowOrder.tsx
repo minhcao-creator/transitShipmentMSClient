@@ -97,8 +97,8 @@ function RowOrder({ order, index }: RowOrderProps) {
         {show && (<div className='pl-8 pr-4 bg-white'>
           <HeaderPackage idOrder={order.id} showIdOrder={false} />
           <div className='max-h-[44dvh] overflow-y-auto'>
-            {order.parcels?.map((parcel) => (
-              <RowPackage idOrder={order.id} parcelData={parcel} key={parcel.id} showIdOrder={false} />
+            {order.parcels?.map((parcel, index) => (
+              <RowPackage idOrder={order.id} parcelData={parcel} key={parcel.id} index={index + 1} showIdOrder={false} />
             ))}
           </div>
         </div>)}

@@ -41,7 +41,7 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
 
   function transformData(routes: Route[]): Board {
     const filteredRoutes = routes
-      .filter(route => route.plan?.id === 'INIT')
+      .filter(route => route.status?.id === 'INIT')
       .map(route => ({
         ...route,
         routeVisitsStations: [...route.routeVisitsStations].sort(
@@ -79,7 +79,6 @@ export function useBoard() {
 function boardReducer(state: Board, action: BoardAction): Board {
   switch (action.type) {
     case "SET_TRIPS": {
-      console.log('action.payload', action.payload)
       return action.payload;
     }
     case "MOVE_COLUMN": {
@@ -115,6 +114,7 @@ function boardReducer(state: Board, action: BoardAction): Board {
       return newState
 
     }
+
     case "DELETE_STATION": {
       const idColumn = action.payload.idColumn;
       const idStation = action.payload.station
@@ -133,6 +133,7 @@ function boardReducer(state: Board, action: BoardAction): Board {
 
       return newState
     }
+
     case "MOVE_STATION": {
       if (
         action.payload.source.droppableId ===
@@ -179,6 +180,10 @@ function boardReducer(state: Board, action: BoardAction): Board {
       };
 
       return newState;
+    }
+
+    case "ADD_TRIP": {
+
     }
     default: {
       return boardInitialState;

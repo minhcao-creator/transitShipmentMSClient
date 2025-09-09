@@ -1,22 +1,36 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { Order, Station } from "@/types/orderStation";
 
 type LocalTagProps = {
-  localName: string,
-  orders: []
+  groupedOrder: {
+    stationId: string;
+    station: Station | undefined;
+    orders: Order[];
+  },
+  stationId: string,
+  setStationId: any
 }
 
 
-function LocalTag({ localName, orders }: LocalTagProps) {
-  const [show, setShow] = useState<Boolean>(false)
+function LocalTag({ groupedOrder, stationId, setStationId }: LocalTagProps) {
+
+  const [show, setShow] = useState<Boolean>(groupedOrder.stationId == stationId)
+
+  useEffect(() => {
+    setShow(groupedOrder.stationId == stationId)
+  }, [stationId])
 
   return (
     <div className="bg-gray-200 rounded-b">
-      <button key={localName} className="bg-[#F8F8F8] p-3 drop-shadow-[1.4px_1.4px_1.4px_rgba(88,88,88,0.4)] rounded-sm text-sm flex items-center justify-between"
-        onClick={() => setShow(!show)}>
-        <span>{localName}</span>
+      <button key={groupedOrder.stationId} className="bg-[#F8F8F8] p-3 drop-shadow-[1.4px_1.4px_1.4px_rgba(88,88,88,0.4)] rounded-sm text-sm flex items-center justify-between"
+        onClick={() => {
+          setShow(!show)
+          setStationId(groupedOrder.stationId)
+        }}>
+        <span>{groupedOrder.station?.name}</span>
       </button>
       {show && <div>
-        {orders.map((order: any) => <div className="p-2">
+        {groupedOrder.orders.map((order: any) => <div className="p-2">
           <div>
             {order.id}
           </div>

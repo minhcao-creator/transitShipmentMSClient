@@ -2,6 +2,7 @@
 
 import DropdownIcon from '@/assets/img/dropdownIcon'
 import DatePickerComponent from '@/components/DatePickerComponent'
+import UploadFile from '@/components/form/uploadFile'
 import Pagination from '@/components/Pagination'
 import HeaderItem from '@/components/tableOrder/HeaderItem'
 import RowItem from '@/components/tableOrder/RowItem'
@@ -43,13 +44,8 @@ function ParcelPage() {
   }
 
 
-  const total = Math.ceil(items.length / orderState.pageSize)
-
-  const current = orderState.pageItemIndex
-
-  const indexStart = (orderState.pageItemIndex - 1) * orderState.pageSize
-  const indexEnd = orderState.pageItemIndex * orderState.pageSize
-  const itemsCurrent = items.length > indexEnd ? items.slice(indexStart, indexEnd) : items.slice(indexStart)
+  const total = Math.ceil(orderState.orders.length / orderState.pageSize)
+  const current = orderState.pageIndex
 
   const [titleFilter, setTitleFilter] = useState<keyof Order | undefined>(undefined)
   const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
@@ -88,6 +84,46 @@ function ParcelPage() {
             }}>
             <Cross1Icon />
           </button>}
+          {/* {showTitleFilter && <div className='absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]'>
+            <button
+              className='hover:bg-rose-200 p-2 border rounded m-1'
+              onClick={() => {
+                setTitleFilter('id')
+                setShowTitleFilter(!showTitleFilter)
+              }}
+            >Mã đơn</button>
+            <button className='hover:bg-rose-200 p-2 border rounded m-1'
+              onClick={() => {
+                setTitleFilter('senderName')
+                setShowTitleFilter(!showTitleFilter)
+              }}>Người gửi</button>
+            <button className='hover:bg-rose-200 p-2 border rounded m-1'
+              onClick={() => {
+                setTitleFilter('receiverName')
+                setShowTitleFilter(!showTitleFilter)
+              }}>Người nhận</button>
+            <button className='hover:bg-rose-200 p-2 border rounded m-1'
+              onClick={() => {
+                setTitleFilter('receiverAddress')
+                setShowTitleFilter(!showTitleFilter)
+              }}>Địa chỉ nhận hàng</button>
+            <button className='hover:bg-rose-200 p-2 border rounded m-1'
+              onClick={() => {
+                setTitleFilter('senderPhoneNumber')
+                setShowTitleFilter(!showTitleFilter)
+              }}>SĐT gửi</button>
+            <button className='hover:bg-rose-200 p-2 border rounded m-1'
+              onClick={() => {
+                setTitleFilter('receiverPhoneNumber')
+                setShowTitleFilter(!showTitleFilter)
+              }}>SĐT nhận</button>
+            <button className='hover:bg-rose-200 p-2 border border-rose-200 text-rose-400 rounded m-1'
+              onClick={() => {
+                setTitleFilter(undefined)
+                setShowTitleFilter(!showTitleFilter)
+                dispatch({ type: "SET_ORDERS_NONFILTER" })
+              }}>Bỏ chọn</button>
+          </div>} */}
           {showTitleFilter && (
             <div className="absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]">
               {Object.entries(titleFilterLabels).map(([key, label]) => (
@@ -118,15 +154,15 @@ function ParcelPage() {
         <DatePickerComponent />
       </div>
       <div className='text-sm'>
-        <HeaderItem idParcel='' idOrder='' isShowParcel={true} />
-        <div className='h-[62dvh] overflow-y-auto'>
-          {itemsCurrent.map((item, index) => (
-            <RowItem item={item} key={item.id} idParcel={item.idParcel} idOrder={item.idOrder} index={indexStart + index + 1} isShowParcel={true} />
+        <HeaderItem idParcel='' />
+        <div className='max-h-[32dvh] overflow-y-auto'>
+          {items.map((item) => (
+            <RowItem item={item} key={item.id} />
           ))}
         </div>
-        <Pagination total={total} current={current} typeTable='item' />
+        <Pagination total={total} current={current} />
       </div>
-    </div >
+    </div>
   )
 }
 

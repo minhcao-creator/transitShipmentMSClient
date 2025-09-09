@@ -3,15 +3,33 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons"
 
 type PaginationProps = {
   total: number,
-  current: number
+  current: number,
+  typeTable: 'item' | 'parcel' | 'order',
 }
 
-function Pagination({ total, current }: PaginationProps) {
+function Pagination({ total, current, typeTable }: PaginationProps) {
 
   const { dispatch } = useOrder()
 
   const handlePagination = (indexPag: number) => {
-    return indexPag > 0 && indexPag < total + 1 ? dispatch({ type: "SET_ORDERS_PAGINATION", payload: indexPag }) : ''
+    if (indexPag < 1 || indexPag > total) return
+    switch (typeTable) {
+      case 'order':
+        dispatch({ type: "SET_ORDERS_PAGINATION", payload: indexPag })
+        break;
+
+      case 'parcel':
+        dispatch({ type: "SET_PARCELS_PAGINATION", payload: indexPag })
+        break;
+
+      case 'item':
+        dispatch({ type: "SET_ITEMS_PAGINATION", payload: indexPag })
+        break;
+
+      default:
+        break;
+    }
+    // return indexPag > 0 && indexPag < total + 1 ? dispatch({ type: "SET_ORDERS_PAGINATION", payload: indexPag }) : ''
   }
 
   const show1 = total < 7;

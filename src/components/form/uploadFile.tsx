@@ -34,7 +34,11 @@ const UploadFile = () => {
         senderPhoneNumber: o.senderPhoneNumber,
         receiverPhoneNumber: o.receiverPhoneNumber,
         message: o.message,
-        parcels: []
+        parcels: [],
+        status: {
+          id: "OrderStatuses001",
+          name: "Pending"
+        }
       }));
 
       const parcels: any[] = parcelsSheet.map((p: any) => ({

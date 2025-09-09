@@ -3,10 +3,13 @@
 import { State, OrderAction } from "@/types/orderStation"
 import { createContext, PropsWithChildren, useContext, useEffect, useReducer, useState } from "react"
 import { api, useAuth } from "../AuthContext/AuthContext"
+import { startOfToday, format } from "date-fns"
 
 const initialData: State = {
   orders: [],
   pageIndex: 1,
+  pageParcelIndex: 1,
+  pageItemIndex: 1,
   pageSize: 7,
   isFilter: false,
   titleFilter: undefined,
@@ -19,6 +22,7 @@ const OrderStationContext = createContext({
 })
 
 export const OrderStationProvider = ({ children }: PropsWithChildren) => {
+  console.log('orderContex')
   const { authState } = useAuth();
 
   const [orderState, dispatch] = useReducer(
@@ -33,8 +37,8 @@ export const OrderStationProvider = ({ children }: PropsWithChildren) => {
 
   async function loadData() {
     try {
-      // const res = await api.get(`orders/departure-stations/${authState.user?.station}`)
-      const res = await api.get('orders')
+      const today = format(startOfToday(), "yyyy-MM-dd")
+      const res = authState.user?.role == 'hub-manager' ? await api.get('orders') : await api.get(`orders/departure-stations/${authState.user?.station}?iso_string=${today}`)
       dispatch({ type: "SET_ORDERS", payload: res.data });
       setLoading(false);
     } catch (error) {
@@ -64,6 +68,8 @@ function orderReducer(state: State, action: OrderAction): State {
       return {
         orders: action.payload,
         pageIndex: 1,
+        pageParcelIndex: 1,
+        pageItemIndex: 1,
         pageSize: 7,
         isFilter: false,
         titleFilter: undefined,
@@ -78,6 +84,8 @@ function orderReducer(state: State, action: OrderAction): State {
       return {
         orders: newOrders,
         pageIndex: 1,
+        pageParcelIndex: 1,
+        pageItemIndex: 1,
         pageSize: 7,
         isFilter: false,
         titleFilter: undefined,
@@ -89,6 +97,20 @@ function orderReducer(state: State, action: OrderAction): State {
       return {
         ...state,
         pageIndex: action.payload
+      }
+    }
+
+    case "SET_PARCELS_PAGINATION": {
+      return {
+        ...state,
+        pageParcelIndex: action.payload
+      }
+    }
+
+    case "SET_ITEMS_PAGINATION": {
+      return {
+        ...state,
+        pageItemIndex: action.payload
       }
     }
 
@@ -225,6 +247,8 @@ function orderReducer(state: State, action: OrderAction): State {
       return {
         orders: newOrders,
         pageIndex: 1,
+        pageParcelIndex: 1,
+        pageItemIndex: 1,
         pageSize: 7,
         isFilter: false,
         titleFilter: undefined,

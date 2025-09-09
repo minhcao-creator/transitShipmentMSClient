@@ -1,11 +1,13 @@
 "use client"
 
-import { memo, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import {
   MapContainer,
   TileLayer,
   Marker,
   useMap,
+  Popup,
+  Tooltip
 } from "react-leaflet";
 import { Icon, LatLngLiteral } from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -13,7 +15,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import RoutingMachine from "./RoutingMachine"
 
-type MapLocation = LatLngLiteral & { id: string, name: string };
+type MapLocation = LatLngLiteral & { id: string, name: string, haveOrder: boolean };
 
 type MapProps = {
   center: LatLngLiteral;
@@ -45,30 +47,60 @@ export const Map = memo(({ center, locations, routes, setStationId, stationId }:
     iconSize: [18, 28],
   });
 
+  const mapMarkIconsNoneOrder = new Icon({
+    iconUrl: "nonOrder.png",
+    iconSize: [18, 28],
+  });
+
+  const markerMapRefs = useRef<Record<string, L.Marker>>({});
+
+
+  useEffect(() => {
+    if (stationId && markerMapRefs.current[stationId]) {
+      const marker = markerMapRefs.current[stationId];
+      marker.openPopup();
+    }
+  }, [stationId]);
+
   const renderMarks = () => {
     return locations?.map((location) => (
-      <div key={location.id}>
-        {location.id == '1420' ? <Marker
-          icon={mapMarkIcon}
+      location.id == '1338' ? <Marker
+        key={location.id}
+        ref={(el) => {
+          if (el) markerMapRefs.current[location.id] = el;
+        }}
+        icon={mapMarkIcon}
+        position={{ lat: location.lat, lng: location.lng }}
+        eventHandlers={{
+          click: () => {
+            setSelectedLocation(location);
+            setStationId(location.id);
+          },
+        }}
+      >
+        <Tooltip>{location.name}</Tooltip>
+        <Popup>{location.name}</Popup>
+      </Marker> :
+        <Marker
+          ref={(el) => {
+            if (el) markerMapRefs.current[location.id] = el;
+          }}
+          icon={location.haveOrder ? mapMarkIcons : mapMarkIconsNoneOrder}
           position={{ lat: location.lat, lng: location.lng }}
           eventHandlers={{
             click: () => {
               setSelectedLocation(location);
+              setStationId(location.id);
             },
           }}
-        /> :
-          <Marker
-            icon={mapMarkIcons}
-            position={{ lat: location.lat, lng: location.lng }}
-            eventHandlers={{
-              click: () => {
-                setSelectedLocation(location);
-              },
-            }}
-          />}
-      </div>
-    ));
+        >
+          <Tooltip>{location.name}</Tooltip>
+          <Popup>{location.name}</Popup>
+        </Marker>));
   };
+
+  console.log('routes', routes)
+  console.log('locations', locations)
 
   return (
     <>
@@ -94,7 +126,7 @@ export const Map = memo(({ center, locations, routes, setStationId, stationId }:
           {
             routes?.map((route: any, index: number) => {
               return (
-                <RoutingMachine stationId={stationId} setSelectedLocation={setSelectedLocation} locations={locations} route={route} color={colors[index]} index={index} setStationId={setStationId} />
+                <RoutingMachine key={index} stationId={stationId} setSelectedLocation={setSelectedLocation} locations={locations} route={route} color={colors[index]} index={index} setStationId={setStationId} />
               )
             })
           }

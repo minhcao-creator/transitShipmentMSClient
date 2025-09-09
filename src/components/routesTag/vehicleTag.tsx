@@ -34,7 +34,7 @@ function VehicleTag({ vehicle, route, stationId, setStationId }: VehicleTagProps
         console.log(data)
         if (data.data.status === 'ok') {
           alert("Đã gửi thông báo!");
-          await api.patch(`/routes/${route.id}/plan/WAIT_CF_O/set`)
+          await api.patch(`/routes/${route.id}/status/WAIT_CF_O/set`)
           setDone(true)
         }
         else alert("Lỗi gửi thông báo");
@@ -57,11 +57,10 @@ function VehicleTag({ vehicle, route, stationId, setStationId }: VehicleTagProps
       <div className="w-full bg-[#F8F8F8] p-2 drop-shadow-[1.4px_1.4px_1.4px_rgba(88,88,88,0.4)] rounded-sm flex items-center justify-between">
         <button key={vehicle.id}
           onClick={() => setShow(!show)}>
-          <div className="bg-[#2C2C2C] rounded-sm text-white px-2 py-1 text-[10px]">{vehicle.vehicleRegistrationPlate}</div>
+          <div className="bg-[#2C2C2C] rounded-sm text-white px-2 py-1 text-[10px] hover:scale-110 transition-transform duration-200">{vehicle.vehicleRegistrationPlate}</div>
         </button>
         <button onClick={sendNotification} disabled={loading || done}>
-          {/* <button disabled={loading || done}> */}
-          <div className={`${done ? 'bg-gray-400 text-gray-200 bg-opacity-80' : 'bg-cyan-900'} rounded-sm text-white px-2 py-1 text-[10px]`}>{loading ? "ĐANG GỬI..." : "PHÂN CÔNG"}</div>
+          <div className={`${done ? 'bg-gray-400 text-gray-200 bg-opacity-80' : 'bg-cyan-900'} rounded-sm text-white px-2 py-1 text-[10px] hover:scale-110 transition-transform duration-200`}>{loading ? "ĐANG GỬI..." : "PHÂN CÔNG"}</div>
         </button>
       </div>
 
@@ -73,7 +72,7 @@ function VehicleTag({ vehicle, route, stationId, setStationId }: VehicleTagProps
 
       {show && route && route.routeVisitsStations.map((routeVisitsStation: any) => <button
         className="block w-full"
-        onClick={() => routeVisitsStation.station == '1420' ? null : setStationId(routeVisitsStation.station)}>
+        onClick={() => routeVisitsStation.station == '1338' ? null : setStationId(routeVisitsStation.station)}>
         <div className={`${routeVisitsStation.station == stationId ? "bg-teal-50 border-2 border-teal-700" : "bg-white"} m-2 rounded p-2`}>
           <div>{routeVisitsStation.station}</div>
           <div className="w-full flex items-center justify-between">

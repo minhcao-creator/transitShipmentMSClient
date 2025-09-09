@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext/AuthContext";
 export const metadata: Metadata = {
-  title: "Map",
+  title: "KKKK",
 };
 
 export default function RootLayout({

@@ -13,9 +13,10 @@ type RowPackageProps = {
   idOrder: string;
   parcelData: Parcels;
   showIdOrder: boolean;
+  index: number;
 }
 
-function RowPackage({ idOrder, parcelData, showIdOrder }: RowPackageProps) {
+function RowPackage({ idOrder, parcelData, showIdOrder, index }: RowPackageProps) {
   const [show, setShow] = useState<boolean>(false)
   const [showModal, setShowModal] = useState<boolean>(false)
 
@@ -30,7 +31,7 @@ function RowPackage({ idOrder, parcelData, showIdOrder }: RowPackageProps) {
       <div>
         <div className='flex flex-row item-center p-4 border-b border-gray-400 bg-[#EDEDED]'>
           <span className='basis-[4%] px-2 border-r border-gray-900'>
-            1
+            {index}
           </span>
           {showIdOrder && <span className='basis-[10%] px-2 border-r border-gray-900'>
             {idOrder}
@@ -74,10 +75,10 @@ function RowPackage({ idOrder, parcelData, showIdOrder }: RowPackageProps) {
         </div>
         {show && (
           <div className='pl-8 pr-4 bg-[#EDEDED]'>
-            <HeaderItem idParcel={parcelData.id} />
+            <HeaderItem idParcel={parcelData.id} idOrder={idOrder} isShowParcel={false} />
             <div className='max-h-[32dvh] overflow-y-auto'>
-              {parcelData.items.map((item) => (
-                <RowItem item={item} key={item.id} />
+              {parcelData.items.map((item, index) => (
+                <RowItem item={item} key={item.id} index={index + 1} idParcel={parcelData.id} idOrder={idOrder} isShowParcel={false} />
               ))}
             </div>
           </div>

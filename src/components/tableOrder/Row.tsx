@@ -17,8 +17,6 @@ export default function Row() {
     return orderFilters
   }
 
-  console.log('orderFilters', handleFilter())
-
   return (
     <div className='h-[62dvh] overflow-y-auto'>
       {handleFilter().map((order, index) => (

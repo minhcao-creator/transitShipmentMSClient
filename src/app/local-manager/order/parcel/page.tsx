@@ -36,8 +36,13 @@ function ParcelPage() {
       );
     }
   }
+
   const total = Math.ceil(parcels.length / orderState.pageSize)
-  const current = orderState.pageIndex
+  const current = orderState.pageParcelIndex
+
+  const indexStart = (orderState.pageParcelIndex - 1) * orderState.pageSize
+  const indexEnd = orderState.pageParcelIndex * orderState.pageSize
+  const parcelsCurrent = parcels.length > indexEnd ? parcels.slice(indexStart, indexEnd) : parcels.slice(indexStart)
 
   const [titleFilter, setTitleFilter] = useState<keyof Order | undefined>(undefined)
   const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
@@ -109,11 +114,11 @@ function ParcelPage() {
       <div className='text-sm'>
         <HeaderPackage idOrder='' showIdOrder={true} />
         <div className='h-[62dvh] overflow-y-auto'>
-          {parcels?.map((parcel) => (
-            <RowPackage parcelData={parcel} key={parcel.id} showIdOrder={true} idOrder={parcel.idOrder} />
+          {parcelsCurrent?.map((parcel, index) => (
+            <RowPackage parcelData={parcel} key={parcel.id} showIdOrder={true} idOrder={parcel.idOrder} index={indexStart + index + 1} />
           ))}
         </div>
-        <Pagination total={total} current={current} />
+        <Pagination total={total} current={current} typeTable='parcel' />
       </div>
     </div>
   )

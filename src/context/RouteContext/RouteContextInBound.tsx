@@ -41,17 +41,17 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
   }
 
   function transformData(routes: Route[]) {
-    const allowedPlanIds = ["PREP_I", "READY_I", "INPROG_I", "DONE_I"];
+    const allowedStatusIds = ["PREP_I", "READY_I", "INPROG_I", "DONE_I"];
     const routeMap: RouteMap = {};
-    const ordered = [...allowedPlanIds];
+    const ordered = [...allowedStatusIds];
 
     routes.forEach(route => {
-      const planId = route.plan?.id;
-      if (allowedPlanIds.includes(planId)) {
-        if (!routeMap[planId]) {
-          routeMap[planId] = [];
+      const StatusId = route.status?.id;
+      if (allowedStatusIds.includes(StatusId)) {
+        if (!routeMap[StatusId]) {
+          routeMap[StatusId] = [];
         }
-        routeMap[planId].push(route);
+        routeMap[StatusId].push(route);
       }
     });
 

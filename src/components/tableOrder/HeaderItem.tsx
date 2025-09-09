@@ -9,9 +9,10 @@ import React, { useState } from 'react'
 type HeaderItemProps = {
   idParcel: string;
   idOrder: string;
+  isShowParcel: boolean;
 }
 
-function HeaderItem({ idParcel, idOrder }: HeaderItemProps) {
+function HeaderItem({ idParcel, idOrder, isShowParcel }: HeaderItemProps) {
 
   const router = useRouter()
 
@@ -49,13 +50,13 @@ function HeaderItem({ idParcel, idOrder }: HeaderItemProps) {
       <span className='basis-[4%] px-2 border-r'>
         STT
       </span>
-      <span className='basis-[10%] px-2 border-r'>
+      {isShowParcel && <span className='basis-[10%] px-2 border-r'>
         Mã đơn hàng
-      </span>
-      <span className='basis-[10%] px-2 border-r'>
+      </span>}
+      {isShowParcel && <span className='basis-[10%] px-2 border-r'>
         Mã kiện hàng
-      </span>
-      <span className='basis-[10%] px-2 border-r'>
+      </span>}
+      <span className={isShowParcel ? 'basis-[10%] px-2 border-r' : 'basis-[20%] px-2 border-r'}>
         Mã món hàng
       </span>
       <span className='basis-[20%] px-2 border-r'>

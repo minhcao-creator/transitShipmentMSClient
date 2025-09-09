@@ -77,7 +77,7 @@ export default function Board() {
 
         const res = await run()
 
-        const res1 = await api.patch(`/routes/${route.id}/plan/${destination.droppableId}/set`)
+        const res1 = await api.patch(`/routes/${route.id}/status/${destination.droppableId}/set`)
         const res2 = await api.put('/routes', {
           id: route.id,
           startCode: startCodeDes().toString(),
@@ -101,27 +101,27 @@ export default function Board() {
   }
 
   function transformData(routes: Route[]) {
-    const allowedPlanIds = ["PREP_O", "READY_O", "INPROG_O", "DONE_O"];
+    const allowedStatusIds = ["PREP_O", "READY_O", "INPROG_O", "DONE_O"];
     const routeMap: RouteMap = {};
-    const ordered = [...allowedPlanIds];
+    const ordered = [...allowedStatusIds];
 
-    // Gom route theo planId
+    // Gom route theo statusId
     routes.forEach(route => {
-      const planId = route.plan?.id;
-      if (allowedPlanIds.includes(planId)) {
-        if (!routeMap[planId]) {
-          routeMap[planId] = [];
+      const statusId = route.status?.id;
+      if (allowedStatusIds.includes(statusId)) {
+        if (!routeMap[statusId]) {
+          routeMap[statusId] = [];
         }
-        routeMap[planId].push(route);
+        routeMap[statusId].push(route);
       }
     });
 
     // Tạo sortedMap có đủ 4 keys, kể cả khi rỗng
     const sortedMap: RouteMap = {};
 
-    allowedPlanIds.forEach(planId => {
-      const routesForPlan = routeMap[planId] || [];
-      sortedMap[planId] = [...routesForPlan].sort((a, b) => {
+    allowedStatusIds.forEach(statusId => {
+      const routesForStatus = routeMap[statusId] || [];
+      sortedMap[statusId] = [...routesForStatus].sort((a, b) => {
         return parseInt(a.startCode) - parseInt(b.startCode);
       });
     });

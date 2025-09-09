@@ -3,17 +3,17 @@
 import DropdownIcon from '@/assets/img/dropdownIcon'
 import DatePickerComponent from '@/components/DatePickerComponent'
 import Pagination from '@/components/Pagination'
-import HeaderItem from '@/components/tableOrder/HeaderItem'
-import RowItem from '@/components/tableOrder/RowItem'
+import HeaderPackage from '@/components/tableOrder/HeaderPackage'
+import RowPackage from '@/components/tableOrder/RowPackage'
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
-import { Item, Order } from '@/types/orderStation'
+import { Order, Parcels } from '@/types/orderStation'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 
 function ParcelPage() {
 
   const titleFilterLabels: Record<string, string> = {
-    id: "Mã đơn",
+    id: "Mã bưu kiện",
     senderName: "Người gửi",
     receiverName: "Người nhận",
     receiverAddress: "Địa chỉ nhận hàng",
@@ -23,33 +23,21 @@ function ParcelPage() {
 
   const { orderState, dispatch } = useOrder()
 
-  type ItemWithOrder = Item & { idOrder: string } & { idParcel: string };
+  type ParcelWithOrder = Parcels & { idOrder: string };
 
-  const items: ItemWithOrder[] = [];
+  const parcels: ParcelWithOrder[] = [];
   for (const order of orderState.orders) {
     if (order.parcels) {
-      for (const parcel of order.parcels) {
-        if (parcel.items) {
-          items.push(
-            ...parcel.items.map(item => ({
-              ...item,
-              idOrder: order.id,
-              idParcel: parcel.id
-            }))
-          );
-        }
-      }
+      parcels.push(
+        ...order.parcels.map(parcel => ({
+          ...parcel,
+          idOrder: order.id
+        }))
+      );
     }
   }
-
-
-  const total = Math.ceil(items.length / orderState.pageSize)
-
-  const current = orderState.pageItemIndex
-
-  const indexStart = (orderState.pageItemIndex - 1) * orderState.pageSize
-  const indexEnd = orderState.pageItemIndex * orderState.pageSize
-  const itemsCurrent = items.length > indexEnd ? items.slice(indexStart, indexEnd) : items.slice(indexStart)
+  const total = Math.ceil(parcels.length / orderState.pageSize)
+  const current = orderState.pageIndex
 
   const [titleFilter, setTitleFilter] = useState<keyof Order | undefined>(undefined)
   const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
@@ -88,6 +76,7 @@ function ParcelPage() {
             }}>
             <Cross1Icon />
           </button>}
+
           {showTitleFilter && (
             <div className="absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]">
               {Object.entries(titleFilterLabels).map(([key, label]) => (
@@ -118,15 +107,15 @@ function ParcelPage() {
         <DatePickerComponent />
       </div>
       <div className='text-sm'>
-        <HeaderItem idParcel='' idOrder='' isShowParcel={true} />
+        <HeaderPackage idOrder='' showIdOrder={true} />
         <div className='h-[62dvh] overflow-y-auto'>
-          {itemsCurrent.map((item, index) => (
-            <RowItem item={item} key={item.id} idParcel={item.idParcel} idOrder={item.idOrder} index={indexStart + index + 1} isShowParcel={true} />
+          {parcels?.map((parcel) => (
+            <RowPackage parcelData={parcel} key={parcel.id} showIdOrder={true} idOrder={parcel.idOrder} />
           ))}
         </div>
-        <Pagination total={total} current={current} typeTable='item' />
+        <Pagination total={total} current={current} />
       </div>
-    </div >
+    </div>
   )
 }
 
