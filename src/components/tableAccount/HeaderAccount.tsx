@@ -9,10 +9,10 @@ function HeaderAccount() {
           Mã người dùng
         </span>
         <span className='basis-[6%] px-2 border-r border-gray-100'>
-          Họ
+          Tên
         </span>
         <span className='basis-[16%] px-2 border-r border-gray-100'>
-          Tên
+          Họ và tên đệm
         </span>
         <span className='basis-[12%] px-2 border-r border-gray-100'>
           Số điện thoại

@@ -6,7 +6,6 @@ import { useUser } from '@/context/UserContext/UserContext'
 import { Role, Station, User } from '@/types/user'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 type AccountEditProps = {
@@ -22,7 +21,6 @@ function AccountEdit({ user, setShowModal }: AccountEditProps) {
   const [role, setRole] = useState<Role>(user.role)
   const [stations, setStations] = useState<Station[]>([])
   const [station, setStation] = useState<Station>(user.station)
-  const router = useRouter()
 
   const getRoles = async () => {
     try {
@@ -46,7 +44,7 @@ function AccountEdit({ user, setShowModal }: AccountEditProps) {
     try {
       const resRole = await api.patch(`/users/${user.id}/role/${role.id}/set`)
 
-      const resStation = (role.name === "hub-manager" || role.name === "local-manager") && await api.patch(`/users/${user.id}/station/${station.id}/set`)
+      const resStation = await api.patch(`/users/${user.id}/station/${station.id}/set`)
 
       if (resRole.data || resStation) {
         dispatch({
@@ -60,7 +58,7 @@ function AccountEdit({ user, setShowModal }: AccountEditProps) {
       setShowModal()
     } catch (error) {
       console.log(error)
-      router.push('/logout')
+      // router.push('/logout')
     }
   }
 
@@ -70,12 +68,12 @@ function AccountEdit({ user, setShowModal }: AccountEditProps) {
   }, [])
 
   return (
-    <div className='absolute top-0 left-0 h-screen w-full bg-neutral-800 bg-opacity-80 flex items-center justify-center' onClick={setShowModal}>
+    <div className='absolute top-0 left-0 h-screen w-full bg-neutral-900 bg-opacity-90 flex items-center justify-center' onClick={setShowModal}>
       <div className='p-8 w-1/2 bg-white rounded flex flex-col gap-8' onClick={(event) => event.stopPropagation()}>
         <div className='flex gap-4'>
           <div className='flex-1 flex justify-center'>
-            <span className='text-sm pb-2 tracking-wider border-b-2 border-neutral-500 mr-[-30px]'>
-              CÀI ĐẶT NGƯỜI DÙNG
+            <span className='font-bold text-lg pb-2 tracking-wider border-b-2 border-neutral-500 mr-[-30px]'>
+              NGƯỜI DÙNG : {user.id}
             </span>
           </div>
           <button onClick={setShowModal} className='w-4 h-4'>
@@ -84,16 +82,6 @@ function AccountEdit({ user, setShowModal }: AccountEditProps) {
         </div>
 
         <div className='flex items-start gap-12 justify-between'>
-          <div className='flex-1 flex flex-col gap-3'>
-            <div className='flex flex-col gap-1'>
-              <span >
-                Mã người dùng
-              </span>
-              <span className='border border-neutral-400 p-2 flex-1 rounded-sm bg-neutral-200'>
-                {user.id}
-              </span>
-            </div>
-          </div>
 
           <div className='flex-1 flex flex-col gap-3'>
             <div className="flex flex-col text-sm gap-1 relative">
@@ -106,7 +94,7 @@ function AccountEdit({ user, setShowModal }: AccountEditProps) {
               </button>
               {
                 showDropdown && (
-                  <div className="z-20 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)] absolute top-10 left-32">
+                  <div className="z-20 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)] absolute top-10 right-2">
                     <ul className="text-sm text-gray-700">
                       {roles?.map((role: Role) => <li className="block px-4 py-2 hover:bg-gray-100">
                         <button onClick={() => {
@@ -130,13 +118,13 @@ function AccountEdit({ user, setShowModal }: AccountEditProps) {
               <span >
                 Địa phận quản lý
               </span>
-              <button className="flex gap-2 px-3 py-2 items-center justify-between rounded hover:bg-gray-100 border" onClick={() => role.name === "hub-manager" || role.name === "local-manager" ? setShowDropdownStations(!showDropdownStations) : null}>
+              <button className="flex gap-2 px-3 py-2 items-center justify-between rounded hover:bg-gray-100 border" onClick={() => setShowDropdownStations(!showDropdownStations)}>
                 <span>{station ? station.name : "Chưa có"}</span>
                 <DropdownIcon />
               </button>
               {
                 showDropdownStations && (
-                  <div className="z-20 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)] absolute top-10 left-60">
+                  <div className="z-20 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)] absolute top-10 right-2">
                     <ul className="text-sm text-gray-700">
                       {stations?.map((station: Station) => <li className="block px-4 py-2 hover:bg-gray-100">
                         <button onClick={() => {
@@ -154,12 +142,12 @@ function AccountEdit({ user, setShowModal }: AccountEditProps) {
           </div>
         </div>
 
-        <div className='flex items-center justify-between'>
+        <div className='flex items-center justify-end'>
           <button
-            className='border border-teal-600 text-teal-600 rounded-sm px-4 py-1.5 hover:bg-teal-600 hover:text-white'
+            className='rounded-sm px-8 py-2 bg-cyan-800 text-white hover:scale-110 transition-transform duration-200'
             onClick={() => handleEdit()}
           >
-            EDIT
+            CHỈNH SỬA
           </button>
         </div>
       </div>

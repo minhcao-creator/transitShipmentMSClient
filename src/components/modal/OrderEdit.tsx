@@ -14,7 +14,7 @@ type OrderAddProps = {
 }
 
 function OrderEdit({ order, setShowModal }: OrderAddProps) {
-  console.log('orderEdit', order)
+  //console.log('orderEdit', order)
   const { dispatch } = useOrder()
   const router = useRouter()
 

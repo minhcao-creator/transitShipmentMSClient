@@ -119,6 +119,7 @@ type FilterType = {
 
 export type OrderAction =
   | { type: "SET_ORDERS"; payload: Order[] }
+  | { type: "SET_DAY"; payload: string }
   | { type: "IMPORT_EXCEL"; payload: Order[] }
   | { type: "SET_ORDERS_PAGINATION"; payload: number }
   | { type: "SET_PARCELS_PAGINATION"; payload: number }

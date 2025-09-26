@@ -34,15 +34,15 @@ export default function Board() {
         const boardStateTmp = { ...boardState }
         dispatch({ type: "MOVE_TRIP", payload: { source, destination } });
         const route = boardStateTmp.columns[source.droppableId][source.index]
-        const startCodeDes = () => {
+        const ordinalNumberDes = () => {
           if (boardStateTmp.columns[destination.droppableId].length == 0) {
             return 0;
           }
           else if (destination.index == 0) {
-            return parseInt(boardStateTmp.columns[destination.droppableId][destination.index].startCode) - 1;
+            return boardStateTmp.columns[destination.droppableId][destination.index].ordinalNumber - 1;
           }
           else {
-            return parseInt(boardStateTmp.columns[destination.droppableId][destination.index - 1].startCode) + 1;
+            return boardStateTmp.columns[destination.droppableId][destination.index - 1].ordinalNumber + 1;
           }
         }
         const lengDes = boardStateTmp.columns[destination.droppableId].length
@@ -52,18 +52,16 @@ export default function Board() {
           if (destination.index !== 0) {
             for (let i = destination.index - 1; i < lengDes - 1; i++) {
               if (res) {
-                if ((parseInt(boardStateTmp.columns[destination.droppableId][i + 1].startCode) - parseInt(boardStateTmp.columns[destination.droppableId][i].startCode)) > 1) {
-                  console.log(parseInt(boardStateTmp.columns[destination.droppableId][i + 1].startCode), parseInt(boardStateTmp.columns[destination.droppableId][i].startCode))
+                if ((boardStateTmp.columns[destination.droppableId][i + 1].ordinalNumber - boardStateTmp.columns[destination.droppableId][i].ordinalNumber) > 1) {
                   i = lengDes
                 }
                 else {
                   const routeTmp = boardStateTmp.columns[destination.droppableId][i + 1]
-                  console.log(boardStateTmp.columns[destination.droppableId][i], routeTmp.startCode, (parseInt(routeTmp.startCode) + 1).toString())
-                  routeTmp.startCode = (parseInt(routeTmp.startCode) + 1).toString()
-                  const response = await api.put('/routes', {
+                  routeTmp.ordinalNumber = routeTmp.ordinalNumber + 1
+                  const response = await api.put(`/routes/${routeTmp.id}`, {
                     id: routeTmp.id,
-                    startCode: routeTmp.startCode,
-                    endCode: "endCode",
+                    ordinalNumber: routeTmp.ordinalNumber,
+                    endCode: routeTmp.endCode,
                     startedAt: routeTmp.startedAt,
                     endedAt: routeTmp.endedAt
                   })
@@ -78,10 +76,10 @@ export default function Board() {
         const res = await run()
 
         const res1 = await api.patch(`/routes/${route.id}/status/${destination.droppableId}/set`)
-        const res2 = await api.put('/routes', {
+        const res2 = await api.put(`/routes/${route.id}`, {
           id: route.id,
-          startCode: startCodeDes().toString(),
-          endCode: "endCode",
+          ordinalNumber: ordinalNumberDes(),
+          endCode: route.endCode,
           startedAt: route.startedAt,
           endedAt: route.endedAt
         })
@@ -89,7 +87,7 @@ export default function Board() {
         if (res && res1.data & res2.data) {
           const localBoardData = await api.get('/routes')
           const dataObject = transformData(localBoardData.data);
-          console.log('dataObject', dataObject)
+          //console.log('dataObject', dataObject)
           dispatch({ type: "SET_TRIPS", payload: dataObject });
         }
 
@@ -122,7 +120,7 @@ export default function Board() {
     allowedStatusIds.forEach(statusId => {
       const routesForStatus = routeMap[statusId] || [];
       sortedMap[statusId] = [...routesForStatus].sort((a, b) => {
-        return parseInt(a.startCode) - parseInt(b.startCode);
+        return a.ordinalNumber - b.ordinalNumber;
       });
     });
 

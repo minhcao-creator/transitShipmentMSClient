@@ -1,10 +1,12 @@
-export async function POST(req) {
+export async function POST(req: any) {
   try {
     const { expoPushToken, title, message } = await req.json();
 
     if (!expoPushToken) {
       return Response.json({ error: "Thiếu Expo Push Token" }, { status: 400 });
     }
+
+    //console.log('expoPushToken', expoPushToken)
 
     const response = await fetch("https://exp.host/--/api/v2/push/send", {
       method: "POST",
@@ -22,7 +24,11 @@ export async function POST(req) {
       }),
     });
 
+    //console.log('response', response)
+
     const result = await response.json();
+    //console.log('result', result);
+
     return Response.json(result);
   } catch (error) {
     console.error("Lỗi gửi thông báo:", error);

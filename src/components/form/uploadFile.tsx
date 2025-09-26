@@ -36,7 +36,7 @@ const UploadFile = () => {
         message: o.message,
         parcels: [],
         status: {
-          id: "OrderStatuses001",
+          id: "OrderStatuses000",
           name: "Pending"
         }
       }));
@@ -67,13 +67,13 @@ const UploadFile = () => {
         order.parcels = parcels.filter((p) => p.orderId === order.id)
       });
 
-      console.log('orders', orders)
+      //console.log('orders', orders)
 
       const res = await api.post('/orders/nested-bulk', orders)
 
       if (res.data) {
         orders.forEach(async (order) => {
-          await api.patch(`orders/${order.id}/status/OrderStatuses001/set`)
+          await api.patch(`orders/${order.id}/status/OrderStatuses000/set`)
           await api.patch(`orders/${order.id}/departure-station/${authState.user?.station}/set`)
         });
       }

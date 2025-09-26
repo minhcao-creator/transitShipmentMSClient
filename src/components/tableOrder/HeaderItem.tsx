@@ -12,13 +12,11 @@ type HeaderItemProps = {
   isShowParcel: boolean;
 }
 
-function HeaderItem({ idParcel, idOrder, isShowParcel }: HeaderItemProps) {
+function HeaderItem({ idParcel, isShowParcel }: HeaderItemProps) {
 
   const router = useRouter()
 
   const { dispatch } = useOrder()
-
-  const [showModal, setShowModal] = useState<boolean>(false)
 
   const id = `ITEM${(+new Date).toString(36).slice(-5)}`
 
@@ -70,7 +68,7 @@ function HeaderItem({ idParcel, idOrder, isShowParcel }: HeaderItemProps) {
       </span>
       <button
         className='basis-[9%] flex justify-center items-center rounded-sm text-cyan-800 bg-cyan-100 hover:scale-110 transition-transform duration-200'
-        onClick={() => setShowModal(true)}>
+        onClick={handleAddItem}>
         <PlusIcon />
       </button>
     </div>

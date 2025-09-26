@@ -20,9 +20,14 @@ const customVi = {
 
 registerLocale("custom-vi", customVi);
 
+type DatePickerProps = {
+  today: Date;
+  setToday: (date: Date) => void;
+  showTime?: boolean;
+};
 
-export default function DatePickerComponent() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+export default function DatePickerComponent({ today, setToday, showTime = false }: DatePickerProps) {
 
   const years = range(getYear(new Date()) - 6, getYear(new Date()) + 6, 1);
   const months = [
@@ -45,7 +50,15 @@ export default function DatePickerComponent() {
       locale="custom-vi"
       showIcon
       icon={<CalendarIcon className="text-cyan-800" />} // đổi icon ở đây
-      dateFormat={"eeee, d MMMM yyyy"}
+
+
+      // thêm chọn giờ
+      showTimeSelect={showTime}
+      timeFormat={showTime ? "HH:mm" : undefined}
+      timeIntervals={showTime ? 15 : undefined}
+      timeCaption={showTime ? "Giờ" : undefined}
+      dateFormat={showTime ? "eeee, d MMMM yyyy HH:mm" : "eeee, d MMMM yyyy"}
+
       renderCustomHeader={({
         date,
         changeYear,
@@ -128,8 +141,8 @@ export default function DatePickerComponent() {
           </button>
         </div>
       )}
-      selected={selectedDate}
-      onChange={(date: Date | null) => date && setSelectedDate(date)}
+      selected={today}
+      onChange={(date: Date | null) => date && setToday(date)}
     />
   );
 }

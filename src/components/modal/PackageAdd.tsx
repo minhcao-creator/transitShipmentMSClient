@@ -1,9 +1,10 @@
 import { api } from '@/context/AuthContext/AuthContext'
-import { useOrder } from '@/context/OrderContext/OrderContext'
+import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
 import { Parcels } from '@/types/orderLocal'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import AlertComponent from '../AlertComponent'
 
 type PackageAddProps = {
   idOrder: string,
@@ -13,7 +14,6 @@ type PackageAddProps = {
 
 function PackageAdd({ idOrder, parcelData, setShowModal }: PackageAddProps) {
   const { dispatch } = useOrder()
-  const router = useRouter()
 
   const [weightAdd, setWeightAdd] = useState<number>(parcelData.weight)
   const [depthAdd, setDepthAdd] = useState<number>(parcelData.depth)
@@ -21,8 +21,28 @@ function PackageAdd({ idOrder, parcelData, setShowModal }: PackageAddProps) {
   const [heightAdd, setHeightAdd] = useState<number>(parcelData.height)
   const [noteAdd, setNoteAdd] = useState<string>(parcelData.note)
 
+  const [alert, setAlert] = useState<{ type: string, message: string } | null>(null);
+
   const handleUpdate = async (parcelDataAdd: Parcels) => {
     try {
+
+      if (weightAdd <= 0) {
+        setAlert({ type: "error", message: "Vui lòng nhập cân nặng lớn hơn 0" });
+        return;
+      }
+      if (depthAdd <= 0) {
+        setAlert({ type: "error", message: "Vui lòng nhập chiều dài lớn hơn 0" });
+        return;
+      }
+      if (widthAdd <= 0) {
+        setAlert({ type: "error", message: "Vui lòng nhập chiều rộng lớn hơn 0" });
+        return;
+      }
+      if (heightAdd <= 0) {
+        setAlert({ type: "error", message: "Vui lòng nhập chiều cao lớn hơn 0" });
+        return;
+      }
+
       const res1 = await api.post('/parcels', {
         ...parcelDataAdd
       })
@@ -36,11 +56,12 @@ function PackageAdd({ idOrder, parcelData, setShowModal }: PackageAddProps) {
             }
           })
           setShowModal()
+          setAlert({ type: "success", message: "Thêm bưu kiện thành công" })
         }
       }
     } catch (error) {
       console.log(error)
-      router.push('/logout')
+      // router.push('/logout')
     }
   }
 
@@ -53,13 +74,13 @@ function PackageAdd({ idOrder, parcelData, setShowModal }: PackageAddProps) {
   }
 
   return (
-    <div className='absolute top-0 left-0 h-screen w-full bg-neutral-800 bg-opacity-80 flex items-center justify-center'>
-      <div className='p-8 w-1/2 bg-white rounded flex flex-col gap-8'>
+    <div className='absolute top-0 left-0 h-screen w-full bg-neutral-900 bg-opacity-90 flex items-center justify-center'>
+      <div className='p-8 bg-white min-w-[34rem] rounded flex flex-col gap-8'>
 
         <div className='flex gap-4'>
           <div className='flex-1 flex justify-center'>
-            <span className='text-sm pb-2 tracking-wider border-b-2 border-neutral-500 mr-[-30px]'>
-              THÔNG TIN BƯU KIỆN
+            <span className='font-bold text-lg pb-2 tracking-wider border-b-2 border-neutral-500 mr-[-30px]'>
+              BƯU KIỆN : {parcelData.id}
             </span>
           </div>
           <button onClick={setShowModal} className='w-4 h-4'>
@@ -68,87 +89,90 @@ function PackageAdd({ idOrder, parcelData, setShowModal }: PackageAddProps) {
         </div>
 
         <div className='flex flex-col gap-3'>
-          <div className='flex items-start gap-8 justify-between'>
+          <div className='flex justify-between gap-8 '>
             <div className='flex-1 flex flex-col gap-3'>
-              <div className='flex flex-col gap-1'>
+
+              <div className='relative flex justify-between items-center'>
                 <span >
-                  Mã bưu kiện
-                </span>
-                <span className='border border-neutral-400 p-2 flex-1 rounded-sm bg-neutral-200'>
-                  {parcelData.id}
-                </span>
-              </div>
-              <div className='flex flex-col gap-1'>
-                <span >
-                  Cân nặng
+                  Cân nặng :
                 </span>
                 <input
                   type={"number"}
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
+                  className='w-32 border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800'
                   value={weightAdd}
                   onChange={(e) => setWeightAdd(Number(e.target.value))} />
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-600">
+                  gram
+                </span>
               </div>
-            </div>
-            <div className='flex-1 flex flex-col gap-3'>
 
-              <div className='flex flex-col gap-1'>
+              <div className='relative flex justify-between items-center'>
                 <span >
-                  Chiều dài
+                  Chiều dài :
                 </span>
                 <input
                   type={"number"}
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
+                  className='w-32 border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800'
                   value={depthAdd}
                   onChange={(e) => setDepthAdd(Number(e.target.value))} />
+                <span className="absolute left-32 top-1/2 -translate-y-1/2 text-gray-600">
+                  centimet
+                </span>
               </div>
 
             </div>
+
             <div className='flex-1 flex flex-col gap-3'>
 
-              <div className='flex flex-col gap-1'>
+              <div className='relative flex justify-between items-center'>
                 <span >
-                  Chiều rộng
+                  Chiều rộng :
                 </span>
                 <input
                   type={"number"}
-                  className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
+                  className='w-32 border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800'
                   value={widthAdd}
                   onChange={(e) => setWidthAdd(Number(e.target.value))} />
+                <span className="absolute left-32 top-1/2 -translate-y-1/2 text-gray-600">
+                  centimet
+                </span>
               </div>
+
+              <div className='relative flex justify-between items-center'>
+                <span >
+                  Chiều cao :
+                </span>
+                <input
+                  type={"number"}
+                  className='w-32 border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800'
+                  value={heightAdd}
+                  onChange={(e) => setHeightAdd(Number(e.target.value))} />
+                <span className="absolute left-32 top-1/2 -translate-y-1/2 text-gray-600">
+                  centimet
+                </span>
+              </div>
+
             </div>
           </div>
-          <div className='flex items-start gap-8 justify-between'>
-            <div className='flex flex-col gap-1 basic-[1/33]'>
-              <span >
-                Chiều cao
-              </span>
-              <input
-                type={"number"}
-                className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={heightAdd}
-                onChange={(e) => setHeightAdd(Number(e.target.value))} />
-            </div>
-
-            <div className='flex flex-col gap-1 grow'>
-              <span >
-                Lời nhắn
-              </span>
-              <textarea
-                rows={1}
-                className='border border-neutral-400 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-slate-400'
-                value={noteAdd}
-                onChange={(e) => setNoteAdd(e.target.value)}
-              ></textarea>
-            </div>
+          <div className='flex gap-1 items-center'>
+            <span >
+              Lời nhắn :
+            </span>
+            <textarea
+              rows={1}
+              className='border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800 flex-1'
+              value={noteAdd}
+              onChange={(e) => setNoteAdd(e.target.value)}
+            ></textarea>
           </div>
         </div>
 
-        <div className='flex items-center justify-between'>
-          <button className='border border-rose-600 text-rose-600 rounded-sm px-4 py-1.5 hover:bg-rose-600 hover:text-white'
+        <div className='flex items-center justify-end'>
+          {/* <button className='border border-rose-600 text-rose-600 rounded-sm px-4 py-1.5 hover:bg-rose-600 hover:text-white'
             onClick={handleReset}>
             ĐẶT LẠI
-          </button>
-          <button className='border border-teal-600 text-teal-600 rounded-sm px-4 py-1.5 hover:bg-teal-600 hover:text-white'
+          </button> */}
+          <button className='rounded-sm px-8 py-2 bg-cyan-800 text-white hover:scale-110 transition-transform duration-200'
             onClick={() => handleUpdate({
               ...parcelData,
               weight: weightAdd,
@@ -163,6 +187,17 @@ function PackageAdd({ idOrder, parcelData, setShowModal }: PackageAddProps) {
           </button>
         </div>
       </div>
+
+      {
+        alert && (
+          <AlertComponent
+            type={alert?.type}
+            message={alert?.message}
+            onClose={() => setAlert(null)}
+          />
+        )
+      }
+
     </div>
   )
 }

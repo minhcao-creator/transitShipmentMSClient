@@ -31,7 +31,7 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
     try {
       const localBoardData = await api.get('/routes')
       const dataObject = transformData(localBoardData.data);
-      // console.log(dataObject)
+      // //console.log(dataObject)
       dispatch({ type: "SET_TRIPS", payload: dataObject });
       setLoading(false);
     } catch (error) {
@@ -62,7 +62,7 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
     allowedStatusIds.forEach(StatusId => {
       const routesForStatus = routeMap[StatusId] || [];
       sortedMap[StatusId] = [...routesForStatus].sort((a, b) => {
-        return parseInt(a.startCode) - parseInt(b.startCode);
+        return (a.ordinalNumber - b.ordinalNumber);
       });
     });
 
@@ -85,7 +85,7 @@ export function useBoard() {
 function boardReducer(state: Board, action: BoardAction): Board {
   switch (action.type) {
     case "SET_TRIPS": {
-      console.log('action.payload', action.payload)
+      //console.log('action.payload', action.payload)
       return action.payload;
     }
     case "MOVE_COLUMN": {

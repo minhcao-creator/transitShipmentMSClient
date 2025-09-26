@@ -4,11 +4,26 @@ import DropdownIcon from '@/assets/img/dropdownIcon'
 import AccountAdd from '@/components/modal/AccountAdd'
 import HeaderAccount from '@/components/tableAccount/HeaderAccount'
 import RowAccounts from '@/components/tableAccount/RowAccounts'
+import { User } from '@/types/user'
+import { Cross1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 
 function Accounts() {
+
+  const titleFilterLabels: Record<string, string> = {
+    id: "Mã đơn",
+    senderName: "Người gửi",
+    receiverName: "Người nhận",
+    receiverAddress: "Địa chỉ nhận hàng",
+    senderPhoneNumber: "SĐT gửi",
+    receiverPhoneNumber: "SĐT nhận",
+  };
+
   const [showModal, setShowModal] = useState<boolean>(false)
-  const [filterTitle, setFilterTitle] = useState<String>('Tên người dùng')
+  const [titleFilter, setTitleFilter] = useState<keyof User | undefined>(undefined)
+  const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
+
+  const [nameFilter, setNameFilter] = useState<string>("")
 
   const newUser = {
     id: '',
@@ -33,17 +48,53 @@ function Accounts() {
         <span className='text-md font-semibold tracking-wider'>DANH SÁCH NHÂN VIÊN</span>
       </div>
       <div className='flex pb-4 justify-between'>
-        <div className="flex text-sm gap-0.5">
-          <button className="flex gap-2 bg-white px-3 py-2 items-center rounded-l hover:bg-cyan-800 hover:text-white">
-            <span>{filterTitle}</span>
+        <div className="flex text-sm gap-0.5 relative">
+          <button
+            className=" w-48 flex justify-between bg-white px-3 py-2 items-center rounded-l hover:bg-cyan-800 hover:text-white"
+            onClick={() => setShowTitleFilter(!showTitleFilter)}
+          >
+            <span>{titleFilterLabels[titleFilter] || "Chọn trường lọc"}</span>
             <DropdownIcon />
           </button>
-          <input className="block bg-white text-sm text-gray-900 px-3 py-2 focus:outline-cyan-800" placeholder="Search" required></input>
-          <button className="bg-white px-3 py-2 rounded-r hover:bg-cyan-800 hover:text-white">
-            <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-            </svg>
-          </button>
+          <input
+            className="block bg-white text-sm text-gray-900 px-3 py-2 focus-visible:outline-cyan-800 rounded-r"
+            placeholder="Nhập tìm kiếm"
+            disabled={!titleFilter}
+            value={nameFilter}
+            onChange={(e) => {
+              setNameFilter(e.target.value)
+            }} />
+          {nameFilter && <button className="absolute right-0 p-3 rounded-r text-gray-600"
+            onClick={() => {
+              setNameFilter('')
+            }}>
+            <Cross1Icon />
+          </button>}
+          {showTitleFilter && (
+            <div className="absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]">
+              {Object.entries(titleFilterLabels).map(([key, label]) => (
+                <button
+                  key={key}
+                  className="hover:bg-rose-200 p-2 border rounded m-1"
+                  onClick={() => {
+                    setTitleFilter(key)
+                    setShowTitleFilter(false)
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+              <button
+                className="hover:bg-rose-200 p-2 border border-rose-200 text-rose-400 rounded m-1"
+                onClick={() => {
+                  setTitleFilter(undefined)
+                  setShowTitleFilter(false)
+                }}
+              >
+                Bỏ chọn
+              </button>
+            </div>
+          )}
         </div>
         <div className='text-sm'>
           <button

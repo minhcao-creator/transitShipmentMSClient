@@ -19,7 +19,7 @@ function Login() {
 
     const payload = accessToken.split('.')[1]
 
-    console.log(JSON.parse(window.atob(payload)))
+    //console.log(JSON.parse(window.atob(payload)))
 
     const userId = JSON.parse(window.atob(payload)).id;
 
@@ -57,7 +57,7 @@ function Login() {
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.response?.status === 401) {
-        console.log("Token expired. Logging out...");
+        //console.log("Token expired. Logging out...");
         localStorage.removeItem("accessToken");
       }
     }

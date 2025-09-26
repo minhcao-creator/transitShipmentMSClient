@@ -29,8 +29,10 @@ export type Vehicle = {
 export type Route = {
   id: string;
   startCode: string;
+  endCode: string;
   startedAt: Date,
   endedAt: Date,
+  ordinalNumber: number,
   vehicle: {
     id: string;
     vehicleRegistrationPlate: string;
@@ -41,6 +43,9 @@ export type Route = {
   status: {
     id: string;
   },
+  mission: {
+    id: string;
+  },
   routeVisitsStations: [
     {
       station: string,
@@ -49,6 +54,7 @@ export type Route = {
       eta: Date;
       departuredAt: Date;
       arrivedAt: Date;
+      flag: boolean;
     }
   ],
   drivers: [

@@ -1,26 +1,24 @@
 "use client"
 
-import DropdownIcon from '@/assets/img/dropdownIcon'
-import DatePickerComponent from '@/components/DatePickerComponent'
-import UploadFile from '@/components/form/uploadFile'
+// import DropdownIcon from '@/assets/img/dropdownIcon'
 import Pagination from '@/components/Pagination'
 import HeaderItem from '@/components/tableOrder/HeaderItem'
 import RowItem from '@/components/tableOrder/RowItem'
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
-import { Item, Order } from '@/types/orderStation'
-import { Cross1Icon } from '@radix-ui/react-icons'
-import { useState } from 'react'
+import { Item } from '@/types/orderStation'
+// import { Cross1Icon } from '@radix-ui/react-icons'
+// import { useState } from 'react'
 
 function ParcelPage() {
 
-  const titleFilterLabels: Record<string, string> = {
-    id: "Mã đơn",
-    senderName: "Người gửi",
-    receiverName: "Người nhận",
-    receiverAddress: "Địa chỉ nhận hàng",
-    senderPhoneNumber: "SĐT gửi",
-    receiverPhoneNumber: "SĐT nhận",
-  };
+  // const titleFilterLabels: Record<string, string> = {
+  //   id: "Mã đơn",
+  //   senderName: "Người gửi",
+  //   receiverName: "Người nhận",
+  //   receiverAddress: "Địa chỉ nhận hàng",
+  //   senderPhoneNumber: "SĐT gửi",
+  //   receiverPhoneNumber: "SĐT nhận",
+  // };
 
   const { orderState, dispatch } = useOrder()
 
@@ -44,18 +42,23 @@ function ParcelPage() {
   }
 
 
-  const total = Math.ceil(orderState.orders.length / orderState.pageSize)
-  const current = orderState.pageIndex
+  const total = Math.ceil(items.length / orderState.pageSize)
 
-  const [titleFilter, setTitleFilter] = useState<keyof Order | undefined>(undefined)
-  const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
+  const current = orderState.pageItemIndex
 
-  const [nameFilter, setNameFilter] = useState<string>("")
+  const indexStart = (orderState.pageItemIndex - 1) * orderState.pageSize
+  const indexEnd = orderState.pageItemIndex * orderState.pageSize
+  const itemsCurrent = items.length > indexEnd ? items.slice(indexStart, indexEnd) : items.slice(indexStart)
+
+  // const [titleFilter, setTitleFilter] = useState<keyof Order | undefined>(undefined)
+  // const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
+
+  // const [nameFilter, setNameFilter] = useState<string>("")
 
   return (
     <div>
       <div className='flex pb-4 gap-24'>
-        <div className="flex text-sm gap-0.5 relative">
+        {/* <div className="flex text-sm gap-0.5 relative">
           <button
             className=" w-48 flex justify-between bg-white px-3 py-2 items-center rounded-l hover:bg-cyan-800 hover:text-white"
             onClick={() => setShowTitleFilter(!showTitleFilter)}
@@ -84,46 +87,6 @@ function ParcelPage() {
             }}>
             <Cross1Icon />
           </button>}
-          {/* {showTitleFilter && <div className='absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]'>
-            <button
-              className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('id')
-                setShowTitleFilter(!showTitleFilter)
-              }}
-            >Mã đơn</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('senderName')
-                setShowTitleFilter(!showTitleFilter)
-              }}>Người gửi</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('receiverName')
-                setShowTitleFilter(!showTitleFilter)
-              }}>Người nhận</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('receiverAddress')
-                setShowTitleFilter(!showTitleFilter)
-              }}>Địa chỉ nhận hàng</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('senderPhoneNumber')
-                setShowTitleFilter(!showTitleFilter)
-              }}>SĐT gửi</button>
-            <button className='hover:bg-rose-200 p-2 border rounded m-1'
-              onClick={() => {
-                setTitleFilter('receiverPhoneNumber')
-                setShowTitleFilter(!showTitleFilter)
-              }}>SĐT nhận</button>
-            <button className='hover:bg-rose-200 p-2 border border-rose-200 text-rose-400 rounded m-1'
-              onClick={() => {
-                setTitleFilter(undefined)
-                setShowTitleFilter(!showTitleFilter)
-                dispatch({ type: "SET_ORDERS_NONFILTER" })
-              }}>Bỏ chọn</button>
-          </div>} */}
           {showTitleFilter && (
             <div className="absolute top-12 bg-[#F8F8F8] rounded shadow-[2px_2px_4px_0px_rgba(88,88,88,0.58)]">
               {Object.entries(titleFilterLabels).map(([key, label]) => (
@@ -150,19 +113,18 @@ function ParcelPage() {
               </button>
             </div>
           )}
-        </div>
-        <DatePickerComponent />
+        </div> */}
       </div>
       <div className='text-sm'>
-        <HeaderItem idParcel='' />
-        <div className='max-h-[32dvh] overflow-y-auto'>
-          {items.map((item) => (
-            <RowItem item={item} key={item.id} />
+        <HeaderItem idParcel='' idOrder='' isShowParcel={true} />
+        <div className='h-[68dvh] overflow-y-auto'>
+          {itemsCurrent.map((item, index) => (
+            <RowItem item={item} key={item.id} idParcel={item.idParcel} idOrder={item.idOrder} index={indexStart + index + 1} isShowParcel={true} />
           ))}
         </div>
-        <Pagination total={total} current={current} />
+        <Pagination total={total} current={current} typeTable='item' />
       </div>
-    </div>
+    </div >
   )
 }
 

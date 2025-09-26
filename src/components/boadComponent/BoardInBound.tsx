@@ -30,7 +30,7 @@ export default function Board() {
   // }, []);
   const onDragEnd = useCallback(
     (result: DropResult) => {
-      // console.log(result);
+      // //console.log(result);
       if (!result.destination) return; // dropped nowhere
 
       const source: DraggableLocation = result.source;

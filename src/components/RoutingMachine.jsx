@@ -7,11 +7,17 @@ import { useEffect, useRef } from "react";
 
 export default function RoutingMachine({ locations, route, color, index, setStationId, setSelectedLocation, stationId }) {
 
+    //console.log(route)
+
+    //console.log(locations)
+
     const routeVisitStationsOrderBy = route.routeVisitsStations?.sort((a, b) => a.ordinalNumber - b.ordinalNumber)
 
     const routeListTmp = routeVisitStationsOrderBy.map((routeVisitsStation) => {
-        return locations.filter(location => location.id === routeVisitsStation.station)[0]
+        return locations.filter(location => location.id == routeVisitsStation.station)[0]
     });
+
+    //console.log(routeListTmp)
 
     const routeList = [...routeListTmp, routeListTmp[0]]
 
@@ -27,6 +33,8 @@ export default function RoutingMachine({ locations, route, color, index, setStat
         iconUrl: `/khotrungchuyen.png`,
         iconSize: [28, 46]
     });
+
+    //console.log(routeList)
 
     const waypoints = routeList?.map((location) => L.latLng(location.lat, location.lng))
     const choosedWay = routeList.some(station => station.id === stationId)

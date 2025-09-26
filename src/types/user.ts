@@ -9,7 +9,7 @@ export type User = {
   driverLicenseNumber: string;
   driverClass: string;
   role: Role;
-  station: Station;
+  station?: Station;
 }
 
 export type Role = {

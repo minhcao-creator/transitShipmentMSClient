@@ -10,16 +10,10 @@ import LocalTag from "@/components/routesTag/localTag";
 import { Order, Station } from "@/types/orderStation";
 import { Vehicle } from "@/types/routes";
 import VehicleTag from "@/components/routesTag/vehicleTag";
-import Board from "@/components/boadComponent/BoardRoute";
+import BoardRoute from "@/components/boadComponent/BoardRoute";
 import { useBoard } from "@/context/RouteContext/RouteContext";
-import { RouteMap } from "@/types/routeInit";
 import RouteAdd from "@/components/modal/RouteAdd";
-
-const override = {
-  display: "block",
-  margin: "100px auto",
-  borderColor: "green",
-};
+import { TransitOrderGroupBy } from "@/types/routeInit";
 
 
 const MapRoutes = dynamic(
@@ -29,13 +23,14 @@ const MapRoutes = dynamic(
 
 const Routes = () => {
   const [allLocations, setAllLocations] = useState<any>([])
-  const [locations, setLocations] = useState<any>([])
+  const [locations, setLocations] = useState<any[]>([])
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [routeList, setRouteList] = useState<any>(null)
   const [isLoading, setIsLoading] = useState<any>(false)
   const [stationId, setStationId] = useState<string>('')
   const [modeButton, setModeButton] = useState<boolean>(true)
   const [heightFull, setHeightFull] = useState<boolean>(false)
+  const [modeShowRoute, setModeShowRoute] = useState<boolean>(false)
 
   const [showModal, setShowModal] = useState<boolean>(false)
 
@@ -44,30 +39,95 @@ const Routes = () => {
 
   const router = useRouter()
 
+  const [transitToOrders, setTransitToOrders] = useState<TransitOrderGroupBy[]>([])
+
   const { orderState } = useOrder()
 
-  const newOrderState = orderState.orders.filter((order) => order.status?.name === 'Pending')
+  // const newOrderState = orderState.orders.filter((order) => order.status?.name === 'Pending')
 
-  const groupedOrders: Record<string, { stationId: string; station: Station | undefined; orders: Order[] }>
-    = newOrderState.reduce((acc: any, order) => {
-      const stationId = order.departureStation?.id || '';
-      const station = order.departureStation;
-      if (!acc[stationId]) {
-        acc[stationId] = { stationId, station, orders: [] };
+  // const groupedOrders: Record<string, { stationId: string; station: Station | undefined; orders: Order[] }>
+  //   = newOrderState.reduce((acc: any, order) => {
+  //     const stationId = order.departureStation?.id || '';
+  //     const station = order.departureStation;
+  //     if (!acc[stationId]) {
+  //       acc[stationId] = { stationId, station, orders: [] };
+  //     }
+  //     acc[stationId].orders.push(order);
+  //     return acc;
+  //   }, {});
+
+  // const groupedOrderList = Object.values(groupedOrders);
+
+  const groupTransitOrdersWithOrders = async () => {
+    try {
+      if (orderState.orders.length === 0) return;
+
+      const transitOrders = (await api.get("/transit-orders")).data.filter((tto: any) => tto.status.id == "TTOStatuses001");
+
+      const orderMap = new Map<string, Order>(
+        orderState.orders.map((o) => [o.id, o])
+      );
+
+      const result: TransitOrderGroupBy[] = [];
+
+      for (const to of transitOrders) {
+        const { departureStation, arrivalStation } = to;
+
+        const fullOrders: Order[] = (to.orders || [])
+          .map((o: any) => orderMap.get(o.id))
+          .filter((o: any): o is Order => !!o);
+
+        if (departureStation.id !== "1338" && arrivalStation.id === "1338") {
+          let group = result.find((g) => g.id === departureStation.id);
+          if (!group) {
+            group = {
+              id: departureStation.id,
+              name: departureStation.name,
+              transitOrders: [],
+            };
+            result.push(group);
+          }
+          group.transitOrders.push({
+            id: to.id,
+            type: "arrival",
+            orders: fullOrders,
+          });
+        }
+
+        if (arrivalStation.id !== "1338" && departureStation.id === "1338") {
+          let group = result.find((g) => g.id === arrivalStation.id);
+          if (!group) {
+            group = {
+              id: arrivalStation.id,
+              name: arrivalStation.name,
+              transitOrders: [],
+            };
+            result.push(group);
+          }
+          group.transitOrders.push({
+            id: to.id,
+            type: "departure",
+            orders: fullOrders,
+          });
+        }
       }
-      acc[stationId].orders.push(order);
-      return acc;
-    }, {});
 
-  const groupedOrderList = Object.values(groupedOrders);
+      setTransitToOrders(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
 
   const { boardState, dispatch } = useBoard()
 
   const handlePlan = () => {
-    setIsLoading(false)
-    const routelist = Object.values(boardState.columns);
-    setRouteList(routelist)
-    setIsLoading(true)
+    setModeShowRoute(!modeShowRoute)
+    // setIsLoading(false)
+    // const routelist = Object.values(boardState.columns);
+    // setRouteList(routelist)
+    // setIsLoading(true)
   }
 
   const vehicleRefs = useRef(new Map<string, HTMLDivElement>());
@@ -91,15 +151,16 @@ const Routes = () => {
         .catch(function (error) {
           console.log(error);
         });
+
       setIsLoading(true)
     } catch (error) {
       console.log(error)
       router.push('/logout')
     }
-
   }, [])
 
   useEffect(() => {
+    if (!stationId) return;
     const targetVehicle = vehicles.find((vehicle) => {
       const route = Object.values(boardState.columns)?.find((route) => route.vehicle.id === vehicle.id);
       return route?.routeVisitsStations.some((routeVisitsStation: any) => routeVisitsStation.station == stationId);
@@ -111,30 +172,38 @@ const Routes = () => {
         targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
-  }, [stationId, vehicles, routeList]);
-
-  useEffect(() => {
-    if (!stationId) return;
 
     const targetRef = localRefs.current?.get(stationId);
     if (targetRef) {
       targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [stationId, groupedOrderList]);
+  }, [stationId, vehicles, routeList]);
 
   useEffect(() => {
-    const locations = allLocations.map((loc: any) => { return { id: loc.id, name: loc.name, lat: loc.latitude, lng: loc.longtitude, haveOrder: !!groupedOrders[loc.id] } });
+    groupTransitOrdersWithOrders()
+  }, [orderState])
+
+  useEffect(() => {
+    const locations = allLocations.map((loc: any) => { return { id: loc.id, name: loc.name, lat: loc.latitude, lng: loc.longtitude, haveOrder: !!transitToOrders.some(g => g.id == loc.id) } });
     setLocations(locations)
-  }, [allLocations, orderState])
+  }, [allLocations, transitToOrders])
 
   useEffect(() => {
-    setMapKey(prevKey => prevKey + 1);
+    console.log(mapKey)
+    setMapKey(prevKey => prevKey + 1)
   }, [modeButton]);
+
+  useEffect(() => {
+    const routelist = Object.values(boardState.columns);
+    setRouteList(routelist)
+  }, [boardState])
+
+  if (locations.length == 0) return
 
   return (
     <div className={modeButton ? 'flex w-full' : 'relative w-full'} >
       <div className={modeButton ? 'w-full' : 'relative z-0 w-full'}>
-        <MapRoutes key={mapKey} center={{ lng: 106.6087319, lat: 10.8175212 }} locations={locations} routes={routeList} setStationId={setStationId} stationId={stationId} />
+        <MapRoutes key={mapKey} center={{ lng: 106.6087319, lat: 10.8175212 }} locations={locations} routes={routeList} setStationId={setStationId} stationId={stationId} modeShowRoute={modeShowRoute} />
       </ div>
       {modeButton ?
         <div className="w-5/12 max-h-screen flex text-sm p-3 gap-3">
@@ -165,11 +234,11 @@ const Routes = () => {
               </div>
             ) : (
               <div className="rounded-b-sm bg-white p-2 flex flex-col gap-3 grow max-h-[100dvh] overflow-y-auto">
-                {groupedOrderList.map((groupedOrder: any) => (
+                {transitToOrders.map((groupedOrder: any) => (
                   <div
-                    key={groupedOrder.station?.id}
+                    key={groupedOrder.id}
                     ref={(el) => {
-                      if (el) localRefs?.current?.set(groupedOrder.station?.id, el);
+                      if (el) localRefs?.current?.set(groupedOrder.id, el);
                     }}
                   >
                     <LocalTag groupedOrder={groupedOrder} stationId={stationId} setStationId={setStationId} />
@@ -207,7 +276,7 @@ const Routes = () => {
             </button>
           </div>
           <div className="w-full bg-gray-900 rounded p-2 h-dvh bg-opacity-20">
-            <Board heightFull={heightFull} />
+            <BoardRoute heightFull={heightFull} />
           </div>
         </div>
       }

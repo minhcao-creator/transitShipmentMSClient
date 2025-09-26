@@ -33,15 +33,15 @@ function RowOrder({ order, index }: RowOrderProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Pending":
-        return "text-yellow-600 rounded-lg bg-yellow-200 px-2";
-      case "Shipped":
-        return "text-blue-500 border rounded-lg border-blue-500 px-2";
-      case "Delivered":
-        return "text-green-500 border rounded-lg border-green-500 px-2";
-      case "Cancelled":
-        return "text-red-500 border rounded-lg border-red-500 px-2";
+        return "text-yellow-500";
+      case "Processing":
+        return "text-blue-500";
+      case "Ready":
+        return "text-green-500";
+      case "Completed":
+        return "text-red-500";
       default:
-        return "text-gray-500 border rounded-lg border-gray-500 px-2";
+        return "text-gray-500";
     }
   };
 
@@ -71,7 +71,7 @@ function RowOrder({ order, index }: RowOrderProps) {
             {order.receiverAddress}
           </span>
           <span className='flex items-center basis-[8%] px-2 border-r border-gray-900'>
-            <span className={`${getStatusColor(order.status?.name || '')}`}>
+            <span className={`${getStatusColor(order.status?.name || '')} font-medium px-2`}>
               {order.status?.name}
             </span>
           </span>

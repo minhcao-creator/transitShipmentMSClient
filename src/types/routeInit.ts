@@ -1,5 +1,7 @@
 import { Station } from './orderLocal'
 import { DraggableLocation } from "react-beautiful-dnd";
+import { User } from './user';
+import { Order } from './orderStation';
 
 export type VehicleStatus = {
   id: string;
@@ -35,10 +37,13 @@ export type Route = {
     id: string;
     vehicleRegistrationPlate: string;
   },
-  plan: {
+  plan?: {
     id: string;
   },
   status: {
+    id: string;
+  },
+  mission: {
     id: string;
   },
   routeVisitsStations:
@@ -49,25 +54,26 @@ export type Route = {
     eta: Date;
     departuredAt: Date;
     arrivedAt: Date;
+    flag: boolean;
   }[],
-  drivers: [
-    {
-      id: string;
-      username: string;
-      lastname: string;
-      firstname: string;
-      phoneNumber: string;
-      citizenId: string;
-      email: string;
-      driverLicenseNumber: string;
-      driverClass: string;
-    }
-  ],
-  transitOrders: [
+  drivers?: User[],
+  transitOrders?: [
     {
       id: string;
     }
   ]
+}
+
+type TransitOrder = {
+  id: string,
+  type: "arrival" | "departure",
+  orders: Order[]
+}
+
+export type TransitOrderGroupBy = {
+  id: string,
+  name: string,
+  transitOrders: TransitOrder[]
 }
 
 export type RouteMap = {
@@ -92,9 +98,11 @@ export type BoardAction =
       eta: Date;
       departuredAt: Date;
       arrivedAt: Date;
+      flag: boolean;
     }
   }
   | { type: "DELETE_STATION"; payload: { station: string, idColumn: string } }
+  | { type: "DELETE_TRIP"; payload: { idColumn: string } }
   | { type: "ADD_TRIP"; payload: Route }
 
 type OnDragPayload = {

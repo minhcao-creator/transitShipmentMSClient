@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       const res = await api.get(`users/${userId}`)
 
       if (res.data) {
-        console.log(res.data);
+        //console.log(res.data);
         dispatch({
           type: "SET_AUTH", payload: {
             user: {
@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.response?.status === 401) {
-        console.log("Token expired. Logging out...");
+        //console.log("Token expired. Logging out...");
         router.replace("/logout");
       }
     }

@@ -9,12 +9,13 @@ import {
 import Column from "./ColumnRoute";
 import { useBoard } from "@/context/RouteContext/RouteContext";
 import { api } from "@/context/AuthContext/AuthContext";
+import { Route, RouteMap, Board } from "@/types/routeInit"
 
 type BoardProps = {
   heightFull: boolean
 };
 
-export default function Board({ heightFull }: BoardProps) {
+export default function BoardRoute({ heightFull }: BoardProps) {
   const { boardState, dispatch } = useBoard();
 
   const onDragEnd = async (result: DropResult) => {
@@ -29,161 +30,96 @@ export default function Board({ heightFull }: BoardProps) {
         dispatch({ type: "MOVE_COLUMN", payload: { source, destination } });
         return;
       }
+
       // Reordering or moving trips
       if (result.type === "TRIP") {
-
         const boardStateTmp = { ...boardState }
-
         dispatch({ type: "MOVE_STATION", payload: { source, destination } });
+        const station = boardStateTmp.columns[source.droppableId].routeVisitsStations[source.index + 1]
+        const ordinalNumberDes = () => boardStateTmp.columns[destination.droppableId].routeVisitsStations[destination.index].ordinalNumber + 1;
 
-        const station = boardStateTmp.columns[source.droppableId].routeVisitsStations[source.index + 1];
-
-        if (source.droppableId == destination.droppableId) {
-
-          const destinationId = destination.droppableId
-
-          if (source.index > destination.index) {
-
-            const stationPre = boardStateTmp.columns[destinationId].routeVisitsStations[destination.index];
-
-            for (let i = source.index + 1; i < destination.index; i++) {
-              if ((boardStateTmp.columns[destinationId].routeVisitsStations[i + 1].ordinalNumber - boardStateTmp.columns[destinationId].routeVisitsStations[i].ordinalNumber) > 1) {
-                i = source.index + 1
+        const lengDes = boardStateTmp.columns[destination.droppableId].routeVisitsStations.length
+        const run = async () => {
+          let res: boolean = true
+          for (let i = destination.index; i < lengDes - 1; i++) {
+            if (res) {
+              if ((boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1].ordinalNumber - boardStateTmp.columns[destination.droppableId].routeVisitsStations[i].ordinalNumber) > 1) {
+                i = lengDes
               }
               else {
-                const stationTmp = boardStateTmp.columns[destinationId].routeVisitsStations[i + 1]
+                const stationTmp = boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1]
                 stationTmp.ordinalNumber = stationTmp.ordinalNumber + 1
-                await api.patch(`/routes/${destinationId}/stations/${stationTmp.station}/update`, {
+                const response = await api.patch(`/routes/${destination.droppableId}/stations/${stationTmp.station}/update`, {
                   ordinalNumber: stationTmp.ordinalNumber,
                   etd: stationTmp.etd,
                   eta: stationTmp.eta,
                   departuredAt: stationTmp.departuredAt,
                   arrivedAt: stationTmp.arrivedAt,
+                  flag: stationTmp.flag
                 })
+                res = await response.data && res
               }
-
             }
-
-            await api.patch(`/routes/${destinationId}/stations/${station.station}/update`, {
-              ordinalNumber: stationPre.ordinalNumber + 1,
-              etd: station.etd,
-              eta: station.eta,
-              departuredAt: station.departuredAt,
-              arrivedAt: station.arrivedAt,
-            })
-
           }
-
+          return res
         }
 
-        // const station = boardStateTmp.columns[source.droppableId].routeVisitsStations[source.index + 1];
+        const res = await run()
 
-        // await api.patch(`/routes/${source.droppableId}/stations/${station.station}/remove`, {
-        //   ordinalNumber: station.ordinalNumber,
-        //   etd: station.etd,
-        //   eta: station.eta,
-        //   departuredAt: station.departuredAt,
-        //   arrivedAt: station.arrivedAt,
-        // })
+        const update = destination.droppableId == source.droppableId
 
-        // const ordinalNumberDes = boardStateTmp.columns[destination.droppableId].routeVisitsStations[destination.index - 1].ordinalNumber + 1;
+        if (!update) {
+          await api.patch(`/routes/${source.droppableId}/stations/${station.station}/remove`, {
+            ...station
+          })
+        }
 
-        // if (source.droppableId == destination.droppableId) {
+        const res2 = await api.patch(`/routes/${destination.droppableId}/stations/${station.station}/${update ? 'update' : 'add'}`, {
+          ordinalNumber: ordinalNumberDes(),
+          etd: station.etd,
+          eta: station.eta,
+          departuredAt: station.departuredAt,
+          arrivedAt: station.arrivedAt,
+          flag: station.flag
+        })
 
-        //   const run = async () => {
+        if (res && res2.data) {
+          const localBoardData = await api.get('/routes')
+          const dataObject = transformData(localBoardData.data);
+          dispatch({ type: "SET_TRIPS", payload: dataObject });
+        }
 
-        //     let res: boolean = true
-
-        //     const stationTmp = boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1]
-        //     console.log(boardStateTmp.columns[destination.droppableId].routeVisitsStations[i], stationTmp.ordinalNumber, (stationTmp.ordinalNumber + 1))
-        //     stationTmp.ordinalNumber = stationTmp.ordinalNumber + 1
-        //     const response = await api.patch(`/routes/${destination.droppableId}/stations/${station.station}/update`, {
-        //       ordinalNumber: stationTmp.ordinalNumber,
-        //       etd: station.etd,
-        //       eta: station.eta,
-        //       departuredAt: station.departuredAt,
-        //       arrivedAt: station.arrivedAt,
-        //     })
-
-        //     for (let i = destination.index; i < source.index + 1; i++) {
-        //       if (res) {
-        //         if ((boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1].ordinalNumber - boardStateTmp.columns[destination.droppableId].routeVisitsStations[i].ordinalNumber) > 1) {
-        //           console.log(boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1].ordinalNumber, boardStateTmp.columns[destination.droppableId].routeVisitsStations[i].ordinalNumber)
-        //           i = source.index + 1
-        //         }
-        //         else {
-        //           const stationTmp = boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1]
-        //           console.log(boardStateTmp.columns[destination.droppableId].routeVisitsStations[i], stationTmp.ordinalNumber, (stationTmp.ordinalNumber + 1))
-        //           stationTmp.ordinalNumber = stationTmp.ordinalNumber + 1
-        //           const response = await api.patch(`/routes/${destination.droppableId}/stations/${station.station}/update`, {
-        //             ordinalNumber: stationTmp.ordinalNumber,
-        //             etd: station.etd,
-        //             eta: station.eta,
-        //             departuredAt: station.departuredAt,
-        //             arrivedAt: station.arrivedAt,
-        //           })
-        //           res = await response.data && res
-        //         }
-        //       }
-        //     }
-        //     return res
-        //   }
-        // }
-
-
-        // const lengDes = boardStateTmp.columns[destination.droppableId].routeVisitsStations.length
-
-        // const run = async () => {
-
-        //   let res: boolean = true
-
-        //   for (let i = destination.index; i < lengDes; i++) {
-        //     if (res) {
-        //       if ((boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1].ordinalNumber - boardStateTmp.columns[destination.droppableId].routeVisitsStations[i].ordinalNumber) > 1) {
-        //         console.log(boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1].ordinalNumber, boardStateTmp.columns[destination.droppableId].routeVisitsStations[i].ordinalNumber)
-        //         i = lengDes
-        //       }
-        //       else {
-        //         const stationTmp = boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1]
-        //         console.log(boardStateTmp.columns[destination.droppableId].routeVisitsStations[i], stationTmp.ordinalNumber, (stationTmp.ordinalNumber + 1))
-        //         stationTmp.ordinalNumber = stationTmp.ordinalNumber + 1
-        //         const response = await api.patch(`/routes/${destination.droppableId}/stations/${station.station}/update`, {
-        //           ordinalNumber: stationTmp.ordinalNumber,
-        //           etd: station.etd,
-        //           eta: station.eta,
-        //           departuredAt: station.departuredAt,
-        //           arrivedAt: station.arrivedAt,
-        //         })
-        //         res = await response.data && res
-        //       }
-        //     }
-        //   }
-        //   return res
-        // }
-
-        // const res = await run()
-
-        // const res1 = await api.patch(`/routes/${route.id}/plan/${destination.droppableId}/set`)
-        // const res2 = await api.put('/routes', {
-        //   id: route.id,
-        //   startCode: startCodeDes().toString(),
-        //   endCode: "endCode",
-        //   startedAt: route.startedAt,
-        //   endedAt: route.endedAt
-        // })
-
-        // if (res && res1.data & res2.data) {
-        //   const localBoardData = await api.get('/routes')
-        //   const dataObject = transformData(localBoardData.data);
-        //   console.log('dataObject', dataObject)
-        //   dispatch({ type: "SET_TRIPS", payload: dataObject });
-        // }
       }
+
     } catch (error) {
       console.log(error)
     }
 
 
+  }
+
+  function transformData(routes: Route[]): Board {
+    const filteredRoutes = routes
+      .filter(route => route.status?.id === 'INIT')
+      .map(route => ({
+        ...route,
+        routeVisitsStations: [...route.routeVisitsStations].sort(
+          (a, b) => a.ordinalNumber - b.ordinalNumber
+        ),
+      }));
+
+    const columns: RouteMap = {};
+    const ordered: string[] = [];
+
+    for (const route of filteredRoutes) {
+      columns[route.id] = route;
+      ordered.push(route.id);
+    }
+
+    return {
+      columns,
+      ordered,
+    };
   }
 
   return (

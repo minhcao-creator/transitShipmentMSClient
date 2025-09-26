@@ -19,11 +19,12 @@ function TripItem({ isDragging, provided, trip, idColumn }: TripItemProps) {
   const handleDeleteStation = async () => {
     try {
       await api.patch(`/routes/${idColumn}/stations/${trip.station}/remove`, {
-        ordinalNumber: trip.ordinalNumber.toString(),
+        ordinalNumber: trip.ordinalNumber,
         etd: trip.etd,
         eta: trip.eta,
         departuredAt: trip.departuredAt,
-        arrivedAt: trip.arrivedAt
+        arrivedAt: trip.arrivedAt,
+        flag: trip.flag,
       })
     } catch (error) {
       console.log(error)

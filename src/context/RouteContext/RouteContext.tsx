@@ -183,6 +183,29 @@ function boardReducer(state: Board, action: BoardAction): Board {
     }
 
     case "ADD_TRIP": {
+      const newState = {
+        columns: {
+          ...state.columns,
+          [action.payload.id]: action.payload
+        },
+        ordered: [...state.ordered, action.payload.id]
+      }
+
+      return newState
+
+    }
+
+    case "DELETE_TRIP": {
+      const idColumn = action.payload.idColumn
+      const newColumns = Object.fromEntries(
+        Object.entries(state.columns).filter(([id]) => id !== idColumn)
+      );
+      const newOrdered = state.ordered.filter(id => id !== idColumn);
+
+      return {
+        columns: newColumns,
+        ordered: newOrdered
+      };
 
     }
     default: {

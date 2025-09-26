@@ -23,6 +23,7 @@ type MapProps = {
   routes: any;
   setStationId: any,
   stationId: any,
+  modeShowRoute: boolean,
 };
 
 const SelectedLocation = ({ center }: { center: LatLngLiteral }) => {
@@ -31,7 +32,7 @@ const SelectedLocation = ({ center }: { center: LatLngLiteral }) => {
   return null;
 };
 
-export const Map = memo(({ center, locations, routes, setStationId, stationId }: MapProps) => {
+export const Map = memo(({ center, locations, routes, setStationId, stationId, modeShowRoute }: MapProps) => {
   const [selectedLocation, setSelectedLocation] = useState<
     MapLocation | undefined
   >();
@@ -99,8 +100,6 @@ export const Map = memo(({ center, locations, routes, setStationId, stationId }:
         </Marker>));
   };
 
-  console.log('routes', routes)
-  console.log('locations', locations)
 
   return (
     <>
@@ -122,13 +121,12 @@ export const Map = memo(({ center, locations, routes, setStationId, stationId }:
         >
           <TileLayer url={"http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}"} />
           {selectedLocation && <SelectedLocation center={selectedLocation} />}
-          {!routes && renderMarks()}
-          {
+          {modeShowRoute ?
             routes?.map((route: any, index: number) => {
               return (
                 <RoutingMachine key={index} stationId={stationId} setSelectedLocation={setSelectedLocation} locations={locations} route={route} color={colors[index]} index={index} setStationId={setStationId} />
               )
-            })
+            }) : renderMarks()
           }
         </MapContainer>
       </div>

@@ -31,7 +31,7 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
     try {
       const localBoardData = await api.get('/routes')
       const dataObject = transformData(localBoardData.data);
-      console.log(dataObject)
+      //console.log(dataObject)
       dispatch({ type: "SET_TRIPS", payload: dataObject });
       setLoading(false);
     } catch (error) {

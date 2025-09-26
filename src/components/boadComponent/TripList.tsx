@@ -86,7 +86,7 @@ export default function TripList({
           <div className={`tracking-wider flex items-center font-semibold justify-center uppercase text-sm py-3 rounded-t-sm ${planColors[listTitle] || "bg-gray-500"}`}>
             {planTranslations[listTitle]}
           </div>
-          <div ref={dropProvided.innerRef} className="rounded-b-sm bg-white p-2 max-h-[83dvh] overflow-y-auto">
+          <div ref={dropProvided.innerRef} className="rounded-b-sm bg-white p-2 max-h-[76dvh] overflow-y-auto">
             <InnerList
               listOfTrips={listOfTrips}
               dropProvided={dropProvided}

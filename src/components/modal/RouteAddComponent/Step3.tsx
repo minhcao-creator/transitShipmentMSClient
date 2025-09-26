@@ -5,7 +5,14 @@ import { useUser } from '@/context/UserContext/UserContext';
 import { User } from '@/types/user';
 import DropdownIcon from '@/assets/img/dropdownIcon';
 
-function Step3() {
+type Step3Props = {
+  drivers: User[] | [{}],
+  setDrivers: any,
+  currentStep: number
+}
+
+
+function Step3({ currentStep, drivers, setDrivers }: Step3Props) {
 
   const { userState } = useUser()
 
@@ -13,11 +20,9 @@ function Step3() {
 
   const [showAllDrivers, setShowAllDrivers] = useState<boolean>(false)
 
-  const [drivers, setDrivers] = useState<string[]>([""]);
-
   const adddriver = (index: number) => {
     const newdrivers = [...drivers];
-    newdrivers.splice(index + 1, 0, ""); // thêm sau driver hiện tại
+    newdrivers.splice(index + 1, 0, {}); // thêm sau driver hiện tại
     setDrivers(newdrivers);
   };
 
@@ -28,7 +33,7 @@ function Step3() {
     setDrivers(newdrivers);
   };
 
-  const updatedriver = (index: number, value: string) => {
+  const updatedriver = (index: number, value: User) => {
     const newdrivers = [...drivers];
     newdrivers[index] = value;
     setDrivers(newdrivers);
@@ -43,7 +48,7 @@ function Step3() {
               className="w-full flex justify-between bg-white border border-cyan-950 px-3 py-2 items-center rounded-sm"
               onClick={() => setShowAllDrivers(!showAllDrivers)}
             >
-              <span>{driver || "Chọn tài xế"}</span>
+              <span>{driver.id || "Chọn tài xế"}</span>
               <DropdownIcon />
             </button>
             {showAllDrivers && (
@@ -54,7 +59,8 @@ function Step3() {
                       key={driver.id}
                       className="hover:bg-rose-200 p-2 border rounded m-1"
                       onClick={() => {
-                        updatedriver(index, driver.id)
+                        if (currentStep != 3) return
+                        updatedriver(index, driver)
                         setShowAllDrivers(false)
                       }}
                     >
@@ -64,19 +70,21 @@ function Step3() {
                 ))}
               </div>
             )}
-            <button
-              onClick={() => adddriver(index)}
-              className="w-8 h-8 flex items-center justify-center rounded bg-cyan-800 text-white"
-            >
-              <PlusIcon />
-            </button>
-            <button
-              onClick={() => removedriver(index)}
-              className="w-8 h-8 flex items-center justify-center rounded bg-rose-800 text-white"
-              disabled={drivers.length === 1}
-            >
-              <MinusIcon />
-            </button>
+            {currentStep == 3 ?
+              <div className='flex gap-1'>
+                <button
+                  onClick={() => adddriver(index)}
+                  className="w-8 h-8 flex items-center justify-center rounded bg-cyan-800 text-white"
+                >
+                  <PlusIcon />
+                </button>
+                <button
+                  onClick={() => removedriver(index)}
+                  className="w-8 h-8 flex items-center justify-center rounded bg-rose-800 text-white"
+                  disabled={drivers.length === 1}
+                >
+                  <MinusIcon />
+                </button></div> : ''}
           </div>
         ))
       }

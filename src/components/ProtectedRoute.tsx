@@ -15,7 +15,7 @@ const ProtectedRoute = ({ allowedRoles, children }: { allowedRoles: string[], ch
 
     const role = authState.user?.role || '';
 
-    console.log(authState.user)
+    //console.log(authState.user)
 
     if (!allowedRoles.includes(role)) {
       router.push("/logout");

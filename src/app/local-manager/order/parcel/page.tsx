@@ -1,25 +1,21 @@
 "use client"
 
-import DropdownIcon from '@/assets/img/dropdownIcon'
-import DatePickerComponent from '@/components/DatePickerComponent'
+// import DropdownIcon from '@/assets/img/dropdownIcon'
 import Pagination from '@/components/Pagination'
 import HeaderPackage from '@/components/tableOrder/HeaderPackage'
 import RowPackage from '@/components/tableOrder/RowPackage'
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
-import { Order, Parcels } from '@/types/orderStation'
-import { Cross1Icon } from '@radix-ui/react-icons'
-import { useState } from 'react'
+import { Parcels } from '@/types/orderStation'
+// import { Cross1Icon } from '@radix-ui/react-icons'
+// import { useState } from 'react'
 
 function ParcelPage() {
 
-  const titleFilterLabels: Record<string, string> = {
-    id: "Mã bưu kiện",
-    senderName: "Người gửi",
-    receiverName: "Người nhận",
-    receiverAddress: "Địa chỉ nhận hàng",
-    senderPhoneNumber: "SĐT gửi",
-    receiverPhoneNumber: "SĐT nhận",
-  };
+  // const titleFilterLabels: Record<string, string> = {
+  //   idOrder: "Mã đơn hàng",
+  //   id: "Mã bưu kiện",
+  //   type: "Loại bưu kiện"
+  // };
 
   const { orderState, dispatch } = useOrder()
 
@@ -44,15 +40,15 @@ function ParcelPage() {
   const indexEnd = orderState.pageParcelIndex * orderState.pageSize
   const parcelsCurrent = parcels.length > indexEnd ? parcels.slice(indexStart, indexEnd) : parcels.slice(indexStart)
 
-  const [titleFilter, setTitleFilter] = useState<keyof Order | undefined>(undefined)
-  const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
+  // const [titleFilter, setTitleFilter] = useState<keyof ParcelWithOrder | undefined>(undefined)
+  // const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
 
-  const [nameFilter, setNameFilter] = useState<string>("")
+  // const [nameFilter, setNameFilter] = useState<string>("")
 
   return (
     <div>
       <div className='flex pb-4 gap-24'>
-        <div className="flex text-sm gap-0.5 relative">
+        {/* <div className="flex text-sm gap-0.5 relative">
           <button
             className=" w-48 flex justify-between bg-white px-3 py-2 items-center rounded-l hover:bg-cyan-800 hover:text-white"
             onClick={() => setShowTitleFilter(!showTitleFilter)}
@@ -108,12 +104,11 @@ function ParcelPage() {
               </button>
             </div>
           )}
-        </div>
-        <DatePickerComponent />
+        </div> */}
       </div>
       <div className='text-sm'>
         <HeaderPackage idOrder='' showIdOrder={true} />
-        <div className='h-[62dvh] overflow-y-auto'>
+        <div className='h-[68dvh] overflow-y-auto'>
           {parcelsCurrent?.map((parcel, index) => (
             <RowPackage parcelData={parcel} key={parcel.id} showIdOrder={true} idOrder={parcel.idOrder} index={indexStart + index + 1} />
           ))}

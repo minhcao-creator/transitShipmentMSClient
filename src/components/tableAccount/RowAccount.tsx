@@ -17,10 +17,7 @@ function RowAccount({ user, index }: RowAccountProps) {
       <div className={index % 2 == 0 ? 'bg-white' : 'bg-gray-200'}>
         <div className='flex flex-row item-center p-4'>
           <span className='basis-[12%] px-2 border-r border-gray-900'>
-            <button className='bg-[#2C2C2C] rounded-sm text-white px-1'
-            >
-              {user.id}
-            </button>
+            {user.id}
           </span>
           <span className='basis-[6%] px-2 border-r border-gray-900'>
             {user.lastname}

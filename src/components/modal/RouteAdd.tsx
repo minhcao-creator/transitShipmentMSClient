@@ -9,7 +9,9 @@ import Step3 from './RouteAddComponent/Step3'
 import Step4 from './RouteAddComponent/Step4'
 import { api } from '@/context/AuthContext/AuthContext'
 import { Route, RouteMap, Board, Vehicle } from "@/types/routeInit"
-import { useBoard } from '@/context/BoardContext/BoardContext'
+import { useBoard } from '@/context/RouteContext/RouteContext'
+import { User } from '@/types/user'
+import { Station } from '@/types/orderStation'
 
 type RouteAddProps = {
   setShowModal: () => void
@@ -17,22 +19,36 @@ type RouteAddProps = {
 
 function RouteAdd({ setShowModal }: RouteAddProps) {
 
-  const { dispatch } = useBoard();
+  const { boardState, dispatch } = useBoard();
 
   const [startCode, setStartCode] = useState<string>('')
   const [endCode, setEndCode] = useState<string>('')
-  const [startedAt, setStartedAt] = useState<string>("2025-09-05T20:27:39.369Z")
-  const [endedAt, setEndedAt] = useState<string>("2025-09-06T20:27:39.369Z")
+  const [startedAt, setStartedAt] = useState<Date>(new Date())
+  const [endedAt, setEndedAt] = useState<Date>(new Date())
 
   const [vehicle, setVehicle] = useState<Vehicle>()
+  const [drivers, setDrivers] = useState<User[] | [{}]>([{}])
+  const [stations, setStations] = useState<Station[] | [{}]>([{}])
 
   const [currentStep, setCurrentStep] = useState(1);
   const [routeId, setRouteId] = useState<string>(`ROU${(+new Date).toString(36).slice(-6)}`)
   const steps = [
-    { id: 1, title: "1", component: <Step1 startCode={startCode} endCode={endCode} setStartCode={setStartCode} setEndCode={setEndCode} /> },
-    { id: 2, title: "2", component: <Step2 vehicle={vehicle} setVehicle={setVehicle} /> },
-    { id: 3, title: "3", component: <Step3 /> },
-    { id: 4, title: "4", component: <Step4 /> },
+    {
+      id: 1, title: "1", component: <Step1
+        currentStep={currentStep}
+        startCode={startCode}
+        endCode={endCode}
+        setStartCode={setStartCode}
+        setEndCode={setEndCode}
+        startedAt={startedAt}
+        setStartedAt={setStartedAt}
+        endedAt={endedAt}
+        setEndedAt={setEndedAt}
+      />
+    },
+    { id: 2, title: "2", component: <Step2 currentStep={currentStep} vehicle={vehicle} setVehicle={setVehicle} /> },
+    { id: 3, title: "3", component: <Step3 currentStep={currentStep} drivers={drivers} setDrivers={setDrivers} /> },
+    { id: 4, title: "4", component: <Step4 currentStep={currentStep} stations={stations} setStations={setStations} /> },
   ];
 
   const [alert, setAlert] = useState<{ type: string, message: string } | null>(null);
@@ -44,18 +60,21 @@ function RouteAdd({ setShowModal }: RouteAddProps) {
         startCode,
         endCode,
         startedAt,
-        endedAt
+        endedAt,
+        ordinalNumber: boardState.ordered.length + 1,
       })
       if (res.data) {
         await api.patch(`/routes/${routeId}/stations/1338/add`, {
-          ordinalNumber: "0",
+          ordinalNumber: 0,
           etd: "2025-09-05T21:01:08.552Z",
           eta: "2025-09-05T21:01:08.552Z",
           departuredAt: "2025-09-05T21:01:08.552Z",
-          arrivedAt: "2025-09-05T21:01:08.552Z"
+          arrivedAt: "2025-09-05T21:01:08.552Z",
+          flag: false,
         })
         await api.patch(`/routes/${routeId}/status/INIT/set`)
       }
+
       setAlert({ type: "success", message: "Tạo chuyến hàng thành công" })
 
     } catch (error) {
@@ -74,7 +93,7 @@ function RouteAdd({ setShowModal }: RouteAddProps) {
 
   const handleStep3 = async () => {
     try {
-
+      drivers.map(async (driver) => await api.patch(`/routes/${routeId}/drivers/${driver.id}/add`))
     } catch (error) {
       console.log(error)
     }
@@ -82,7 +101,49 @@ function RouteAdd({ setShowModal }: RouteAddProps) {
 
   const handleStep4 = async () => {
     try {
-
+      const stationInit = [{
+        station: '1338',
+        ordinalNumber: 0,
+        etd: "2025-09-05T21:01:08.552Z",
+        eta: "2025-09-05T21:01:08.552Z",
+        departuredAt: "2025-09-05T21:01:08.552Z",
+        arrivedAt: "2025-09-05T21:01:08.552Z",
+        flag: false,
+      }]
+      const formatStations = stations.reduce((routeVisitsStations, station, index) => {
+        routeVisitsStations.push({
+          station: station.id,
+          ordinalNumber: index + 1,
+          etd: "2025-09-05T21:01:08.552Z",
+          eta: "2025-09-05T21:01:08.552Z",
+          departuredAt: "2025-09-05T21:01:08.552Z",
+          arrivedAt: "2025-09-05T21:01:08.552Z",
+          flag: false,
+        })
+        return routeVisitsStations;
+      }, stationInit)
+      dispatch({
+        type: "ADD_TRIP", payload: {
+          id: routeId,
+          startCode,
+          startedAt,
+          endedAt,
+          vehicle,
+          status: {
+            id: "INIT"
+          },
+          routeVisitsStations: formatStations,
+          drivers,
+        }
+      })
+      stations.map(async (station, index) => await api.patch(`/routes/${routeId}/stations/${station.id}/add`, {
+        ordinalNumber: index + 1,
+        etd: "2025-09-05T21:01:08.552Z",
+        eta: "2025-09-05T21:01:08.552Z",
+        departuredAt: "2025-09-05T21:01:08.552Z",
+        arrivedAt: "2025-09-05T21:01:08.552Z",
+        flag: false,
+      }))
     } catch (error) {
       console.log(error)
     }

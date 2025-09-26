@@ -83,7 +83,7 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
 
       const res = await api.post('/orders', orderAdd)
       if (res.data) {
-        await api.patch(`orders/${order.id}/status/OrderStatuses001/set`)
+        await api.patch(`orders/${order.id}/status/OrderStatuses000/set`)
         await api.patch(`orders/${order.id}/departure-station/${authState.user?.station}/set`)
         setShowModal()
         setAlert({ type: "success", message: "Gửi đơn thành công" })
@@ -296,7 +296,7 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
               receiverPhoneNumber: receiverPhoneNumberAdd,
               message: messageAdd,
               status: {
-                id: "OrderStatuses001",
+                id: "OrderStatuses000",
                 name: "Pending"
               },
               createdAt: order.createdAt

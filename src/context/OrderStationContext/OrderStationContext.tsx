@@ -22,7 +22,7 @@ const OrderStationContext = createContext({
 })
 
 export const OrderStationProvider = ({ children }: PropsWithChildren) => {
-  console.log('orderContex')
+  //console.log('orderContex')
   const { authState } = useAuth();
 
   const [orderState, dispatch] = useReducer(
@@ -256,40 +256,47 @@ function orderReducer(state: State, action: OrderAction): State {
       }
     }
 
-    // case "ADD_PARCEL": {
-    //   const newState = [...state]
+    case "ADD_PARCEL": {
+      const newOrders = [...state.orders]
 
-    //   const idOrder = action.payload.idOrder
-    //   const newPackage = {
-    //     ...action.payload.parcelData
-    //   }
+      const idOrder = action.payload.idOrder
+      const newPackage = {
+        ...action.payload.parcelData
+      }
 
-    //   newState.forEach((order) => {
-    //     if ((order.id) === idOrder) {
-    //       order.parcels.unshift(newPackage)
-    //     }
-    //   })
-    //   return newState
-    // }
+      newOrders.forEach((order) => {
+        if ((order.id) === idOrder) {
+          order.parcels.unshift(newPackage)
+        }
+      })
 
-    // case "ADD_ITEM": {
-    //   const newState = [...state]
+      return {
+        ...state,
+        orders: newOrders
+      }
+    }
 
-    //   const idPackage = action.payload.idParcel
-    //   const newItem = {
-    //     ...action.payload.item
-    //   }
+    case "ADD_ITEM": {
+      const newOrders = [...state.orders]
 
-    //   newState.forEach((order) => {
-    //     order.parcels.forEach((packageData) => {
-    //       if (packageData.id === idPackage) {
-    //         packageData.items.unshift(newItem)
-    //       }
-    //     })
-    //   })
+      const idPackage = action.payload.idParcel
+      const newItem = {
+        ...action.payload.item
+      }
 
-    //   return newState
-    // }
+      newOrders.forEach((order) => {
+        order.parcels.forEach((packageData) => {
+          if (packageData.id === idPackage) {
+            packageData.items.unshift(newItem)
+          }
+        })
+      })
+
+      return {
+        ...state,
+        orders: newOrders
+      }
+    }
 
     default:
       return initialData

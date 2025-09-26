@@ -17,7 +17,7 @@ function Logout() {
   }, [])
 
   const handleLogout = async () => {
-    console.log(authState.user)
+    //console.log(authState.user)
     await api.post('auth/logout', null, {
       params: {
         id: authState.user?.id

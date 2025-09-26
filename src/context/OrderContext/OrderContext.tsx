@@ -25,13 +25,13 @@
 //   }, [authState.isCheckAuth])
 
 //   async function loadData() {
-//     console.log('Order Context')
+//     //console.log('Order Context')
 //     try {
 //       const res = await api.get('/orders')
 //       dispatch({ type: "SET_ORDERS", payload: res.data });
 //       setLoading(false);
 //     } catch (error) {
-//       console.log(error)
+//       console.log
 //     }
 //   }
 

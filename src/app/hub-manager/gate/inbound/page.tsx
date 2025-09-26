@@ -4,7 +4,7 @@ import { Cross1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 import Board from '@/components/boadComponent/BoardInBound'
 import DatePickerComponent from '@/components/DatePickerComponent'
-import { Route } from '@/types/routeInit'
+import { Route } from '@/types/routes'
 import DropdownIcon from '@/assets/img/dropdownIcon'
 
 function Inbound() {

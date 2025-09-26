@@ -6,9 +6,10 @@ import { useEffect, useState } from 'react'
 type Step2Props = {
   vehicle: Vehicle | undefined,
   setVehicle: any,
+  currentStep: number
 }
 
-function Step2({ vehicle, setVehicle }: Step2Props) {
+function Step2({ vehicle, setVehicle, currentStep }: Step2Props) {
   const [vehicles, setVehicles] = useState<any[]>([])
   const [showVehicles, setShowVehicles] = useState<boolean>(false)
 
@@ -29,7 +30,7 @@ function Step2({ vehicle, setVehicle }: Step2Props) {
     <div className="relative pr-8">
       <button
         className="w-full flex justify-between bg-white border border-cyan-950 px-3 py-2 items-center rounded-sm"
-        onClick={() => setShowVehicles(!showVehicles)}
+        onClick={() => currentStep == 2 ? setShowVehicles(!showVehicles) : ''}
       >
         <span>{vehicle?.vehicleRegistrationPlate || "Chọn xe thực hiện chuyến đi"}</span>
         <DropdownIcon />

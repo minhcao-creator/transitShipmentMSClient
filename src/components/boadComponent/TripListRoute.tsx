@@ -10,7 +10,7 @@ import {
 } from "react-beautiful-dnd";
 import TripItem from "./TripItemRoute";
 import { useEffect, useState } from "react";
-import { PlusIcon } from "@radix-ui/react-icons";
+import { PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import { api } from "@/context/AuthContext/AuthContext";
 import { Station } from "@/types/user";
 import { useBoard } from "@/context/RouteContext/RouteContext";
@@ -33,24 +33,25 @@ export default function TripList({
   heightFull
 }: TripListProps) {
 
-  const { dispatch } = useBoard();
+  const { boardState, dispatch } = useBoard()
 
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false)
 
   const [stations, setStations] = useState<Station[]>()
 
-  const handleAddStation = async (stationId: string, ordinalNumber: string) => {
+  const handleAddStation = async (stationId: string, ordinalNumber: number) => {
     try {
 
       dispatch({
         type: 'ADD_STATION', payload: {
           idColumn: listTitle || "",
           station: stationId,
-          ordinalNumber: Number(ordinalNumber),
+          ordinalNumber: ordinalNumber,
           etd: new Date("2025-04-17T03:31:35.408Z"),
           eta: new Date("2025-04-17T03:31:35.408Z"),
           departuredAt: new Date("2025-04-17T03:31:35.408Z"),
-          arrivedAt: new Date("2025-04-17T03:31:35.408Z")
+          arrivedAt: new Date("2025-04-17T03:31:35.408Z"),
+          flag: false,
         }
       })
 
@@ -59,7 +60,8 @@ export default function TripList({
         etd: "2025-04-17T03:31:35.408Z",
         eta: "2025-04-17T03:31:35.408Z",
         departuredAt: "2025-04-17T03:31:35.408Z",
-        arrivedAt: "2025-04-17T03:31:35.408Z"
+        arrivedAt: "2025-04-17T03:31:35.408Z",
+        flag: false,
       })
     } catch (error) {
       console.log(error)
@@ -79,6 +81,18 @@ export default function TripList({
     }
   }
 
+  const deleteRoute = async (idRoute: string) => {
+    try {
+      const vehicleId = boardState.columns[idRoute].vehicle.id
+      dispatch({ type: "DELETE_TRIP", payload: { idColumn: idRoute } })
+      await api.delete(`routes/${idRoute}`)
+      await api.patch(`/vehicles/${vehicleId}/status/VSAVAILABLE/set`)
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
   useEffect(() => {
     getStations()
   }, [])
@@ -94,26 +108,35 @@ export default function TripList({
         dropSnapshot: DroppableStateSnapshot
       ) => (
         <div {...dropProvided.droppableProps}>
-          <button
-            className={`relative w-full flex gap-1 items-center justify-center p-1 rounded-t-sm bg-gray-800 hover:bg-gray-600`}
-            onClick={() => setShowModal(!showModal)}
-          >
-            <PlusIcon className="text-white size-5" />
-            {showModal && <div className='absolute left-16 top-0 z-40 flex flex-col items-start gap-2 p-2 w-[24rem] h-[15rem] overflow-auto bg-gray-300 rounded'>
-              {stations?.map((s, i) => (
-                <button
-                  key={i}
-                  className="text-sm bg-gray-50 hover:bg-gray-200 p-1 w-full flex flex-col items-start rounded"
-                  onClick={() => {
-                    handleAddStation(s.id, (listOfTrips.length == 0 ? 1 : listOfTrips[listOfTrips.length - 1].ordinalNumber + 1).toString())
-                  }}
-                >
-                  <span>{s.id}</span>
-                  <span>{s.name}</span>
-                </button>
-              ))}
-            </div>}
-          </button>
+          <div className="flex gap-0.5">
+            <button
+              className={`relative w-full flex gap-1 items-center justify-center p-1 rounded-t-sm bg-gray-800 hover:bg-gray-600`}
+              onClick={() => setShowModal(!showModal)}
+            >
+              <PlusIcon className="text-white size-5" />
+              {showModal && <div className='absolute left-16 top-0 z-40 flex flex-col items-start gap-2 p-2 w-[24rem] h-[15rem] overflow-auto bg-gray-300 rounded'>
+                {stations?.map((s, i) => (
+                  <button
+                    key={i}
+                    className="text-sm bg-gray-50 hover:bg-gray-200 p-1 w-full flex flex-col items-start rounded"
+                    onClick={() => {
+                      handleAddStation(s.id, (listOfTrips.length == 0 ? 1 : listOfTrips[listOfTrips.length - 1].ordinalNumber + 1))
+                    }}
+                  >
+                    <span>{s.id}</span>
+                    <span>{s.name}</span>
+                  </button>
+                ))}
+              </div>}
+            </button>
+            <button
+              className={`relative w-full flex gap-1 items-center justify-center p-1 rounded-t-sm bg-rose-800 hover:bg-rose-600`}
+              onClick={() => deleteRoute(listTitle || "")}
+            >
+              <TrashIcon className="text-white size-5" />
+            </button>
+          </div>
+
           <div ref={dropProvided.innerRef} className={`rounded-b-sm bg-white p-2 transition-all duration-1000 ${heightFull ? 'h-[32rem]' : 'h-[13rem]'} overflow-y-auto`}>
             <InnerList
               listOfTrips={listOfTrips}

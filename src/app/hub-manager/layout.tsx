@@ -26,7 +26,7 @@ export default function RootLayout({
     <ProtectedRoute allowedRoles={["hub-manager"]}>
       <div className="flex">
         <div className="h-screen px-2 py-24 flex flex-col justify-around items-center bg-cyan-800">
-          <Link href="#" className="w-10 h-10 text-gray-900 rounded-full hover:scale-110 transition-transform duration-200">
+          <Link href="/hub-manager/profile" className="w-10 h-10 text-gray-900 rounded-full hover:scale-110 transition-transform duration-200">
             <img
               src="/a.jpg"
               alt="Avatar"

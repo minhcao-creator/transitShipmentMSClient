@@ -38,23 +38,23 @@ function RowItem({ item, idParcel, idOrder, index, isShowParcel }: RowItemProps)
 
   return (
     <div>
-      <div className='flex flex-row item-center p-4 border-b border-blue-gray-100 bg-[#dedede]'>
-        <span className='basis-[4%] px-2 border-r'>
+      <div className='flex flex-row item-center p-4 border-b border-gray-400 bg-[#dedede]'>
+        <span className='basis-[4%] px-2 border-r border-gray-900'>
           {index}
         </span>
-        {isShowParcel && <span className='basis-[10%] px-2 border-r'>
+        {isShowParcel && <span className='basis-[10%] px-2 border-r border-gray-900'>
           {idOrder}
         </span>}
-        {isShowParcel && <span className='basis-[10%] px-2 border-r'>
+        {isShowParcel && <span className='basis-[10%] px-2 border-r border-gray-900'>
           {idParcel}
         </span>}
-        <span className={isShowParcel ? 'basis-[10%] px-2' : 'basis-[20%] px-2'}>
+        <span className={isShowParcel ? 'basis-[10%] px-2 border-r border-gray-900' : 'basis-[20%] px-2 border-r border-gray-900'}>
           {item.id}
         </span>
-        <span className='basis-[20%] px-2'>
+        <span className='basis-[20%] px-2 border-r border-gray-900'>
           {item.name}
         </span>
-        <span className='basis-[12%] px-1 flex gap-2'>
+        <span className='basis-[12%] px-1 flex gap-2 border-r border-gray-900'>
           <button className='w-4 h-4 border border-slate-600 rounded-sm hover:bg-slate-600 hover:text-white'
             onClick={() => {
               handleEditItem({
