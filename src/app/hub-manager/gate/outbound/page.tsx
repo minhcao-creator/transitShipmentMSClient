@@ -7,7 +7,7 @@ import DatePickerComponent from '@/components/DatePickerComponent'
 import DropdownIcon from '@/assets/img/dropdownIcon'
 import { Route } from 'next'
 
-function Inbound() {
+function Outbound() {
 
   const titleFilterLabels: Record<string, string> = {
     id: "Mã đơn",
@@ -20,6 +20,7 @@ function Inbound() {
 
   const [titleFilter, setTitleFilter] = useState<keyof Route | undefined>(undefined)
   const [showTitleFilter, setShowTitleFilter] = useState<boolean>(false)
+  const [today, setToday] = useState<Date>(new Date())
 
   const [nameFilter, setNameFilter] = useState<string>("")
 
@@ -57,7 +58,7 @@ function Inbound() {
             <Cross1Icon />
           </button>}
         </div>
-        <DatePickerComponent />
+        <DatePickerComponent today={today} setToday={setToday} />
       </div>
       <Board />
     </div>
@@ -65,4 +66,4 @@ function Inbound() {
   )
 }
 
-export default Inbound
+export default Outbound

@@ -1,8 +1,9 @@
 import { DraggableProvided } from "react-beautiful-dnd";
 import { useBoard } from "@/context/BoardContext/BoardContext";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { format } from "date-fns";
 import { Route } from "@/types/routes";
+import RouteInfomation from "../modal/RouteInfomation";
 
 type TripItemProps = {
   trip: Route;
@@ -12,6 +13,7 @@ type TripItemProps = {
 
 function TripItem({ isDragging, provided, trip }: TripItemProps) {
   const { dispatch } = useBoard();
+  const [showModal, setShowModal] = useState<boolean>(false)
 
   const missionConfig: Record<
     string,
@@ -56,7 +58,7 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
   };
 
   return (
-    <li
+    <div
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
@@ -78,6 +80,7 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
 
           <button
             className="bg-[#2C2C2C] rounded-sm text-white px-2 py-1"
+            onClick={() => setShowModal(true)}
           >
             {trip.id}
           </button>
@@ -105,7 +108,8 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
           </span>
         </div>
       </div>
-    </li >
+      {showModal && <RouteInfomation trip={trip} setShowModal={() => setShowModal(false)} />}
+    </div >
   );
 }
 

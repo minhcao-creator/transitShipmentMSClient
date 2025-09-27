@@ -1,7 +1,6 @@
 // components/CustomDatePicker.tsx
 "use client";
 
-import { useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { getMonth, getYear } from "date-fns";
 import range from "lodash/range";

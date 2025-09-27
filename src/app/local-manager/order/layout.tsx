@@ -5,6 +5,7 @@ import { useState } from "react"
 import UploadFile from '@/components/form/uploadFile'
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { api, useAuth } from "@/context/AuthContext/AuthContext";
 
 export default function RootLayout({
   children,
@@ -21,6 +22,18 @@ export default function RootLayout({
     { href: "/local-manager/order/parcel", label: "KIỆN HÀNG" },
     { href: "/local-manager/order/parcel/item", label: "MÓN HÀNG" },
   ]
+
+  const { authState } = useAuth()
+
+  const handleCreateTransitOrder = async () => {
+    try {
+      await api.post('transit-orders/auto-create-transit-orders', {
+        stationId: authState.user?.station
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <OrderStationProvider>
@@ -43,17 +56,29 @@ export default function RootLayout({
               )
             })}
           </div>
-          <div>
-            <button className="text-cyan-800 border border-cyan-800 rounded-sm hover:bg-[#116A7B] px-4 py-1 text-sm hover:text-white" onClick={() => setShowUpload(!showUpload)}>
-              + Tải đơn hàng
-            </button>
+          <div className="flex gap-4">
+            <div>
+              <button className="border border-cyan-800 rounded-sm bg-[#116A7B] px-4 py-1 text-sm text-white hover:bg-cyan-900"
+                onClick={handleCreateTransitOrder}
 
-            {showUpload && (
-              <div className="absolute top-16 right-5 w-80 z-10">
-                <UploadFile />
-              </div>
-            )}
+              >
+                Tạo đơn trung chuyển
+              </button>
+            </div>
+
+            <div>
+              <button className="border border-cyan-800 rounded-sm bg-[#116A7B] px-4 py-1 text-sm text-white hover:bg-cyan-900" onClick={() => setShowUpload(!showUpload)}>
+                Tải đơn hàng
+              </button>
+
+              {showUpload && (
+                <div className="absolute top-16 right-5 w-80 z-10">
+                  <UploadFile />
+                </div>
+              )}
+            </div>
           </div>
+
 
         </div>
         {children}
