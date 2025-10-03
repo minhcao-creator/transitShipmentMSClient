@@ -62,7 +62,7 @@ const Routes = () => {
     try {
       if (orderState.orders.length === 0) return;
 
-      const transitOrders = (await api.get("/transit-orders")).data.filter((tto: any) => tto.status.id == "TTOStatuses001");
+      const transitOrders = (await api.get("transit-orders")).data.filter((tto: any) => tto.status.id == "TTOStatuses001");
 
       const orderMap = new Map<string, Order>(
         orderState.orders.map((o) => [o.id, o])
@@ -77,7 +77,7 @@ const Routes = () => {
           .map((o: any) => orderMap.get(o.id))
           .filter((o: any): o is Order => !!o);
 
-        if (departureStation.id !== "1338" && arrivalStation.id === "1338") {
+        if (departureStation.id !== "WAREHOUSE-001" && arrivalStation.id === "WAREHOUSE-001") {
           let group = result.find((g) => g.id === departureStation.id);
           if (!group) {
             group = {
@@ -94,7 +94,7 @@ const Routes = () => {
           });
         }
 
-        if (arrivalStation.id !== "1338" && departureStation.id === "1338") {
+        if (arrivalStation.id !== "WAREHOUSE-001" && departureStation.id === "WAREHOUSE-001") {
           let group = result.find((g) => g.id === arrivalStation.id);
           if (!group) {
             group = {

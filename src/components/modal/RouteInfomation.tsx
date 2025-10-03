@@ -1,11 +1,14 @@
 "use client"
 
-import React, { useState } from 'react'
-import { useAuth } from '@/context/AuthContext/AuthContext'
+import React, { useEffect, useState } from 'react'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import AlertComponent from '../AlertComponent'
 import DatePickerComponent from '../DatePickerComponent'
 import { Route } from '@/types/routes'
+import { TransitOrderGroupBy } from '@/types/routeInit'
+import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
+import { Order } from '@/types/orderStation'
+import { api } from '@/context/AuthContext/AuthContext'
 
 type OrderAddProps = {
   trip: Route,
@@ -15,36 +18,97 @@ type OrderAddProps = {
 function RouteInfomation({ trip, setShowModal }: OrderAddProps) {
 
   const [startedAt, setStartedAt] = useState<Date>(new Date(trip.startedAt))
-  const [receiverNameAdd, setReceiverNameAdd] = useState<string>('')
-  const [receiverAddressAdd, setReceiverAddressAdd] = useState<string>('')
   const [endedAt, setEndedAt] = useState<Date>(new Date(trip.endedAt))
-  const [receiverPhoneNumberAdd, setReceiverPhoneNumberAdd] = useState<string>('')
-  const [messageAdd, setMessageAdd] = useState<string>('')
+  const [startCode, setStartCode] = useState<string>(trip.startCode)
+  const [endCode, setEndCode] = useState<string>(trip.endCode)
+  const [driverNameAdd, setDriverNameAdd] = useState<any>(trip.drivers[0])
+  const [vehicle, setVehicle] = useState<{
+    id: string;
+    vehicleRegistrationPlate: string;
+  }>(trip.vehicle)
 
-  const { authState } = useAuth()
-
-  const addressData = {
-    "TP.HCM": {
-      "Quận 1": ["Phường 1", "Phường 5", "Phường 10"],
-      "Quận 3": ["Phường 2", "Phường 7"],
-    },
-    "Hà Nội": {
-      "Quận Hoàn Kiếm": ["Phường Hàng Bài", "Phường Tràng Tiền"],
-      "Quận Ba Đình": ["Phường Ngọc Hà", "Phường Kim Mã"],
-    }
-  }
-
-  const [city, setCity] = useState("")
-  const [district, setDistrict] = useState("")
-  const [ward, setWard] = useState("")
-
-  const [open, setOpen] = useState<null | "city" | "district" | "ward">(null)
+  const [showOrders, setShowOrders] = useState<string | null>(null)
 
   const [alert, setAlert] = useState<{ type: string, message: string } | null>(null);
 
+  const [transitToOrders, setTransitToOrders] = useState<TransitOrderGroupBy[]>([])
+
+  const { orderState } = useOrder()
+
+  const groupTransitOrdersWithOrders = async () => {
+    try {
+      if (orderState.orders.length === 0) return;
+
+      const transitOrders = await Promise.all(
+        trip.transitOrders.map(async (t: any) => {
+          const res = await api.get(`transit-orders/${t.id}`);
+          return res.data;
+        })
+      );
+
+      const orderMap = new Map<string, Order>(
+        orderState.orders.map((o) => [o.id, o])
+      );
+
+      const result: TransitOrderGroupBy[] = [];
+
+      for (const to of transitOrders) {
+        const { departureStation, arrivalStation } = to;
+
+        const fullOrders: Order[] = (to.orders || [])
+          .map((o: any) => orderMap.get(o.id))
+          .filter((o: any): o is Order => !!o);
+
+        if (departureStation.id !== "WAREHOUSE-001" && arrivalStation.id === "WAREHOUSE-001") {
+          let group = result.find((g) => g.id === departureStation.id);
+          if (!group) {
+            group = {
+              id: departureStation.id,
+              name: departureStation.name,
+              transitOrders: [],
+            };
+            result.push(group);
+          }
+          group.transitOrders.push({
+            id: to.id,
+            type: "arrival",
+            orders: fullOrders,
+          });
+        }
+
+        if (arrivalStation.id !== "WAREHOUSE-001" && departureStation.id === "WAREHOUSE-001") {
+          let group = result.find((g) => g.id === arrivalStation.id);
+          if (!group) {
+            group = {
+              id: arrivalStation.id,
+              name: arrivalStation.name,
+              transitOrders: [],
+            };
+            result.push(group);
+          }
+          group.transitOrders.push({
+            id: to.id,
+            type: "departure",
+            orders: fullOrders,
+          });
+        }
+      }
+
+      setTransitToOrders(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    groupTransitOrdersWithOrders()
+  }, [])
+
   return (
     <div className='z-[2] absolute top-0 left-0 h-screen w-full bg-neutral-900 bg-opacity-90 flex items-center justify-center'>
-      <div className='p-8 bg-white rounded flex flex-col gap-4'>
+      <div
+        className='p-8 bg-white rounded flex flex-col gap-4'
+      >
         <div className='flex gap-4 mb-8'>
           <div className='flex-1 flex justify-center'>
             <span className='font-bold text-lg pb-2 tracking-wider border-b-2 border-neutral-500 mr-[-30px]'>
@@ -56,76 +120,101 @@ function RouteInfomation({ trip, setShowModal }: OrderAddProps) {
           </button>
         </div>
 
-        <div className='flex items-start justify-between gap-4'>
+        <div className="grid grid-cols-3 gap-4">
 
-          <div className='flex flex-col gap-1'>
-            <span >
-              Thời gian bắt đầu
-            </span>
-            <div className='border border-gray-800 rounded-sm'>
-              <DatePickerComponent today={startedAt} setToday={setStartedAt} showTime={true} />
+          {/* --- Cột 1 --- */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <span>Thời gian bắt đầu</span>
+              <div className="border border-gray-800 rounded-sm">
+                <DatePickerComponent today={startedAt} setToday={setStartedAt} showTime={true} />
+              </div>
             </div>
-          </div>
 
-          <div className='flex flex-col gap-1'>
-            <span >
-              Tên người nhận
-            </span>
-            <input
-              className='border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
-              placeholder="Nhập tên người nhận"
-              value={receiverNameAdd}
-              onChange={(e) => setReceiverNameAdd(e.target.value)} />
-          </div>
+            <div className="flex flex-col gap-1">
+              <span>Thời gian kết thúc</span>
+              <div className="border border-gray-800 rounded-sm">
+                <DatePickerComponent today={endedAt} setToday={setEndedAt} showTime={true} />
+              </div>
+            </div>
 
-        </div>
-
-        <div className='flex items-start justify-between gap-4'>
-
-          <div className='flex flex-col gap-1'>
-            <span >
-              Thời gian kết thúc
-            </span>
-            <div className='border border-gray-800 rounded-sm'>
-              <DatePickerComponent today={endedAt} setToday={setEndedAt} showTime={true} />
+            <div className="flex flex-col gap-1">
+              <span>Mã vào cổng</span>
+              <input
+                className="border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800"
+                placeholder="Nhập mã vào cổng"
+                value={startCode}
+                onChange={(e) => setStartCode(e.target.value)}
+              />
             </div>
 
           </div>
 
-          <div className='flex flex-col gap-1'>
-            <span >
-              Số điện thoại người nhận
-            </span>
-            <input
-              className='border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
-              placeholder="0xxxxxxxxx"
-              value={receiverPhoneNumberAdd}
-              onChange={(e) => setReceiverPhoneNumberAdd(e.target.value)} />
+          {/* --- Cột 2 --- */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <span>Xe thực hiện</span>
+              <input
+                className="border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800"
+                placeholder="Nhập xe thực hiện"
+                value={vehicle.vehicleRegistrationPlate}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span>Tài xế</span>
+              <input
+                className="border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800"
+                placeholder="Nhập tài xế"
+                value={driverNameAdd.username}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span>Mã ra cổng</span>
+              <input
+                className="border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800"
+                placeholder="Nhập mã vào cổng"
+                value={endCode}
+                onChange={(e) => setEndCode(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* --- Cột 3 (cuộn) --- */}
+          <div className="flex flex-col gap-1 relative">
+            <span>Danh sách bưu cục</span>
+
+            <div className="flex flex-col gap-2 border border-gray-600 rounded-sm p-2 h-[13rem] overflow-y-auto w-60">
+              {transitToOrders.map((t: TransitOrderGroupBy) =>
+                <div className=''>
+                  <button
+                    className="border border-gray-800 p-2 rounded-sm focus:outline-1 focus:outline-cyan-800 hover:bg-gray-100"
+                    onClick={() => showOrders == t.id ? setShowOrders(null) : setShowOrders(t.id)}
+                  >
+                    {t.name}
+                  </button>
+                  {showOrders == t.id && <div className='absolute top-8 right-60 max-h-60 overflow-y-auto bg-gray-100 border border-gray-800 rounded-sm'>
+                    {t.transitOrders.map((tt) => <div className={`${tt.type == 'arrival' ? 'bg-[#562E1C]' : 'bg-[#006F62]'} text-white p-2 m-2 rounded-sm`}>
+                      <div className='font-bold border-b border-white mb-2'>{tt.id}</div>
+                      {tt.orders.map((o) => <div>
+                        {o.id}
+                      </div>)}
+                    </div>)}
+                  </div>}
+                </div>)}
+            </div>
           </div>
         </div>
 
-        <div className='flex flex-col gap-1.5'>
-          <span >
-            Lời nhắn
-          </span>
-          <textarea
-            rows={2}
-            className='border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
-            value={messageAdd}
-            placeholder="Nhập lưu ý đặc điểm món hàng"
-            onChange={(e) => setMessageAdd(e.target.value)}
-          ></textarea>
-        </div>
 
-        <div className='flex items-center justify-between w-full mt-8'>
+
+        <div className='flex items-center justify-end w-full mt-8'>
           <button
-            className='rounded-sm px-8 py-2 bg-gray-800 text-white hover:scale-110 transition-transform duration-200'
+            className='bg-[#2C2C2C] rounded-sm text-white px-8 py-2 hover:bg-gray-600'
+            onClick={async () => await api.patch(`/routes/${trip.id}/status/PREP_I/set`)}
           >
-            XUẤT PHIẾU
-          </button>
-          <button
-            className='rounded-sm px-8 py-2 bg-cyan-800 text-white hover:scale-110 transition-transform duration-200'>
-            CHỈNH SỬA
+            NHẬP HÀNG
           </button>
         </div>
       </div>

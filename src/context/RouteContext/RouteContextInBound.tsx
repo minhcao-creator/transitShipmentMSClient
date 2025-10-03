@@ -31,7 +31,7 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
     try {
       const localBoardData = await api.get('/routes')
       const dataObject = transformData(localBoardData.data);
-      //console.log(dataObject)
+      // //console.log(dataObject)
       dispatch({ type: "SET_TRIPS", payload: dataObject });
       setLoading(false);
     } catch (error) {
@@ -45,6 +45,7 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
     const routeMap: RouteMap = {};
     const ordered = [...allowedStatusIds];
 
+    // Gom route theo StatusId
     routes.forEach(route => {
       const StatusId = route.status?.id;
       if (allowedStatusIds.includes(StatusId)) {
@@ -55,7 +56,17 @@ export const BoardProvider = ({ children }: PropsWithChildren) => {
       }
     });
 
-    return { columns: routeMap, ordered };
+    // Tạo sortedMap có đủ 4 keys, kể cả khi rỗng
+    const sortedMap: RouteMap = {};
+
+    allowedStatusIds.forEach(StatusId => {
+      const routesForStatus = routeMap[StatusId] || [];
+      sortedMap[StatusId] = [...routesForStatus].sort((a, b) => {
+        return (a.ordinalNumber - b.ordinalNumber);
+      });
+    });
+
+    return { columns: sortedMap, ordered };
   }
 
   if (loading) return;
@@ -74,6 +85,7 @@ export function useBoard() {
 function boardReducer(state: Board, action: BoardAction): Board {
   switch (action.type) {
     case "SET_TRIPS": {
+      //console.log('action.payload', action.payload)
       return action.payload;
     }
     case "MOVE_COLUMN": {
@@ -109,7 +121,7 @@ function boardReducer(state: Board, action: BoardAction): Board {
           },
         };
         // save locally
-        localStorage.setItem("@Board", JSON.stringify(newState));
+        // localStorage.setItem("@Board", JSON.stringify(newState));
         // Exit after handling reordering within the same column
         return newState;
       }
@@ -132,7 +144,7 @@ function boardReducer(state: Board, action: BoardAction): Board {
       };
 
       // save locally
-      localStorage.setItem("@Board", JSON.stringify(newState));
+      // localStorage.setItem("@Board", JSON.stringify(newState));
 
       return newState;
     }

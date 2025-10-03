@@ -121,8 +121,8 @@
   },
   {
     "address": "Số 90 Bà Hom, Phường 13, Quận 6, HCM",
-    "id": "1338",
-    "locationId": 1338,
+    "id": "WAREHOUSE-001",
+    "locationId": WAREHOUSE-001,
     "locationName": "Bưu Cục 90 Bà Hom-Q.6-HCM",
     "parentLocation": [
       "REGION/E",

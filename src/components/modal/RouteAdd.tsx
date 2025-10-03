@@ -64,7 +64,7 @@ function RouteAdd({ setShowModal }: RouteAddProps) {
         ordinalNumber: boardState.ordered.length + 1,
       })
       if (res.data) {
-        await api.patch(`/routes/${routeId}/stations/1338/add`, {
+        await api.patch(`/routes/${routeId}/stations/WAREHOUSE-001/add`, {
           ordinalNumber: 0,
           etd: "2025-09-05T21:01:08.552Z",
           eta: "2025-09-05T21:01:08.552Z",
@@ -102,7 +102,7 @@ function RouteAdd({ setShowModal }: RouteAddProps) {
   const handleStep4 = async () => {
     try {
       const stationInit = [{
-        station: '1338',
+        station: 'WAREHOUSE-001',
         ordinalNumber: 0,
         etd: "2025-09-05T21:01:08.552Z",
         eta: "2025-09-05T21:01:08.552Z",

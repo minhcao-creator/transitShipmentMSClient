@@ -13,13 +13,17 @@ export default function RoutingMachine({ locations, route, color, index, setStat
 
     const routeVisitStationsOrderBy = route.routeVisitsStations?.sort((a, b) => a.ordinalNumber - b.ordinalNumber)
 
-    const routeListTmp = routeVisitStationsOrderBy.map((routeVisitsStation) => {
+    // const routeListTmp = routeVisitStationsOrderBy.map((routeVisitsStation) => {
+    //     return locations.filter(location => location.id == routeVisitsStation.station)[0]
+    // });
+
+    const routeList = routeVisitStationsOrderBy.map((routeVisitsStation) => {
         return locations.filter(location => location.id == routeVisitsStation.station)[0]
     });
 
     //console.log(routeListTmp)
 
-    const routeList = [...routeListTmp, routeListTmp[0]]
+    // const routeList = [...routeListTmp, routeListTmp[0]]
 
     const map = useMap();
     // const travellerIcon = L.icon({ iconUrl: "/active-map-marker.png", iconSize: [26, 40] });

@@ -65,7 +65,7 @@ export const Map = memo(({ center, locations, routes, setStationId, stationId, m
 
   const renderMarks = () => {
     return locations?.map((location) => (
-      location.id == '1338' ? <Marker
+      location.id == 'WAREHOUSE-001' ? <Marker
         key={location.id}
         ref={(el) => {
           if (el) markerMapRefs.current[location.id] = el;

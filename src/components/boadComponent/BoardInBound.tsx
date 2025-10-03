@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -9,29 +8,16 @@ import {
 } from "react-beautiful-dnd";
 import Column from "./Column";
 import { useBoard } from "@/context/RouteContext/RouteContextInBound";
-// import useWindowSize from "@/hooks/useWindowSize";
+import { api } from "@/context/AuthContext/AuthContext";
+import { Route, RouteMap } from "@/types/routes";
+
 
 export default function Board() {
   const { boardState, dispatch } = useBoard();
-  // const { isMobile } = useWindowSize();
 
-  // // using useCallback is optional
-  // const onBeforeCapture = useCallback(() => {
-  //   /*...*/
-  // }, []);
-  // const onBeforeDragStart = useCallback(() => {
-  //   /*...*/
-  // }, []);
-  // const onDragStart = useCallback(() => {
-  //   /*...*/
-  // }, []);
-  // const onDragUpdate = useCallback(() => {
-  //   /*...*/
-  // }, []);
-  const onDragEnd = useCallback(
-    (result: DropResult) => {
-      // //console.log(result);
-      if (!result.destination) return; // dropped nowhere
+  const onDragEnd = async (result: DropResult) => {
+    try {
+      if (!result.destination) return;
 
       const source: DraggableLocation = result.source;
       const destination: DraggableLocation = result.destination;
@@ -41,20 +27,110 @@ export default function Board() {
         dispatch({ type: "MOVE_COLUMN", payload: { source, destination } });
         return;
       }
+
       // Reordering or moving trips
       if (result.type === "TRIP") {
+        const boardStateTmp = { ...boardState }
         dispatch({ type: "MOVE_TRIP", payload: { source, destination } });
+        const route = boardStateTmp.columns[source.droppableId][source.index]
+        const ordinalNumberDes = () => {
+          if (boardStateTmp.columns[destination.droppableId].length == 0) {
+            return 0;
+          }
+          else if (destination.index == 0) {
+            return boardStateTmp.columns[destination.droppableId][destination.index].ordinalNumber - 1;
+          }
+          else {
+            return boardStateTmp.columns[destination.droppableId][destination.index - 1].ordinalNumber + 1;
+          }
+        }
+        const lengDes = boardStateTmp.columns[destination.droppableId].length
+        const run = async () => {
+          let res: boolean = true
+
+          if (destination.index !== 0) {
+            for (let i = destination.index - 1; i < lengDes - 1; i++) {
+              if (res) {
+                if ((boardStateTmp.columns[destination.droppableId][i + 1].ordinalNumber - boardStateTmp.columns[destination.droppableId][i].ordinalNumber) > 1) {
+                  i = lengDes
+                }
+                else {
+                  const routeTmp = boardStateTmp.columns[destination.droppableId][i + 1]
+                  routeTmp.ordinalNumber = routeTmp.ordinalNumber + 1
+                  const response = await api.put(`/routes/${routeTmp.id}`, {
+                    id: routeTmp.id,
+                    ordinalNumber: routeTmp.ordinalNumber,
+                    endCode: routeTmp.endCode,
+                    startedAt: routeTmp.startedAt,
+                    endedAt: routeTmp.endedAt
+                  })
+                  res = await response.data && res
+                }
+              }
+            }
+          }
+          return res
+        }
+
+        const res = await run()
+
+        const res1 = await api.patch(`/routes/${route.id}/status/${destination.droppableId}/set`)
+        if (destination.droppableId === 'DONE_I') {
+          await api.post(`/routes/${route.id}/import`)
+        }
+        const res2 = await api.put(`/routes/${route.id}`, {
+          id: route.id,
+          ordinalNumber: ordinalNumberDes(),
+          endCode: route.endCode,
+          startedAt: route.startedAt,
+          endedAt: route.endedAt
+        })
+
+        if (res && res1.data & res2.data) {
+          const localBoardData = await api.get('/routes')
+          const dataObject = transformData(localBoardData.data);
+          //console.log('dataObject', dataObject)
+          dispatch({ type: "SET_TRIPS", payload: dataObject });
+        }
+
       }
-    },
-    [dispatch]
-  );
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  function transformData(routes: Route[]) {
+    const allowedStatusIds = ["PREP_I", "READY_I", "INPROG_I", "DONE_I"];
+    const routeMap: RouteMap = {};
+    const ordered = [...allowedStatusIds];
+
+    // Gom route theo statusId
+    routes.forEach(route => {
+      const statusId = route.status?.id;
+      if (allowedStatusIds.includes(statusId)) {
+        if (!routeMap[statusId]) {
+          routeMap[statusId] = [];
+        }
+        routeMap[statusId].push(route);
+      }
+    });
+
+    // Tạo sortedMap có đủ 4 keys, kể cả khi rỗng
+    const sortedMap: RouteMap = {};
+
+    allowedStatusIds.forEach(statusId => {
+      const routesForStatus = routeMap[statusId] || [];
+      sortedMap[statusId] = [...routesForStatus].sort((a, b) => {
+        return a.ordinalNumber - b.ordinalNumber;
+      });
+    });
+
+    return { columns: sortedMap, ordered };
+  }
 
   return (
     <DragDropContext
-      // onBeforeCapture={onBeforeCapture}
-      // onBeforeDragStart={onBeforeDragStart}
-      // onDragStart={onDragStart}
-      // onDragUpdate={onDragUpdate}
       onDragEnd={onDragEnd}
     >
       <Droppable

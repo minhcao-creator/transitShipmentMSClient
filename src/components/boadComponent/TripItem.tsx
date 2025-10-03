@@ -77,7 +77,8 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
           <div>
             <span>{trip.startedAt && format(trip.startedAt, "HH:mm")}</span>
           </div>
-
+        </div>
+        <div>
           <button
             className="bg-[#2C2C2C] rounded-sm text-white px-2 py-1"
             onClick={() => setShowModal(true)}
@@ -85,7 +86,7 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
             {trip.id}
           </button>
         </div>
-        <div className='flex gap-4'>
+        <div className='flex flex-col gap-2'>
           {trip.routeVisitsStations.map((r: any) => (
             <span
               key={r.station}

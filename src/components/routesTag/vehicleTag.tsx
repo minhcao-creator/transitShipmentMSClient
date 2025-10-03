@@ -90,7 +90,7 @@ function VehicleTag({ vehicle, route, stationId, setStationId }: VehicleTagProps
       {
         show && route && route.routeVisitsStations.map((routeVisitsStation: any) => <button
           className="block w-full"
-          onClick={() => routeVisitsStation.station == '1338' ? null : setStationId(routeVisitsStation.station)}>
+          onClick={() => routeVisitsStation.station == 'WAREHOUSE-001' ? null : setStationId(routeVisitsStation.station)}>
           <div className={`${routeVisitsStation.station == stationId ? "bg-teal-50 border-2 border-teal-700" : "bg-white"} m-2 rounded p-2`}>
             <div>{routeVisitsStation.station}</div>
             <div className="w-full flex items-center justify-between">

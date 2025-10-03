@@ -72,7 +72,7 @@ export default function TripList({
   const getStations = async () => {
     try {
       const usedStationIds = new Set(listOfTrips.map(trip => trip.station));
-      usedStationIds.add('1338');
+      usedStationIds.add('WAREHOUSE-001');
       const res = await api.get('/stations');
       const stations = res.data.filter((s: any) => !usedStationIds.has(s.id));
       setStations(stations)

@@ -57,7 +57,7 @@ function OrderPage() {
         createdAt: (new Date).toISOString(),
         isPlanned: false,
         departureStation: authState.user?.station,
-        arrivalStation: "1338",
+        arrivalStation: "WAREHOUSE-001",
         weight: 0
       })
       if (res.data) {
@@ -97,7 +97,7 @@ function OrderPage() {
         id: idOut,
         createdAt: (new Date).toISOString(),
         isPlanned: false,
-        departureStation: "1338",
+        departureStation: "WAREHOUSE-001",
         arrivalStation: station.id,
         weight: 0
       })
