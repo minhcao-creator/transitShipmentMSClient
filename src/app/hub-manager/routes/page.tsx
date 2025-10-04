@@ -122,8 +122,31 @@ const Routes = () => {
 
   const { boardState, dispatch } = useBoard()
 
-  const handlePlan = () => {
+  const handleChangeMode = () => {
     setModeShowRoute(!modeShowRoute)
+    // setIsLoading(false)
+    // const routelist = Object.values(boardState.columns);
+    // setRouteList(routelist)
+    // setIsLoading(true)
+  }
+
+  const handlePlan = async () => {
+    try {
+      setIsLoading(false)
+      const res = await api.post('plans/short-haul', {
+        timestampz: "2025-10-01T02:00:00Z",
+        stationId: "WAREHOUSE-001",
+        managerId: "10000000001"
+      })
+      if (res.data) {
+        setModeShowRoute(true)
+        setIsLoading(true)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+
     // setIsLoading(false)
     // const routelist = Object.values(boardState.columns);
     // setRouteList(routelist)
@@ -199,6 +222,7 @@ const Routes = () => {
   }, [boardState])
 
   if (locations.length == 0) return
+  if (!isLoading) return
 
   return (
     <div className={modeButton ? 'flex w-full' : 'relative w-full'} >
@@ -248,13 +272,19 @@ const Routes = () => {
             )}
 
           </div>
-          <div className="w-1/4 flex flex-col justify-between">
-            <div></div>
+          <div className="w-1/4 flex flex-col gap-8 justify-between">
+            <div>
+            </div>
             <div className="flex flex-col gap-4 w-full">
-              {modeButton ?
+              <div>
                 <button className="text-white text-[9px] tracking-wider font-semibold p-1 bg-[#37AB9C] hover:bg-[#116A7B] rounded-sm"
                   onClick={handlePlan}
                 >LẬP KẾ HOẠCH</button>
+              </div>
+              {modeButton ?
+                <button className="text-white text-[9px] tracking-wider font-semibold p-1 bg-[#37AB9C] hover:bg-[#116A7B] rounded-sm"
+                  onClick={handleChangeMode}
+                >TRẠNG THÁI</button>
                 :
                 <button className="text-white text-[9px] tracking-wider font-semibold p-1 bg-yellow-700 hover:bg-yellow-800 rounded-sm"
                   onClick={() => { }}
