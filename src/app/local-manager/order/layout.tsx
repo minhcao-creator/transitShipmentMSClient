@@ -6,6 +6,7 @@ import UploadFile from '@/components/form/uploadFile'
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { api, useAuth } from "@/context/AuthContext/AuthContext";
+import AlertComponent from "@/components/AlertComponent";
 
 export default function RootLayout({
   children,
@@ -14,6 +15,7 @@ export default function RootLayout({
 }>) {
 
   const [showUpload, setShowUpload] = useState<Boolean>(false)
+  const [alert, setAlert] = useState<{ type: string, message: string } | null>(null);
 
   const pathname = usePathname()
 
@@ -27,9 +29,13 @@ export default function RootLayout({
 
   const handleCreateTransitOrder = async () => {
     try {
-      await api.post('transit-orders/auto-create-transit-orders', {
+      const res = await api.post('transit-orders/auto-create-transit-orders', {
         stationId: authState.user?.station
       })
+
+      if (res.data) {
+        setAlert({ type: "success", message: "Tạo chuyến hàng thành công" })
+      }
     } catch (error) {
       console.log(error)
     }
@@ -78,10 +84,17 @@ export default function RootLayout({
               )}
             </div>
           </div>
-
-
         </div>
         {children}
+        {
+          alert && (
+            <AlertComponent
+              type={alert?.type}
+              message={alert?.message}
+              onClose={() => setAlert(null)}
+            />
+          )
+        }
       </div>
     </OrderStationProvider>
   );

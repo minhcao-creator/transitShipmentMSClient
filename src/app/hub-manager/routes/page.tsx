@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeftIcon, DoubleArrowDownIcon, DoubleArrowUpIcon, PlusIcon } from "@radix-ui/react-icons";
+import { ChevronLeftIcon, DoubleArrowDownIcon, DoubleArrowUpIcon, PlusIcon, UpdateIcon } from "@radix-ui/react-icons";
 import { api } from "@/context/AuthContext/AuthContext";
 import { useOrder } from "@/context/OrderStationContext/OrderStationContext";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,7 @@ import BoardRoute from "@/components/boadComponent/BoardRoute";
 import { useBoard } from "@/context/RouteContext/RouteContext";
 import RouteAdd from "@/components/modal/RouteAdd";
 import { TransitOrderGroupBy } from "@/types/routeInit";
+import DatePickerComponent from "@/components/DatePickerComponent";
 
 
 const MapRoutes = dynamic(
@@ -31,6 +32,7 @@ const Routes = () => {
   const [modeButton, setModeButton] = useState<boolean>(true)
   const [heightFull, setHeightFull] = useState<boolean>(false)
   const [modeShowRoute, setModeShowRoute] = useState<boolean>(false)
+  const [today, setToday] = useState<Date>(new Date())
 
   const [showModal, setShowModal] = useState<boolean>(false)
 
@@ -124,17 +126,14 @@ const Routes = () => {
 
   const handleChangeMode = () => {
     setModeShowRoute(!modeShowRoute)
-    // setIsLoading(false)
-    // const routelist = Object.values(boardState.columns);
-    // setRouteList(routelist)
-    // setIsLoading(true)
   }
 
   const handlePlan = async () => {
     try {
+      console.log(today.toISOString())
       setIsLoading(false)
       const res = await api.post('plans/short-haul', {
-        timestampz: "2025-10-01T02:00:00Z",
+        timestampz: today.toISOString(),
         stationId: "WAREHOUSE-001",
         managerId: "10000000001"
       })
@@ -222,7 +221,7 @@ const Routes = () => {
   }, [boardState])
 
   if (locations.length == 0) return
-  if (!isLoading) return
+  if (!isLoading) return <div className="w-full flex items-center justify-center">Loading ...</div>
 
   return (
     <div className={modeButton ? 'flex w-full' : 'relative w-full'} >
@@ -240,7 +239,7 @@ const Routes = () => {
             </div>
 
             {driverShow ? (
-              <div className="rounded-b-sm bg-white p-2 flex flex-col gap-3 grow max-h-[100dvh] overflow-y-auto">
+              <div className="rounded-b-sm bg-white p-2 flex flex-col gap-3 grow max-h-[80dvh] overflow-y-auto">
                 {vehicles.map((vehicle) => {
                   const route = routeList?.find((route: any) => route.vehicle.id === vehicle.id);
 
@@ -257,7 +256,7 @@ const Routes = () => {
                 })}
               </div>
             ) : (
-              <div className="rounded-b-sm bg-white p-2 flex flex-col gap-3 grow max-h-[100dvh] overflow-y-auto">
+              <div className="rounded-b-sm bg-white p-2 flex flex-col gap-3 grow max-h-[80dvh] overflow-y-auto">
                 {transitToOrders.map((groupedOrder: any) => (
                   <div
                     key={groupedOrder.id}
@@ -282,16 +281,15 @@ const Routes = () => {
                 >LẬP KẾ HOẠCH</button>
               </div>
               {modeButton ?
-                <button className="text-white text-[9px] tracking-wider font-semibold p-1 bg-[#37AB9C] hover:bg-[#116A7B] rounded-sm"
+                <button className="text-white text-[9px] tracking-wider font-semibold p-1 bg-[#37AB9C] hover:bg-[#116A7B] rounded-sm flex items-center justify-between"
                   onClick={handleChangeMode}
-                >TRẠNG THÁI</button>
+                ><UpdateIcon /> TRẠNG THÁI</button>
                 :
                 <button className="text-white text-[9px] tracking-wider font-semibold p-1 bg-yellow-700 hover:bg-yellow-800 rounded-sm"
                   onClick={() => { }}
                 >CHỈNH SỬA</button>
               }
             </div>
-
           </div>
         </div>
         :
@@ -327,6 +325,12 @@ const Routes = () => {
       </button>
 
       {showModal && <RouteAdd setShowModal={() => setShowModal(false)} />}
+
+      {modeButton && <div className="absolute bottom-2 right-28 w-full z-[900] flex justify-end">
+        <div className="flex">
+          <DatePickerComponent today={today} setToday={setToday} showTime={true} />
+        </div>
+      </div>}
 
     </div >
   )
