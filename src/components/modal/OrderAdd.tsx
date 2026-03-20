@@ -18,7 +18,6 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
 
   const [senderNameAdd, setSenderNameAdd] = useState<string>(order.senderName)
   const [receiverNameAdd, setReceiverNameAdd] = useState<string>(order.receiverName)
-  const [receiverAddressAdd, setReceiverAddressAdd] = useState<string>(order.receiverAddress)
   const [senderPhoneNumberAdd, setSenderPhoneNumberAdd] = useState<string>(order.senderPhoneNumber)
   const [receiverPhoneNumberAdd, setReceiverPhoneNumberAdd] = useState<string>(order.receiverPhoneNumber)
   const [messageAdd, setMessageAdd] = useState<string>(order.message)
@@ -26,14 +25,19 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
   const { authState } = useAuth()
 
   const addressData = {
-    "TP.HCM": {
-      "Quận 1": ["Phường 1", "Phường 5", "Phường 10"],
-      "Quận 3": ["Phường 2", "Phường 7"],
-    },
-    "Hà Nội": {
-      "Quận Hoàn Kiếm": ["Phường Hàng Bài", "Phường Tràng Tiền"],
-      "Quận Ba Đình": ["Phường Ngọc Hà", "Phường Kim Mã"],
+    "Thành phố Hồ Chí Minh": {
+      "Phường Tân Sơn Nhất": ["544 Cách mạng tháng 8"],
+      "Phường Đức Nhuận": ["5 Hoàng Minh Giám"],
+      "Phường Chợ Quán": ["235 Nguyễn Văn Cừ"],
+      "Phường Sài Gòn": ["20 Lý Tự Trọng"],
+      "Phường Xuân Hòa": ["275 Điện Biên Phủ", "282 Võ Thị Xuân"],
+      "Phường Tân Sơn Hòa": ["19 Bùi Thị Xuân"],
+      "Phường Bến Thành": ["73 Bùi Thị Xuân"],
+      "Phường Tân Bình": ["1A Nguyễn Hiến Lê"],
+      "Phường Phú Thọ Hòa": ["18 Lê Thúc Hoạch"],
+      "Phường Diên Hồng": ["268 Lý Thường Kiệt"]
     }
+
   }
 
   const [city, setCity] = useState("")
@@ -66,16 +70,32 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
         setAlert({ type: "error", message: "Vui lòng chọn phường/xã" });
         return;
       }
-      if (!receiverAddressAdd.trim()) {
-        setAlert({ type: "error", message: "Vui lòng nhập địa chỉ người nhận" });
-        return;
-      }
       if (!senderPhoneNumberAdd.trim()) {
         setAlert({ type: "error", message: "Vui lòng nhập số điện thoại người gửi" });
         return;
       }
       if (!receiverPhoneNumberAdd.trim()) {
         setAlert({ type: "error", message: "Vui lòng nhập số điện thoại người nhận" });
+        return;
+      }
+
+      if (!senderPhoneNumberAdd.trim()) {
+        setAlert({ type: "error", message: "Vui lòng nhập số điện thoại người gửi" });
+        return;
+      }
+
+      if (!/^(0)\d{9}$/.test(senderPhoneNumberAdd.trim())) {
+        setAlert({ type: "error", message: "Số điện thoại người gửi không hợp lệ" });
+        return;
+      }
+
+      if (!receiverPhoneNumberAdd.trim()) {
+        setAlert({ type: "error", message: "Vui lòng nhập số điện thoại người nhận" });
+        return;
+      }
+
+      if (!/^(0)\d{9}$/.test(receiverPhoneNumberAdd.trim())) {
+        setAlert({ type: "error", message: "Số điện thoại người nhận không hợp lệ" });
         return;
       }
 
@@ -256,11 +276,11 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
               )}
             </div>
           </div>
-          <input
+          {/* <input
             className='border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
             placeholder="Nhập số nhà, tên đường"
             value={receiverAddressAdd}
-            onChange={(e) => setReceiverAddressAdd(e.target.value)} />
+            onChange={(e) => setReceiverAddressAdd(e.target.value)} /> */}
         </div>
 
         <div className='flex flex-col gap-1.5'>
@@ -291,7 +311,7 @@ function OrderAdd({ order, setShowModal }: OrderAddProps) {
               weight: 10,
               senderName: senderNameAdd,
               receiverName: receiverNameAdd,
-              receiverAddress: receiverAddressAdd + ', ' + ward + ', ' + district + ', ' + city,
+              receiverAddress: ward + ', ' + district + ', ' + city,
               senderPhoneNumber: senderPhoneNumberAdd,
               receiverPhoneNumber: receiverPhoneNumberAdd,
               message: messageAdd,

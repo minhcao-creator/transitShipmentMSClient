@@ -72,6 +72,14 @@ function RouteAdd({ setShowModal }: RouteAddProps) {
           arrivedAt: "2025-09-05T21:01:08.552Z",
           flag: false,
         })
+        await api.patch(`/routes/${routeId}/stations/WAREHOUSE-001/add`, {
+          ordinalNumber: 100,
+          etd: "2025-09-05T21:01:08.552Z",
+          eta: "2025-09-05T21:01:08.552Z",
+          departuredAt: "2025-09-05T21:01:08.552Z",
+          arrivedAt: "2025-09-05T21:01:08.552Z",
+          flag: false,
+        })
         await api.patch(`/routes/${routeId}/status/INIT/set`)
       }
 

@@ -72,7 +72,7 @@ export default function TripList({
   const getStations = async () => {
     try {
       const usedStationIds = new Set(listOfTrips.map(trip => trip.station));
-      usedStationIds.add('WAREHOUSE-001');
+      // usedStationIds.add('WAREHOUSE-001');
       const res = await api.get('/stations');
       const stations = res.data.filter((s: any) => !usedStationIds.has(s.id));
       setStations(stations)
@@ -120,7 +120,7 @@ export default function TripList({
                     key={i}
                     className="text-sm bg-gray-50 hover:bg-gray-200 p-1 w-full flex flex-col items-start rounded"
                     onClick={() => {
-                      handleAddStation(s.id, (listOfTrips.length == 0 ? 1 : listOfTrips[listOfTrips.length - 2].ordinalNumber + 1))
+                      handleAddStation(s.id, (listOfTrips.length == 0 ? 1 : listOfTrips[listOfTrips.length - 1].ordinalNumber + 1))
                     }}
                   >
                     <span>{s.id}</span>

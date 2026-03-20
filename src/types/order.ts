@@ -8,7 +8,7 @@ export type Item = {
 export type Package = {
   id: string;
   weight: number;
-  length: number;
+  depth: number;
   height: number;
   width: number;
   note: string;

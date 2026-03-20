@@ -41,7 +41,7 @@ export default function BoardRoute({ heightFull }: BoardProps) {
         const lengDes = boardStateTmp.columns[destination.droppableId].routeVisitsStations.length
         const run = async () => {
           let res: boolean = true
-          for (let i = destination.index; i < lengDes - 1; i++) {
+          for (let i = destination.index; i < lengDes - 2; i++) {
             if (res) {
               if ((boardStateTmp.columns[destination.droppableId].routeVisitsStations[i + 1].ordinalNumber - boardStateTmp.columns[destination.droppableId].routeVisitsStations[i].ordinalNumber) > 1) {
                 i = lengDes
@@ -142,7 +142,7 @@ export default function BoardRoute({ heightFull }: BoardProps) {
                 key={key}
                 index={index}
                 listTitle={key}
-                listOfTrips={boardState.columns[key].routeVisitsStations.slice(1)}
+                listOfTrips={boardState.columns[key].routeVisitsStations.slice(1, -1)}
                 heightFull={heightFull}
               />
             ))}

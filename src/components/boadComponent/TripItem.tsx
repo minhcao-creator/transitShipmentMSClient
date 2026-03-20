@@ -87,7 +87,7 @@ function TripItem({ isDragging, provided, trip }: TripItemProps) {
           </button>
         </div>
         <div className='flex flex-col gap-2'>
-          {trip.routeVisitsStations.map((r: any) => (
+          {trip.routeVisitsStations.sort((a, b) => a.ordinalNumber - b.ordinalNumber).map((r: any) => (
             <span
               key={r.station}
               className={`rounded-full text-sm font-medium ${r.flag

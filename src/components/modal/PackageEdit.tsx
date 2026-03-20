@@ -1,10 +1,10 @@
 import { useOrder } from '@/context/OrderStationContext/OrderStationContext'
-import { Package } from '@/types/order'
+import { Parcels } from '@/types/orderStation'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import React, { useState } from 'react'
 
 type PackageEditProps = {
-  packageData: Package
+  packageData: Parcels
   setShowModal: () => void
 }
 
@@ -12,12 +12,11 @@ function PackageEdit({ packageData, setShowModal }: PackageEditProps) {
   const { dispatch } = useOrder()
 
   const [weightEdit, setWeightEdit] = useState<number>(packageData.weight)
-  const [lengthEdit, setLenghtEdit] = useState<number>(packageData.length)
+  const [depthEdit, setDepthEdit] = useState<number>(packageData.depth)
   const [widthEdit, setWidthEdit] = useState<number>(packageData.width)
   const [heightEdit, setHeightEdit] = useState<number>(packageData.height)
   const [noteEdit, setNoteEdit] = useState<string>(packageData.note)
-  const [typeEdit, setTypeEdit] = useState<string>(packageData.type)
-  const [statusEdit, setStatusEdit] = useState<string>(packageData.status)
+  const [typeEdit, setTypeEdit] = useState<string>(packageData.type?.name)
 
   const [open, setOpen] = useState<boolean>(false)
 
@@ -64,20 +63,20 @@ function PackageEdit({ packageData, setShowModal }: PackageEditProps) {
     }
   ]
 
-  const handleUpdate = (packageDataEdit: Package) => {
+  const handleUpdate = (packageDataEdit: Parcels) => {
     setShowModal()
     dispatch({ type: "EDIT_PACKAGE", payload: packageDataEdit })
   }
 
-  const handleReset = () => {
-    setWeightEdit(packageData.weight)
-    setLenghtEdit(packageData.length)
-    setWidthEdit(packageData.width)
-    setHeightEdit(packageData.height)
-    setNoteEdit(packageData.note)
-    setTypeEdit(packageData.type)
-    setStatusEdit(packageData.status)
-  }
+  // const handleReset = () => {
+  //   setWeightEdit(packageData.weight)
+  //   setDepthEdit(packageData.depth)
+  //   setWidthEdit(packageData.width)
+  //   setHeightEdit(packageData.height)
+  //   setNoteEdit(packageData.note)
+  //   setTypeEdit(packageData.type)
+  //   setStatusEdit(packageData.status)
+  // }
 
   return (
     <div className='absolute top-0 left-0 h-screen w-full bg-neutral-900 bg-opacity-90 flex items-center justify-center'>
@@ -113,8 +112,8 @@ function PackageEdit({ packageData, setShowModal }: PackageEditProps) {
               <input
                 type={"number"}
                 className='w-20 border border-gray-800 p-2 flex-1 rounded-sm focus:outline-1 focus:outline-cyan-800'
-                value={lengthEdit}
-                onChange={(e) => setLenghtEdit(Number(e.target.value))} />
+                value={depthEdit}
+                onChange={(e) => setDepthEdit(Number(e.target.value))} />
             </div>
 
             <div className='flex flex-col gap-1'>
@@ -192,13 +191,12 @@ function PackageEdit({ packageData, setShowModal }: PackageEditProps) {
             onClick={() => handleUpdate({
               ...packageData,
               weight: weightEdit,
-              length: lengthEdit,
+              depth: depthEdit,
               width: widthEdit,
               height: heightEdit,
               note: noteEdit,
-              type: typeEdit,
-              status: statusEdit,
-
+              type: parcelTypes.filter((p) => p.name == typeEdit)[0],
+              status: null,
             })}
           >
             CHỈNH SỬA

@@ -28,7 +28,7 @@ export type Parcels = {
   width: number;
   note: string;
   type: ParcelTypes;
-  status: ParcelStatus;
+  status?: ParcelStatus | null;
   items: Item[];
 }
 
